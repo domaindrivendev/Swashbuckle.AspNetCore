@@ -19,12 +19,12 @@
     <PackageVersion Include="Microsoft.Kiota.Bundle" Version="2.0.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="3.7.0" />
     <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.7.0" />
-    <PackageVersion Include="Microsoft.Playwright" Version="1.61.0" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.62.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
     <PackageVersion Include="MSBuild.ProjectCreation" Version="19.1.4" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="NJsonSchema" Version="11.6.1" />
-    <PackageVersion Include="NSubstitute" Version="6.0.0" />
+    <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="NSwag.CodeGeneration.CSharp" Version="14.7.1" />
     <PackageVersion Include="NSwag.MSBuild" Version="14.7.1" />
     <PackageVersion Include="ReportGenerator" Version="5.5.11" />
