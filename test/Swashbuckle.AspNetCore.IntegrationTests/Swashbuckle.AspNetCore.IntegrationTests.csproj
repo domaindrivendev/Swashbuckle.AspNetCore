@@ -47,18 +47,18 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.29" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.29" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.30" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.30" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.18" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.18" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.19" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.19" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.10" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="10.0.10" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.11" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="10.0.11" />
   </ItemGroup>
 
 </Project>
