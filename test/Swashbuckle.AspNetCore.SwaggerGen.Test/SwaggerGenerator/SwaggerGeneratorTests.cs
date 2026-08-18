@@ -1623,6 +1623,33 @@ public class SwaggerGeneratorTests
     }
 
     [Fact]
+    public void GetSwagger_SupportsOption_Servers_ForEveryDocument()
+    {
+        var subject = Subject(
+            apiDescriptions: [],
+            options: new SwaggerGeneratorOptions
+            {
+                SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                {
+                    ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" },
+                    ["v2"] = new OpenApiInfo { Version = "V2", Title = "Test API" }
+                },
+                Servers =
+                [
+                    new OpenApiServer { Url = "http://tempuri.org/api" }
+                ]
+            }
+        );
+
+        foreach (var documentName in new[] { "v1", "v2" })
+        {
+            var document = subject.GetSwagger(documentName);
+            var server = Assert.Single(document.Servers);
+            Assert.Equal("http://tempuri.org/api", server.Url);
+        }
+    }
+
+    [Fact]
     public void GetSwagger_SupportsOption_SecuritySchemes()
     {
         var subject = Subject(
