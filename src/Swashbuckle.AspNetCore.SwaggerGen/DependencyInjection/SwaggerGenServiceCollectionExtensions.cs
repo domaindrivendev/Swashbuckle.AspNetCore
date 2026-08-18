@@ -69,17 +69,28 @@ public static class SwaggerGenServiceCollectionExtensions
             JsonSerializerOptions serializerOptions;
 
             /*
-             * First try to get the options configured for MVC,
+             * First try to get the options configured for MVC, but only when MVC is actually
+             * registered: IOptions<Mvc.JsonOptions> resolves in any application, so in a Minimal
+             * APIs application it hands back MVC's own defaults and hides whatever the application
+             * configured through ConfigureHttpJsonOptions,
              * then try to get the options configured for Minimal APIs if available,
              * then try the default JsonSerializerOptions if available,
              * otherwise create a new instance as a last resort as this is an expensive operation.
              */
             serializerOptions =
-                _serviceProvider.GetService<IOptions<AspNetCore.Mvc.JsonOptions>>()?.Value?.JsonSerializerOptions
+                (IsMvcRegistered() ? _serviceProvider.GetService<IOptions<AspNetCore.Mvc.JsonOptions>>()?.Value?.JsonSerializerOptions : null)
                 ?? _serviceProvider.GetService<IOptions<AspNetCore.Http.Json.JsonOptions>>()?.Value?.SerializerOptions
                 ?? JsonSerializerOptions.Default;
 
             return serializerOptions;
         }
+
+        /// <summary>
+        /// Whether the application registered MVC, through <c>AddControllers()</c>, <c>AddMvcCore()</c>
+        /// or <c>AddMvc()</c>. <c>IControllerFactory</c> is registered by all three, and by nothing a
+        /// Minimal APIs application uses, including <c>AddEndpointsApiExplorer()</c>.
+        /// </summary>
+        private bool IsMvcRegistered()
+            => _serviceProvider.GetService<AspNetCore.Mvc.Controllers.IControllerFactory>() is not null;
     }
 }
