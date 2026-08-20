@@ -1,6 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-
-using System.Reflection;
+﻿using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -134,5 +132,3 @@ public partial class CodeGenerationTests(ITestOutputHelper outputHelper)
     [GeneratedRegex(@"^//     Generated using the NSwag toolchain.*$")]
     private static partial Regex NSwagGenerationComment();
 }
-
-#endif
