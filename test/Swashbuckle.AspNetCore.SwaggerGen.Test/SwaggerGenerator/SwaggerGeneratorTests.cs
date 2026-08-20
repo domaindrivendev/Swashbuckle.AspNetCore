@@ -2161,6 +2161,32 @@ public class SwaggerGeneratorTests
         Assert.Equal($"The \"{httpMethod}\" HTTP method is not supported.", exception.Message);
     }
 
+    [Theory]
+    [InlineData("query")]
+    [InlineData("QUERY")]
+    public void GetSwagger_GeneratesSwaggerDocument_ForQueryHttpMethod(string httpMethod)
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: httpMethod, relativePath: "resource"),
+            ],
+            options: new SwaggerGeneratorOptions
+            {
+                SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                {
+                    ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                }
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = Assert.Single(document.Paths["/resource"].Operations);
+        Assert.Equal(new HttpMethod("QUERY"), operation.Key);
+    }
+
     [Fact]
     public void GetSwagger_Throws_Exception_When_FromForm_Attribute_Used_With_IFormFile()
     {
