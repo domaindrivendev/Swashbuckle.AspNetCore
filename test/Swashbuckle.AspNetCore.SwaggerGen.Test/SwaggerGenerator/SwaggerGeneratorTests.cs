@@ -1409,6 +1409,32 @@ public class SwaggerGeneratorTests
     }
 
     [Fact]
+    public void GetSwagger_DoesNotThrow_WhenTagsMetadataIsEmpty()
+    {
+        var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+        var actionDescriptor = new ActionDescriptor
+        {
+            EndpointMetadata = [new TagsAttribute()],
+            RouteValues = new Dictionary<string, string>
+            {
+                ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+            }
+        };
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        Assert.Equal(["/resource"], [.. document.Paths.Keys]);
+        Assert.Single(document.Paths["/resource"].Operations);
+        Assert.Empty(document.Paths["/resource"].Operations[HttpMethod.Post].Tags);
+    }
+
+    [Fact]
     public void GetSwagger_CanReadEndpointSummaryFromMetadata()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
