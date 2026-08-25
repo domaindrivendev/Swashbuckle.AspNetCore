@@ -48,7 +48,7 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
             // Test to determine if the serializer will treat as string
             var serializeAsString =
                 enumValues.Length > 0 &&
-                JsonConverterFunc(enumValues.GetValue(0), type).StartsWith('\"');
+                JsonConverterFunc(enumValues.GetValue(0), effectiveType).StartsWith('\"');
 
             var exampleType = serializeAsString ?
                 typeof(string) :
@@ -60,7 +60,7 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
                 underlyingType: effectiveType,
                 dataType: primitiveTypeAndFormat.Item1,
                 dataFormat: primitiveTypeAndFormat.Item2,
-                jsonConverter: (value) => JsonConverterFunc(value, type));
+                jsonConverter: (value) => JsonConverterFunc(value, effectiveType));
         }
 
         if (IsSupportedDictionary(effectiveType, out Type keyType, out Type valueType))
