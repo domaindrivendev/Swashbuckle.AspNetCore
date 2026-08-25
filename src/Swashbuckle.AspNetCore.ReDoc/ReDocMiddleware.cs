@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 
@@ -12,6 +14,7 @@ internal sealed partial class ReDocMiddleware
 {
     private static readonly HashSet<string> AllowedHttpMethods = new(StringComparer.OrdinalIgnoreCase) { HttpMethods.Get, HttpMethods.Head };
     private static readonly string ReDocVersion = GetReDocVersion();
+    private static readonly JsonSerializerOptions DefaultJsonSerializerOptions = CreateDefaultJsonSerializerOptions();
 
     private readonly RequestDelegate _next;
     private readonly ReDocOptions _options;
@@ -23,10 +26,7 @@ internal sealed partial class ReDocMiddleware
         _next = next;
         _options = options ?? new ReDocOptions();
 
-        if (options.JsonSerializerOptions != null)
-        {
-            _jsonSerializerOptions = options.JsonSerializerOptions;
-        }
+        _jsonSerializerOptions = _options.JsonSerializerOptions ?? DefaultJsonSerializerOptions;
 
         var pathPrefix = options.RoutePrefix.StartsWith('/') ? options.RoutePrefix : $"/{options.RoutePrefix}";
         _resourceProvider = new(
@@ -70,6 +70,32 @@ internal sealed partial class ReDocMiddleware
         }
 
         await _next(httpContext);
+    }
+
+    [UnconditionalSuppressMessage(
+        "AOT",
+        "IL2026:RequiresUnreferencedCode",
+        Justification = "The reflection-based resolver is only used when dynamic code is supported (i.e. not native AoT) to serialize custom values in ConfigObject.AdditionalItems. See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3153.")]
+    [UnconditionalSuppressMessage(
+        "AOT",
+        "IL3050:RequiresDynamicCode",
+        Justification = "The reflection-based resolver is only used when dynamic code is supported (i.e. not native AoT) to serialize custom values in ConfigObject.AdditionalItems. See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3153.")]
+    private static JsonSerializerOptions CreateDefaultJsonSerializerOptions()
+    {
+        if (!RuntimeFeature.IsDynamicCodeSupported)
+        {
+            // Only source-generated metadata can be used with native AoT
+            return null;
+        }
+
+        // Chain a reflection-based resolver after the source-generated one so that custom
+        // values in ConfigObject.AdditionalItems (e.g. anonymous types) can be serialized.
+        return new JsonSerializerOptions(ReDocOptionsJsonContext.Default.Options)
+        {
+            TypeInfoResolver = JsonTypeInfoResolver.Combine(
+                ReDocOptionsJsonContext.Default,
+                new DefaultJsonTypeInfoResolver()),
+        };
     }
 
     private static string GetReDocVersion()
@@ -196,11 +222,11 @@ internal sealed partial class ReDocMiddleware
     [UnconditionalSuppressMessage(
         "AOT",
         "IL2026:RequiresUnreferencedCode",
-        Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
+        Justification = "Reflection-based serialization is only used if the user provides their own custom JsonSerializerOptions or when dynamic code is supported.")]
     [UnconditionalSuppressMessage(
         "AOT",
         "IL3050:RequiresDynamicCode",
-        Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
+        Justification = "Reflection-based serialization is only used if the user provides their own custom JsonSerializerOptions or when dynamic code is supported.")]
     private Dictionary<string, string> GetIndexArguments()
     {
         string configObject = null;

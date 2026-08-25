@@ -807,4 +807,38 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         Assert.Equal("x');alert(1);//", config.RootElement.GetProperty("urls")[0].GetProperty("name").GetString());
     }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_Serializes_Custom_Object_In_AdditionalItems()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI((options) =>
+        {
+            // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3153
+            options.ConfigObject.AdditionalItems["theme"] = new { colors = new { primary = "#086eaa" } };
+        }));
+
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/swagger/index.js", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        const string Prefix = "var configObject =";
+
+        var line = body.Split('\n').First((p) => p.Contains(Prefix));
+        outputHelper.WriteLine(line);
+
+        var json = line[(line.IndexOf(Prefix, StringComparison.Ordinal) + Prefix.Length)..].Trim().TrimEnd(';');
+
+        using var config = JsonDocument.Parse(json);
+
+        Assert.Equal("#086eaa", config.RootElement.GetProperty("theme").GetProperty("colors").GetProperty("primary").GetString());
+    }
 }
