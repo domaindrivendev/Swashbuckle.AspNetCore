@@ -167,6 +167,48 @@ public static class OpenApiSchemaExtensions
         return schema.Type;
     }
 
+    internal static Dictionary<string, IOpenApiSchema> ResolveProperties(this IOpenApiSchema schema, SchemaRepository schemaRepository)
+    {
+        var properties = new Dictionary<string, IOpenApiSchema>();
+        CollectProperties(schema, schemaRepository, properties, []);
+        return properties;
+
+        static void CollectProperties(
+            IOpenApiSchema schema,
+            SchemaRepository schemaRepository,
+            Dictionary<string, IOpenApiSchema> properties,
+            HashSet<string> visitedReferenceIds)
+        {
+            if (schema is OpenApiSchemaReference reference)
+            {
+                if (!string.IsNullOrEmpty(reference.Reference.Id) &&
+                    visitedReferenceIds.Add(reference.Reference.Id) &&
+                    schemaRepository.Schemas.TryGetValue(reference.Reference.Id, out var definitionSchema))
+                {
+                    CollectProperties(definitionSchema, schemaRepository, properties, visitedReferenceIds);
+                }
+
+                return;
+            }
+
+            if (schema.Properties is not null)
+            {
+                foreach (var property in schema.Properties)
+                {
+                    properties.TryAdd(property.Key, property.Value);
+                }
+            }
+
+            if (schema.AllOf is not null)
+            {
+                foreach (var subSchema in schema.AllOf)
+                {
+                    CollectProperties(subSchema, schemaRepository, properties, visitedReferenceIds);
+                }
+            }
+        }
+    }
+
     private static void ApplyDataTypeAttribute(OpenApiSchema schema, DataTypeAttribute dataTypeAttribute)
     {
         if (DataFormatMappings.TryGetValue(dataTypeAttribute.DataType, out string format))

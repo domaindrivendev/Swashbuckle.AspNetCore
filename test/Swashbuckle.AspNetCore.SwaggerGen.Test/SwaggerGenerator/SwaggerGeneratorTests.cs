@@ -2298,7 +2298,9 @@ public class SwaggerGeneratorTests
         Assert.NotNull(mediaType.Schema);
         var reference = Assert.IsType<OpenApiSchemaReference>(mediaType.Schema);
         Assert.Equal(nameof(SwaggerIngoreAnnotatedType), reference.Reference.Id);
-        Assert.Empty(mediaType.Encoding);
+        Assert.NotNull(mediaType.Encoding);
+        Assert.Equal([nameof(SwaggerIngoreAnnotatedType.NotIgnoredString)], mediaType.Encoding.Keys);
+        Assert.Equal(ParameterStyle.Form, mediaType.Encoding[nameof(SwaggerIngoreAnnotatedType.NotIgnoredString)].Style);
     }
 
     [Fact]
@@ -2345,7 +2347,45 @@ public class SwaggerGeneratorTests
         Assert.NotEmpty(mediaType.Schema.AllOf[1].Properties);
         Assert.Equal(["param2"], mediaType.Schema.AllOf[1].Properties.Keys);
         Assert.NotEmpty(mediaType.Encoding);
-        Assert.Equal(["param2"], mediaType.Encoding.Keys);
+        Assert.Equal([nameof(SwaggerIngoreAnnotatedType.NotIgnoredString), "param2"], mediaType.Encoding.Keys);
+    }
+
+    [Fact]
+    public void GetSwagger_GeneratesEncodingForArrayProperties_OfComplexTypeBoundFromForm()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+               ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionHavingFromFormObjectWithArrayProperty),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "param1",
+                            Source = BindingSource.Form,
+                            Type = typeof(TypeWithArrayProperty),
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(TypeWithArrayProperty))
+                        }
+                    ])
+            ]
+        );
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        Assert.NotNull(operation.RequestBody);
+        Assert.Equal(["multipart/form-data"], operation.RequestBody.Content.Keys);
+        var mediaType = operation.RequestBody.Content["multipart/form-data"];
+        var reference = Assert.IsType<OpenApiSchemaReference>(mediaType.Schema);
+        Assert.Equal(nameof(TypeWithArrayProperty), reference.Reference.Id);
+        Assert.NotNull(mediaType.Encoding);
+        Assert.Equal(
+            [nameof(TypeWithArrayProperty.StringProperty), nameof(TypeWithArrayProperty.ArrayProperty)],
+            mediaType.Encoding.Keys);
+        Assert.Equal(ParameterStyle.Form, mediaType.Encoding[nameof(TypeWithArrayProperty.ArrayProperty)].Style);
     }
 
     [Fact]

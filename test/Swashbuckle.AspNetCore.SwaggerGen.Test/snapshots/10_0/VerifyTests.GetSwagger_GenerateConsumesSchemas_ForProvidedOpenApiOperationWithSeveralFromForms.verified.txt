@@ -20,6 +20,17 @@
                     "$ref": "#/components/schemas/TypeWithDefaultAttributeOnEnum"
                   }
                 ]
+              },
+              "encoding": {
+                "Prop1": {
+                  "style": "form"
+                },
+                "EnumWithDefault": {
+                  "style": "form"
+                },
+                "EnumArrayWithDefault": {
+                  "style": "form"
+                }
               }
             }
           }
