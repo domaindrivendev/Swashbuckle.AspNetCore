@@ -15,24 +15,24 @@ public static class SwaggerGenServiceCollectionExtensionsTests
         // so without a registration check its camelCase default would win over what the
         // application actually configured for Minimal APIs.
         var services = CreateServices();
-        services.ConfigureHttpJsonOptions(options => options.SerializerOptions.PropertyNamingPolicy = null);
+        services.ConfigureHttpJsonOptions((options) => options.SerializerOptions.PropertyNamingPolicy = MinimalApiNamingPolicy);
         services.AddSwaggerGen();
 
         var contract = ResolveDataContract(services);
 
-        Assert.Equal("HelloWorld", Assert.Single(contract.ObjectProperties).Name);
+        Assert.Equal("HelloWorld-minimal-api", Assert.Single(contract.ObjectProperties).Name);
     }
 
     [Fact]
     public static void AddSwaggerGen_UsesMvcJsonOptions_WhenMvcIsRegistered()
     {
         var services = CreateServices();
-        services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+        services.AddControllers().AddJsonOptions((options) => options.JsonSerializerOptions.PropertyNamingPolicy = MvcNamingPolicy);
         services.AddSwaggerGen();
 
         var contract = ResolveDataContract(services);
 
-        Assert.Equal("HelloWorld", Assert.Single(contract.ObjectProperties).Name);
+        Assert.Equal("HelloWorld-mvc", Assert.Single(contract.ObjectProperties).Name);
     }
 
     [Fact]
@@ -41,18 +41,19 @@ public static class SwaggerGenServiceCollectionExtensionsTests
         // A document describes every endpoint with one set of serializer options, so when an
         // application registers both, MVC keeps precedence as it always has.
         var services = CreateServices();
-        services.ConfigureHttpJsonOptions(options => options.SerializerOptions.PropertyNamingPolicy = null);
-        services.AddControllers();
+        services.ConfigureHttpJsonOptions((options) => options.SerializerOptions.PropertyNamingPolicy = MinimalApiNamingPolicy);
+        services.AddControllers().AddJsonOptions((options) => options.JsonSerializerOptions.PropertyNamingPolicy = MvcNamingPolicy);
         services.AddSwaggerGen();
 
         var contract = ResolveDataContract(services);
 
-        Assert.Equal("helloWorld", Assert.Single(contract.ObjectProperties).Name);
+        Assert.Equal("HelloWorld-mvc", Assert.Single(contract.ObjectProperties).Name);
     }
 
     [Fact]
     public static void AddSwaggerGen_UsesCamelCase_WhenNothingIsConfigured()
     {
+        // Both option types default to the web defaults, so neither branch is observable here.
         var services = CreateServices();
         services.AddSwaggerGen();
 
@@ -60,6 +61,10 @@ public static class SwaggerGenServiceCollectionExtensionsTests
 
         Assert.Equal("helloWorld", Assert.Single(contract.ObjectProperties).Name);
     }
+
+    private static JsonNamingPolicy MinimalApiNamingPolicy { get; } = new SuffixNamingPolicy("-minimal-api");
+
+    private static JsonNamingPolicy MvcNamingPolicy { get; } = new SuffixNamingPolicy("-mvc");
 
     private static ServiceCollection CreateServices()
     {
@@ -80,6 +85,11 @@ public static class SwaggerGenServiceCollectionExtensionsTests
         using var provider = services.BuildServiceProvider();
         var resolver = provider.GetRequiredService<ISerializerDataContractResolver>();
         return resolver.GetDataContractForType(typeof(Dto));
+    }
+
+    private sealed class SuffixNamingPolicy(string suffix) : JsonNamingPolicy
+    {
+        public override string ConvertName(string name) => name + suffix;
     }
 
     private class Dto
