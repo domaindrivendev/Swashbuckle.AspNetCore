@@ -426,7 +426,15 @@ public class SwaggerGenerator(
         // Schemas will be generated via Swashbuckle by default.
         foreach (var parameter in operation.Parameters ?? [])
         {
-            var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault((p) => p.Name == parameter.Name && !p.IsFromBody() && !p.IsFromForm() && !p.IsIllegalHeaderParameter());
+            var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault((p) =>
+                p.Name == parameter.Name &&
+                !p.IsFromBody() &&
+                !p.IsFromForm() &&
+                !p.IsIllegalHeaderParameter() &&
+                (parameter.In is null ||
+                 (p.Source != null &&
+                  ParameterLocationMap.TryGetValue(p.Source, out var parameterLocation) &&
+                  parameterLocation == parameter.In)));
             if (apiParameter is not null)
             {
                 var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository, document);
