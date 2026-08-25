@@ -426,15 +426,8 @@ public class SwaggerGenerator(
         // Schemas will be generated via Swashbuckle by default.
         foreach (var parameter in operation.Parameters ?? [])
         {
-            var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault((p) =>
-                p.Name == parameter.Name &&
-                !p.IsFromBody() &&
-                !p.IsFromForm() &&
-                !p.IsIllegalHeaderParameter() &&
-                (parameter.In is null ||
-                 (p.Source != null &&
-                  ParameterLocationMap.TryGetValue(p.Source, out var parameterLocation) &&
-                  parameterLocation == parameter.In)));
+            var apiParameter = apiDescription.ParameterDescriptions
+                .SingleOrDefault(p => IsMatchingMetadataParameter(p, parameter.Name, parameter.In));
             if (apiParameter is not null)
             {
                 var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository, document);
@@ -1137,6 +1130,22 @@ public class SwaggerGenerator(
         ["PATCH"] = HttpMethod.Patch,
         ["TRACE"] = HttpMethod.Trace,
     };
+
+    private static bool IsMatchingMetadataParameter(ApiParameterDescription apiParameter, string name, ParameterLocation? location)
+    {
+        if (apiParameter.Name != name ||
+            apiParameter.IsFromBody() ||
+            apiParameter.IsFromForm() ||
+            apiParameter.IsIllegalHeaderParameter())
+        {
+            return false;
+        }
+
+        return location is null ||
+               (apiParameter.Source != null &&
+                ParameterLocationMap.TryGetValue(apiParameter.Source, out var parameterLocation) &&
+                parameterLocation == location);
+    }
 
     private static readonly Dictionary<BindingSource, ParameterLocation> ParameterLocationMap = new()
     {
