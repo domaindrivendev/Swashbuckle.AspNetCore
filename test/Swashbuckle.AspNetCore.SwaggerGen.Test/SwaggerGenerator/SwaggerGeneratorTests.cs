@@ -398,6 +398,134 @@ public class SwaggerGeneratorTests
     }
 
     [Fact]
+    public void GetSwagger_GenerateParameterSchemas_ForProvidedOpenApiOperation_WhenQueryAndPathParametersShareSameName_QueryInMetadata()
+    {
+        var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+        var actionDescriptor = new ActionDescriptor
+        {
+            EndpointMetadata =
+            [
+                new OpenApiOperation
+                {
+                    Parameters =
+                    [
+                        new OpenApiParameter
+                        {
+                            Name = "id",
+                            In = ParameterLocation.Query
+                        }
+                    ]
+                }
+            ],
+            RouteValues = new Dictionary<string, string>
+            {
+                ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+            }
+        };
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create(
+                    actionDescriptor,
+                    methodInfo,
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource/{id}",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "id",
+                            Source = BindingSource.Path,
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(int)),
+                            Type = typeof(int)
+                        },
+                        new ApiParameterDescription
+                        {
+                            Name = "id",
+                            Source = BindingSource.Query,
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string)),
+                            Type = typeof(string)
+                        }
+                    ]),
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource/{id}"].Operations[HttpMethod.Get];
+        var parameter = Assert.Single(operation.Parameters);
+        Assert.Equal("id", parameter.Name);
+        Assert.Equal(ParameterLocation.Query, parameter.In);
+        Assert.NotNull(parameter.Schema);
+        Assert.Equal(JsonSchemaTypes.String, parameter.Schema.Type);
+    }
+
+    [Fact]
+    public void GetSwagger_GenerateParameterSchemas_ForProvidedOpenApiOperation_WhenQueryAndPathParametersShareSameName_PathInMetadata()
+    {
+        var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+        var actionDescriptor = new ActionDescriptor
+        {
+            EndpointMetadata =
+            [
+                new OpenApiOperation
+                {
+                    Parameters =
+                    [
+                        new OpenApiParameter
+                        {
+                            Name = "id",
+                            In = ParameterLocation.Path
+                        }
+                    ]
+                }
+            ],
+            RouteValues = new Dictionary<string, string>
+            {
+                ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+            }
+        };
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create(
+                    actionDescriptor,
+                    methodInfo,
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource/{id}",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "id",
+                            Source = BindingSource.Path,
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(int)),
+                            Type = typeof(int)
+                        },
+                        new ApiParameterDescription
+                        {
+                            Name = "id",
+                            Source = BindingSource.Query,
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string)),
+                            Type = typeof(string)
+                        }
+                    ]),
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource/{id}"].Operations[HttpMethod.Get];
+        var parameter = Assert.Single(operation.Parameters);
+        Assert.Equal("id", parameter.Name);
+        Assert.Equal(ParameterLocation.Path, parameter.In);
+        Assert.NotNull(parameter.Schema);
+        Assert.Equal(JsonSchemaTypes.Integer, parameter.Schema.Type);
+    }
+
+    [Fact]
     public void GetSwagger_SetsOperationIdToNull_IfActionHasNoEndpointMetadata()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
