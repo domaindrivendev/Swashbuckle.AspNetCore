@@ -1,1 +1,3 @@
 ﻿
+*REMOVED*static Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions.MapSwagger(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string pattern = "/swagger/{documentName}/swagger.{extension:regex(^(json|ya?ml)$)}", System.Action<Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder
+static Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions.MapSwagger(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string pattern = "/swagger/{documentName}/swagger.{extension}", System.Action<Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder
