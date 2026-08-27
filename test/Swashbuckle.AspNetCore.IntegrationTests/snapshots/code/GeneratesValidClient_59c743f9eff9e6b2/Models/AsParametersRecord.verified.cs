@@ -22,7 +22,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models
         /// <summary>The paramFour property</summary>
         public DateTimeOffset? ParamFour { get; set; }
         /// <summary>The paramNine property</summary>
-        public int? ParamNine { get; set; }
+        public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.DateTimeKindObject? ParamNine { get; set; }
         /// <summary>The paramOne property</summary>
         public Guid? ParamOne { get; set; }
         /// <summary>The paramSeven property</summary>
@@ -30,7 +30,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models
         /// <summary>The paramSix property</summary>
         public Date? ParamSix { get; set; }
         /// <summary>The paramTen property</summary>
-        public int? ParamTen { get; set; }
+        public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.DateTimeKindObject? ParamTen { get; set; }
         /// <summary>The paramThree property</summary>
         public DateTimeOffset? ParamThree { get; set; }
         /// <summary>The paramTwelve property</summary>
@@ -59,11 +59,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models
                 { "paramEleven", n => { ParamEleven = n.GetDoubleValue(); } },
                 { "paramFive", n => { ParamFive = n.GetDateValue(); } },
                 { "paramFour", n => { ParamFour = n.GetDateTimeOffsetValue(); } },
-                { "paramNine", n => { ParamNine = n.GetIntValue(); } },
+                { "paramNine", n => { ParamNine = n.GetEnumValue<global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.DateTimeKindObject>(); } },
                 { "paramOne", n => { ParamOne = n.GetGuidValue(); } },
                 { "paramSeven", n => { ParamSeven = n.GetTimeValue(); } },
                 { "paramSix", n => { ParamSix = n.GetDateValue(); } },
-                { "paramTen", n => { ParamTen = n.GetIntValue(); } },
+                { "paramTen", n => { ParamTen = n.GetEnumValue<global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.DateTimeKindObject>(); } },
                 { "paramThree", n => { ParamThree = n.GetDateTimeOffsetValue(); } },
                 { "paramTwelve", n => { ParamTwelve = n.GetDoubleValue(); } },
                 { "paramTwo", n => { ParamTwo = n.GetGuidValue(); } },
@@ -80,11 +80,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models
             writer.WriteDoubleValue("paramEleven", ParamEleven);
             writer.WriteDateValue("paramFive", ParamFive);
             writer.WriteDateTimeOffsetValue("paramFour", ParamFour);
-            writer.WriteIntValue("paramNine", ParamNine);
+            writer.WriteEnumValue<global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.DateTimeKindObject>("paramNine", ParamNine);
             writer.WriteGuidValue("paramOne", ParamOne);
             writer.WriteTimeValue("paramSeven", ParamSeven);
             writer.WriteDateValue("paramSix", ParamSix);
-            writer.WriteIntValue("paramTen", ParamTen);
+            writer.WriteEnumValue<global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.DateTimeKindObject>("paramTen", ParamTen);
             writer.WriteDateTimeOffsetValue("paramThree", ParamThree);
             writer.WriteDoubleValue("paramTwelve", ParamTwelve);
             writer.WriteGuidValue("paramTwo", ParamTwo);

@@ -2118,9 +2118,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.NSwagTests
         public System.TimeSpan ParamEight { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paramNine", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public DateTimeKind ParamNine { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paramTen", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public DateTimeKind ParamTen { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paramEleven", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -2153,11 +2155,14 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.NSwagTests
     public enum DateTimeKind
     {
 
-        _0 = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"Unspecified")]
+        Unspecified = 0,
 
-        _1 = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"Utc")]
+        Utc = 1,
 
-        _2 = 2,
+        [System.Runtime.Serialization.EnumMember(Value = @"Local")]
+        Local = 2,
 
     }
 
