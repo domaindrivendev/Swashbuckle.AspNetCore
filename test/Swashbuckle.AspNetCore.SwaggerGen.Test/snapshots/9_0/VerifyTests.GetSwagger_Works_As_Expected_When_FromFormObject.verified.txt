@@ -15,6 +15,11 @@
             "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/SwaggerIngoreAnnotatedType"
+              },
+              "encoding": {
+                "NotIgnoredString": {
+                  "style": "form"
+                }
               }
             }
           }
