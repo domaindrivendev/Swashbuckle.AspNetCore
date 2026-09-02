@@ -856,7 +856,11 @@ public class SwaggerGenerator(
                 (contentType) => new OpenApiMediaType
                 {
                     Schema = schema
-                }),
+                }
+#if NET11_0_OR_GREATER
+                as IOpenApiMediaType
+#endif
+                ),
         };
     }
 
@@ -910,7 +914,11 @@ public class SwaggerGenerator(
                         (entry) => entry.Key,
                         (entry) => new OpenApiEncoding { Style = ParameterStyle.Form }
                     ) ?? []
-                })
+                }
+#if NET11_0_OR_GREATER
+                as IOpenApiMediaType
+#endif
+                )
         };
     }
 
@@ -1071,7 +1079,11 @@ public class SwaggerGenerator(
             Description = description,
             Content = contentTypes.ToDictionary(
                 (contentType) => contentType,
+#if NET11_0_OR_GREATER
+                (contentType) => new OpenApiMediaType { Schema = CombineResponseSchemas(schemasByContentType[contentType]) } as IOpenApiMediaType
+#else
                 (contentType) => new OpenApiMediaType { Schema = CombineResponseSchemas(schemasByContentType[contentType]) }
+#endif
             )
         };
     }

@@ -8,16 +8,19 @@
     <Company>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</Company>
     <ContinuousIntegrationBuild Condition=" '$(CI)' != '' ">true</ContinuousIntegrationBuild>
     <Copyright>Copyright (c) 2016-$([System.DateTime]::Now.ToString(yyyy)) Richard Morris</Copyright>
-    <DefaultTargetFrameworks>net10.0;net9.0;net8.0</DefaultTargetFrameworks>
+    <DefaultTargetFrameworks>net11.0;net10.0</DefaultTargetFrameworks>
     <Deterministic>true</Deterministic>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>$(IsPackable)</EnablePackageValidation>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <IncludeSymbols>true</IncludeSymbols>
-    <LangVersion>latest</LangVersion>
+    <!-- TODO Move back to latest once it resolves to C# 15 in 11.0-rc.1 -->
+    <LangVersion>preview</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <!-- TODO Remove before merge -->
+    <NoWarn>$(NoWarn);NU5104</NoWarn>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <!--
     TODO Go through the code and add nullable annotations
@@ -35,9 +38,10 @@
     <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
     <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <TestTfmsInParallel>false</TestTfmsInParallel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UseArtifactsOutput>true</UseArtifactsOutput>
-    <VersionPrefix>10.2.4</VersionPrefix>
+    <VersionPrefix>11.0.0</VersionPrefix>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' AND '$(DEPENDABOT_JOB_ID)' == '' ">
