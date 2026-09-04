@@ -433,4 +433,32 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
 
         Assert.Equal("x');alert(1);//", config.RootElement.GetProperty("theme").GetString());
     }
+
+    [Fact]
+    public async Task ReDocMiddleware_Serializes_Custom_Object_In_AdditionalItems()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseReDoc((options) =>
+        {
+            // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3153
+            options.ConfigObject.AdditionalItems["theme"] = new { colors = new { primary = "#086eaa" } };
+        }));
+
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/api-docs/index.js", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        outputHelper.WriteLine(body);
+
+        using var config = JsonDocument.Parse(body[body.IndexOf('{')..(body.LastIndexOf('}') + 1)]);
+
+        Assert.Equal("#086eaa", config.RootElement.GetProperty("theme").GetProperty("colors").GetProperty("primary").GetString());
+    }
 }
