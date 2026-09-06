@@ -1,11 +1,7 @@
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateSlimBuilder(args);
-
-builder.Services.Configure<RouteOptions>(
-    options => options.SetParameterPolicy<RegexInlineRouteConstraint>("regex"));
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
