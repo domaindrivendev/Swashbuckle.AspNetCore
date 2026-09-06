@@ -86,8 +86,18 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Annotations.AsParam
             public Date? ParamFive { get; set; }
             [QueryParameter("paramFour")]
             public DateTimeOffset? ParamFour { get; set; }
+            [Obsolete("This property is deprecated, use ParamNineAsDateTimeKind instead")]
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
             [QueryParameter("paramNine")]
-            public int? ParamNine { get; set; }
+            public string? ParamNine { get; set; }
+#nullable restore
+#else
+            [QueryParameter("paramNine")]
+            public string ParamNine { get; set; }
+#endif
+            [QueryParameter("paramNine")]
+            public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.DateTimeKindObject? ParamNineAsDateTimeKind { get; set; }
             /// <summary>Description</summary>
             [QueryParameter("paramOne")]
             public Guid? ParamOne { get; set; }
@@ -95,8 +105,18 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Annotations.AsParam
             public Time? ParamSeven { get; set; }
             [QueryParameter("paramSix")]
             public Date? ParamSix { get; set; }
+            [Obsolete("This property is deprecated, use ParamTenAsDateTimeKind instead")]
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
             [QueryParameter("paramTen")]
-            public int? ParamTen { get; set; }
+            public string? ParamTen { get; set; }
+#nullable restore
+#else
+            [QueryParameter("paramTen")]
+            public string ParamTen { get; set; }
+#endif
+            [QueryParameter("paramTen")]
+            public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.DateTimeKindObject? ParamTenAsDateTimeKind { get; set; }
             [QueryParameter("paramThree")]
             public DateTimeOffset? ParamThree { get; set; }
             [QueryParameter("paramTwelve")]
