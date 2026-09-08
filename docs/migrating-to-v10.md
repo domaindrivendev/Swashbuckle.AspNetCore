@@ -76,16 +76,22 @@ Migrating to Swashbuckle.AspNetCore v10+ will likely involve changes in the foll
 - Update any `using` directives that reference types from the `Microsoft.OpenApi.Models` namespace to use the new namespace `Microsoft.OpenApi`.
 - Update model references (e.g. `OpenApiSchema`) to use the new interfaces (e.g. `IOpenApiSchema`) and use the relevant concrete types to mutate them (e.g. `OpenApiSchema`). An example of this is shown below for an `ISchemaFilter` implementation:
 
-   ```csharp
-  public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
-  {
+   <!-- markdownlint-disable MD031 MD033 -->
+   <!-- snippet: Migrating-SchemaFilter -->
+   <a id='snippet-Migrating-SchemaFilter'></a>
+   ```cs
+   public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+   {
        if (schema is OpenApiSchema openApiSchema)
        {
-            // The properties are only mutable on the concrete type
-            openApiSchema.Type = JsonSchemaType.String;
+           // The properties are only mutable on the concrete type
+           openApiSchema.Type = JsonSchemaType.String;
        }
-   }     
+   }
    ```
+   <sup><a href='/test/WebSites/DocumentationSnippets/MigrationSchemaFilter.cs#L8-L17' title='Snippet source file'>snippet source</a> | <a href='#snippet-Migrating-SchemaFilter' title='Start of snippet'>anchor</a></sup>
+   <!-- endSnippet -->
+   <!-- markdownlint-enable MD031 MD033 -->
 
 - Update any use of `.Reference` properties (e.g. `OpenApiSchema.ReferenceV3`) to use the new `*Reference` class instead (e.g. `OpenApiSchemaReference`).
 - Replace usage of the `OpenApiSchema.Type` property using a string (e.g. `"string"` or `"boolean"`) with the `JsonSchemaType` flags enumeration.

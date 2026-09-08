@@ -110,7 +110,10 @@ public class SwaggerGeneratorOptions
 
     private string DefaultSortKeySelector(ApiDescription apiDescription)
     {
-        return TagsSelector(apiDescription).First();
+        return TagsSelector(apiDescription).FirstOrDefault()
+            ?? apiDescription.RelativePath
+            ?? apiDescription.ActionDescriptor?.DisplayName
+            ?? string.Empty;
     }
 
     private static string DefaultPathGroupSelector(ApiDescription apiDescription)

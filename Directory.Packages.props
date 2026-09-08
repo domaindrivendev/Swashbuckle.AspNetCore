@@ -20,7 +20,7 @@
     <PackageVersion Include="Microsoft.OpenApi" Version="3.7.0" />
     <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.7.0" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.62.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
     <PackageVersion Include="MSBuild.ProjectCreation" Version="19.1.4" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="NJsonSchema" Version="11.6.1" />
@@ -28,10 +28,10 @@
     <PackageVersion Include="NSwag.CodeGeneration.CSharp" Version="14.7.1" />
     <PackageVersion Include="NSwag.MSBuild" Version="14.7.1" />
     <PackageVersion Include="ReportGenerator" Version="5.5.11" />
-    <PackageVersion Include="Verify.XunitV3" Version="31.28.0" />
+    <PackageVersion Include="Verify.XunitV3" Version="32.0.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="xunit.v3.mtp-off" Version="3.2.2" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
+    <PackageVersion Include="xunit.v3.mtp-off" Version="4.0.0" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.0" />
   </ItemGroup>
 </Project>
