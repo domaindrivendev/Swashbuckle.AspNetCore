@@ -10,4 +10,5 @@ public enum SubmitMethod
     Head,
     Patch,
     Trace,
+    Query,
 }

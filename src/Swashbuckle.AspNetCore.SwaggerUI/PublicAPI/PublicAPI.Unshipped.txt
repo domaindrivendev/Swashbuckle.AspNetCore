@@ -1,1 +1,1 @@
-﻿
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Query = 8 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod

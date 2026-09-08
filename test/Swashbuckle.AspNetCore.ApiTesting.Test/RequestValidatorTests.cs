@@ -31,6 +31,8 @@ public class RequestValidatorTests
     [Theory]
     [InlineData("POST", "GET", "Request method 'POST' does not match specified operation type 'GET'")]
     [InlineData("GET", "GET", null)]
+    [InlineData("GET", "QUERY", "Request method 'GET' does not match specified operation type 'QUERY'")]
+    [InlineData("QUERY", "QUERY", null)]
     public void Validate_ThrowsException_IfMethodDoesNotMatchOperationType(
         string methodString,
         string operationType,
