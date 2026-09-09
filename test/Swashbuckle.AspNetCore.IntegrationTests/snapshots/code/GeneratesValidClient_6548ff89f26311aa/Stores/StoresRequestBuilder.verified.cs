@@ -138,12 +138,16 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
+            #pragma warning disable CS1591
             [QueryParameter("locations")]
             public string[]? Locations { get; set; }
+            #pragma warning restore CS1591
 #nullable restore
 #else
+            #pragma warning disable CS1591
             [QueryParameter("locations")]
             public string[] Locations { get; set; }
+            #pragma warning restore CS1591
 #endif
         }
         /// <summary>
@@ -159,16 +163,22 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores
         public partial class StoresRequestBuilderPostQueryParameters 
         #pragma warning restore CS1591
         {
+            #pragma warning disable CS1591
             [QueryParameter("id")]
             public int? Id { get; set; }
+            #pragma warning restore CS1591
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
+            #pragma warning disable CS1591
             [QueryParameter("location")]
             public string? Location { get; set; }
+            #pragma warning restore CS1591
 #nullable restore
 #else
+            #pragma warning disable CS1591
             [QueryParameter("location")]
             public string Location { get; set; }
+            #pragma warning restore CS1591
 #endif
         }
         /// <summary>

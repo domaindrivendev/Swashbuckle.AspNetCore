@@ -84,12 +84,16 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.WithOpenApi.IFromFi
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
+            #pragma warning disable CS1591
             [QueryParameter("queryParameter")]
             public string? QueryParameter { get; set; }
+            #pragma warning restore CS1591
 #nullable restore
 #else
+            #pragma warning disable CS1591
             [QueryParameter("queryParameter")]
             public string QueryParameter { get; set; }
+            #pragma warning restore CS1591
 #endif
         }
         /// <summary>
