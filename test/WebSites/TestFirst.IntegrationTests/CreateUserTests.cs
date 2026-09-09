@@ -20,7 +20,11 @@ public class CreateUserTests : ApiTestFixture<Startup>
             OperationId = "CreateUser",
             RequestBody = new OpenApiRequestBody
             {
+#if NET11_0_OR_GREATER
+                Content = new Dictionary<string, IOpenApiMediaType>
+#else
                 Content = new Dictionary<string, OpenApiMediaType>
+#endif
                 {
                     [ "application/json" ] = new OpenApiMediaType
                     {

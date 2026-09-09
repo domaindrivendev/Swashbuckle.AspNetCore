@@ -1,5 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-using Microsoft.Playwright;
+﻿using Microsoft.Playwright;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
@@ -60,4 +59,3 @@ public sealed class PlaywrightFixture : IAsyncLifetime
         }
     }
 }
-#endif

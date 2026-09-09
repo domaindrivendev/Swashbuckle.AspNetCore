@@ -1,6 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-using Microsoft.AspNetCore.Mvc;
-#endif
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.EndPoints;
 
@@ -17,12 +15,9 @@ public static class XmlCommentsEndpoints
         var group = app.MapGroup("/XmlComments").WithTags("Xml");
 
         group.MapGet("/Car/{id}", GetProduct);
-
-#if NET10_0_OR_GREATER
         group.MapGet("Car", GetProductAsParameters);
         group.MapGet("CarWithProduces",GetProductWithProduces);
         group.MapGet("CarWithProducesDefaultResponseType",GetProductProducesDefaultResponseType);
-#endif
 
         return app;
     }
@@ -34,7 +29,6 @@ public static class XmlCommentsEndpoints
     private static Product GetProduct(int id)
         => new() { Id = id, Description = "A product" };
 
-#if NET10_0_OR_GREATER
     /// <summary>
     /// Returns a specific product using asParameters record
     /// </summary>
@@ -55,7 +49,6 @@ public static class XmlCommentsEndpoints
     [ProducesDefaultResponseType(typeof(Product), Description = "A Product")]
     private static Product GetProductProducesDefaultResponseType(int id)
          => new() { Id = id, Description = "A product" };
-#endif
 }
 
 /// <summary>

@@ -78,7 +78,7 @@
 
   <!-- Embed compressed file using SDK task-->
   <PropertyGroup>
-    <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net10.0</_SdkTasksTFM>
+    <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net11.0</_SdkTasksTFM>
     <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' != 'Core'">net472</_SdkTasksTFM>
   </PropertyGroup>
   <UsingTask TaskName="Microsoft.NET.Sdk.BlazorWebAssembly.GzipCompress" AssemblyFile="$(MicrosoftNETBuildTasksDirectoryRoot)../../Microsoft.NET.Sdk.BlazorWebAssembly/tools/$(_SdkTasksTFM)/Microsoft.NET.Sdk.BlazorWebAssembly.Tasks.dll" />

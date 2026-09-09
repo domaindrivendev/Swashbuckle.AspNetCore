@@ -23,6 +23,14 @@ public class SchemaGenerator(
         ParameterInfo parameterInfo = null,
         ApiParameterRouteInfo routeInfo = null)
     {
+#if NET11_0_OR_GREATER
+        if (TryGenerateUnionSchema(modelType, schemaRepository, out var unionSchema))
+        {
+            ApplyFilters(unionSchema, modelType, schemaRepository, memberInfo, parameterInfo);
+            return unionSchema;
+        }
+#endif
+
         if (memberInfo != null)
         {
             return GenerateSchemaForMember(modelType, schemaRepository, memberInfo);
@@ -197,6 +205,25 @@ public class SchemaGenerator(
 
         return schema;
     }
+
+#if NET11_0_OR_GREATER
+    private bool TryGenerateUnionSchema(Type modelType, SchemaRepository schemaRepository, out OpenApiSchema schema)
+    {
+        schema = null;
+
+        if (_serializerDataContractResolver is JsonSerializerDataContractResolver stjResolver &&
+            stjResolver.TryGetUnionCaseTypes(modelType, out var cases))
+        {
+            schema = new OpenApiSchema
+            {
+                AnyOf = [.. cases.Select(c => GenerateSchema(c, schemaRepository))],
+            };
+            return true;
+        }
+
+        return false;
+    }
+#endif
 
     private IOpenApiSchema GenerateSchemaForType(Type modelType, SchemaRepository schemaRepository)
     {
