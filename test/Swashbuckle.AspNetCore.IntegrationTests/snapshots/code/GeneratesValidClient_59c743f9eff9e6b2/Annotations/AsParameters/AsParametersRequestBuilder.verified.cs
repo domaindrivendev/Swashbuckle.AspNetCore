@@ -78,31 +78,53 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Annotations.AsParam
         public partial class AsParametersRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
+            #pragma warning disable CS1591
             [QueryParameter("paramEight")]
             public Time? ParamEight { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("paramEleven")]
             public double? ParamEleven { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("paramFive")]
             public Date? ParamFive { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("paramFour")]
             public DateTimeOffset? ParamFour { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("paramNine")]
             public int? ParamNine { get; set; }
+            #pragma warning restore CS1591
             /// <summary>Description</summary>
             [QueryParameter("paramOne")]
             public Guid? ParamOne { get; set; }
+            #pragma warning disable CS1591
             [QueryParameter("paramSeven")]
             public Time? ParamSeven { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("paramSix")]
             public Date? ParamSix { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("paramTen")]
             public int? ParamTen { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("paramThree")]
             public DateTimeOffset? ParamThree { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("paramTwelve")]
             public double? ParamTwelve { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("paramTwo")]
             public Guid? ParamTwo { get; set; }
+            #pragma warning restore CS1591
         }
         /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.

@@ -89,12 +89,12 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Files.Item
             return new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Files.Item.WithNameItemRequestBuilder(rawUrl, RequestAdapter);
         }
         /// <summary>
-        /// Composed type wrapper for classes <see cref="byte[]"/>
+        /// Composed type wrapper for classes <see cref="byte"/> array
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         public partial class WithNameGetResponse : IComposedTypeWrapper, IParsable
         {
-            /// <summary>Composed type representation for type <see cref="byte[]"/></summary>
+            /// <summary>Composed type representation for type <see cref="byte"/> array</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
             public byte[]? Binary { get; set; }
@@ -148,12 +148,12 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Files.Item
         {
         }
         /// <summary>
-        /// Composed type wrapper for classes <see cref="byte[]"/>
+        /// Composed type wrapper for classes <see cref="byte"/> array
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         public partial class WithNameResponse : IComposedTypeWrapper, IParsable
         {
-            /// <summary>Composed type representation for type <see cref="byte[]"/></summary>
+            /// <summary>Composed type representation for type <see cref="byte"/> array</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
             public byte[]? Binary { get; set; }
