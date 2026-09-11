@@ -119,6 +119,23 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         }
     }
 
+    [Fact]
+    public async Task SwaggerUIMiddleware_InitializerScript_DropsQueryStringFromRelativeDocumentUrls()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        var site = new TestSite(typeof(Basic.Startup), outputHelper);
+        using var client = site.BuildClient();
+
+        using var response = await client.GetAsync("/index.js", cancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var jsContent = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        Assert.Contains("window.location.href.split(/[?#]/)[0].replace(\"index.html\", item.url)", jsContent);
+    }
+
     [Theory]
     [InlineData(typeof(Basic.Startup), "/index.js")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.js")]
