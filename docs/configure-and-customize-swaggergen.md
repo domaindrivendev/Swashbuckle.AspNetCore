@@ -750,6 +750,62 @@ services.AddSwaggerGen(options =>
 > [!NOTE]
 > See [this GitHub issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2703) for support for nested types.
 
+## Rename Enum Values in Schemas
+
+When an enum is serialized as a string, the values that appear in the generated schema come from the serializer, not from
+Swashbuckle.AspNetCore. Which attribute renames a member therefore depends on which serializer your application uses, and the
+two do not agree.
+
+`System.Text.Json` does not implement `[EnumMember]`. It is ignored for both serialization and schema generation, so this enum:
+
+```csharp
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum Priority
+{
+    Low = 1,
+    [EnumMember(Value = "very-high")]
+    VeryHigh = 2
+}
+```
+
+produces the member name, not the value you asked for:
+
+```json
+{
+  "type": "string",
+  "enum": [
+    "Low",
+    "VeryHigh"
+  ]
+}
+```
+
+Use `[JsonStringEnumMemberName]`, added to `System.Text.Json` in .NET 9, which `System.Text.Json` does implement:
+
+```csharp
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum Priority
+{
+    Low = 1,
+    [JsonStringEnumMemberName("very-high")]
+    VeryHigh = 2
+}
+```
+
+```json
+{
+  "type": "string",
+  "enum": [
+    "Low",
+    "very-high"
+  ]
+}
+```
+
+> [!NOTE]
+> `Newtonsoft.Json` does honor `[EnumMember]`, so an application using the `Swashbuckle.AspNetCore.Newtonsoft` package gets
+> `very-high` from the first example. The difference is in the serializers, not in Swashbuckle.AspNetCore.
+
 ## Override Schema for Specific Types
 
 Out-of-the-box, Swashbuckle.AspNetCore performs a best-effort generating JSON schemas that accurately describe your request and response payloads.
