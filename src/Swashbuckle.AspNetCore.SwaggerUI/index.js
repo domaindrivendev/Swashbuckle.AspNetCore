@@ -36,7 +36,7 @@ window.onload = function () {
     // Workaround for https://github.com/swagger-api/swagger-ui/issues/5945
     configObject.urls.forEach(function (item) {
         if (item.url.startsWith("http") || item.url.startsWith("/")) return;
-        item.url = window.location.href.replace("index.html", item.url).split(/[?#]/)[0];
+        item.url = window.location.href.split(/[?#]/)[0].replace("index.html", item.url).split('#')[0];
     });
 
     // If validatorUrl is not explicitly provided, disable the feature by setting to null

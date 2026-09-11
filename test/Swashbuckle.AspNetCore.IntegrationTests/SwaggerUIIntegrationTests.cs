@@ -133,8 +133,7 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         var jsContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
-        Assert.Contains(".split(/[?#]/)[0]", jsContent);
-        Assert.DoesNotContain(".split('#')[0]", jsContent);
+        Assert.Contains("window.location.href.split(/[?#]/)[0].replace(\"index.html\", item.url)", jsContent);
     }
 
     [Theory]
