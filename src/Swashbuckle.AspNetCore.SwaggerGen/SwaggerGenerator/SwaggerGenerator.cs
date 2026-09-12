@@ -895,9 +895,10 @@ public class SwaggerGenerator(
 
         var schema = GenerateSchemaFromFormParameters(formParameters, schemaRepository);
 
-        var totalProperties = schema.AllOf
-            ?.FirstOrDefault((p) => p.Properties?.Count > 0)
-            ?.Properties ?? schema.Properties;
+        // Resolve the properties through any schema references so that properties
+        // bound from a complex type also get an encoding entry. Otherwise arrays
+        // within such types are not exploded into multiple form fields. See #3169.
+        var totalProperties = schema.ResolveProperties(schemaRepository);
 
         return new OpenApiRequestBody
         {
@@ -906,10 +907,10 @@ public class SwaggerGenerator(
                 (contentType) => new OpenApiMediaType
                 {
                     Schema = schema,
-                    Encoding = totalProperties?.ToDictionary(
+                    Encoding = totalProperties.ToDictionary(
                         (entry) => entry.Key,
                         (entry) => new OpenApiEncoding { Style = ParameterStyle.Form }
-                    ) ?? []
+                    )
                 })
         };
     }

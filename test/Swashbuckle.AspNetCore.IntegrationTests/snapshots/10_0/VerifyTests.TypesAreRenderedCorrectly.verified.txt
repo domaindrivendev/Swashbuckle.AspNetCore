@@ -58,11 +58,27 @@
             "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/PersonAnnotated"
+              },
+              "encoding": {
+                "firstName": {
+                  "style": "form"
+                },
+                "lastName": {
+                  "style": "form"
+                }
               }
             },
             "application/x-www-form-urlencoded": {
               "schema": {
                 "$ref": "#/components/schemas/PersonAnnotated"
+              },
+              "encoding": {
+                "firstName": {
+                  "style": "form"
+                },
+                "lastName": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -98,6 +114,26 @@
                     "$ref": "#/components/schemas/AddressAnnotated"
                   }
                 ]
+              },
+              "encoding": {
+                "firstName": {
+                  "style": "form"
+                },
+                "lastName": {
+                  "style": "form"
+                },
+                "street": {
+                  "style": "form"
+                },
+                "city": {
+                  "style": "form"
+                },
+                "state": {
+                  "style": "form"
+                },
+                "zipCode": {
+                  "style": "form"
+                }
               }
             },
             "application/x-www-form-urlencoded": {
@@ -110,6 +146,26 @@
                     "$ref": "#/components/schemas/AddressAnnotated"
                   }
                 ]
+              },
+              "encoding": {
+                "firstName": {
+                  "style": "form"
+                },
+                "lastName": {
+                  "style": "form"
+                },
+                "street": {
+                  "style": "form"
+                },
+                "city": {
+                  "style": "form"
+                },
+                "state": {
+                  "style": "form"
+                },
+                "zipCode": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -254,6 +310,12 @@
                 ]
               },
               "encoding": {
+                "firstName": {
+                  "style": "form"
+                },
+                "lastName": {
+                  "style": "form"
+                },
                 "tags": {
                   "style": "form"
                 }
@@ -279,6 +341,12 @@
                 ]
               },
               "encoding": {
+                "firstName": {
+                  "style": "form"
+                },
+                "lastName": {
+                  "style": "form"
+                },
                 "tags": {
                   "style": "form"
                 }
@@ -491,6 +559,26 @@
                     "$ref": "#/components/schemas/Address"
                   }
                 ]
+              },
+              "encoding": {
+                "firstName": {
+                  "style": "form"
+                },
+                "lastName": {
+                  "style": "form"
+                },
+                "street": {
+                  "style": "form"
+                },
+                "city": {
+                  "style": "form"
+                },
+                "state": {
+                  "style": "form"
+                },
+                "zipCode": {
+                  "style": "form"
+                }
               }
             },
             "application/x-www-form-urlencoded": {
@@ -503,6 +591,26 @@
                     "$ref": "#/components/schemas/Address"
                   }
                 ]
+              },
+              "encoding": {
+                "firstName": {
+                  "style": "form"
+                },
+                "lastName": {
+                  "style": "form"
+                },
+                "street": {
+                  "style": "form"
+                },
+                "city": {
+                  "style": "form"
+                },
+                "state": {
+                  "style": "form"
+                },
+                "zipCode": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -772,6 +880,12 @@
                 ]
               },
               "encoding": {
+                "firstName": {
+                  "style": "form"
+                },
+                "lastName": {
+                  "style": "form"
+                },
                 "tags": {
                   "style": "form"
                 }
@@ -797,6 +911,12 @@
                 ]
               },
               "encoding": {
+                "firstName": {
+                  "style": "form"
+                },
+                "lastName": {
+                  "style": "form"
+                },
                 "tags": {
                   "style": "form"
                 }
