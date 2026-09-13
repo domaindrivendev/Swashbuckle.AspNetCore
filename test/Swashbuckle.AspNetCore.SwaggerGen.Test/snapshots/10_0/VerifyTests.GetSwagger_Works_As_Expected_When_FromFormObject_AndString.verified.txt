@@ -29,6 +29,9 @@
                 ]
               },
               "encoding": {
+                "NotIgnoredString": {
+                  "style": "form"
+                },
                 "param2": {
                   "style": "form"
                 }
