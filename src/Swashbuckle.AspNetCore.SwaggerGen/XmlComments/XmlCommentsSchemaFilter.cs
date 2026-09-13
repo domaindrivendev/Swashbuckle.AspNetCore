@@ -10,7 +10,7 @@ public class XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator>
 
     public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
-        ApplyTypeTags(schema, context.Type);
+        ApplyTypeTags(schema, context);
 
         if (context.MemberInfo != null)
         {
@@ -18,16 +18,21 @@ public class XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator>
         }
     }
 
-    private void ApplyTypeTags(IOpenApiSchema schema, Type type)
+    private void ApplyTypeTags(IOpenApiSchema schema, SchemaFilterContext context)
     {
-        var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
+        var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(context.Type);
 
         if (!_xmlDocMembers.TryGetValue(typeMemberName, out var memberNode)) return;
 
         var typeSummaryNode = memberNode.SelectFirstChild("summary");
 
-        if (typeSummaryNode != null)
+        if (typeSummaryNode != null && (context.MemberInfo is null || schema.Description is null))
         {
+            // For a member's schema the type's summary is only a fallback: it must not
+            // overwrite a description a member's summary has already provided, such as by
+            // an XmlCommentsSchemaFilter for another XML comments file when comments are
+            // included from multiple assemblies.
+            // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3240.
             schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml, _options?.XmlCommentEndOfLine);
         }
     }

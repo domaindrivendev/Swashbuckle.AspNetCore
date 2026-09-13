@@ -179,10 +179,99 @@ public class XmlCommentsSchemaFilterTests
         Assert.Equal(expectedValue, schema.Example.GetValue<float>());
     }
 
+    [Fact]
+    public void Apply_DoesNotOverridePropertySummary_WithTypeSummaryFromAnotherXmlCommentsDocument()
+    {
+        // Arrange
+        var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringProperty));
+        var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(propertyInfo);
+        var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(propertyInfo.PropertyType);
+
+        // Simulates IncludeXmlComments() being called once for the assembly declaring the
+        // property and once for the assembly declaring the property's type.
+        // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3240.
+        var propertyAssemblyFilter = Subject(
+            $"""
+             <doc>
+               <members>
+                 <member name="{propertyMemberName}">
+                   <summary>Summary for StringProperty</summary>
+                 </member>
+               </members>
+             </doc>
+             """);
+
+        var typeAssemblyFilter = Subject(
+            $"""
+             <doc>
+               <members>
+                 <member name="{typeMemberName}">
+                   <summary>Summary for the property's type</summary>
+                 </member>
+               </members>
+             </doc>
+             """);
+
+        var schema = new OpenApiSchema();
+        var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
+
+        // Act
+        propertyAssemblyFilter.Apply(schema, filterContext);
+        typeAssemblyFilter.Apply(schema, filterContext);
+
+        // Assert
+        Assert.Equal("Summary for StringProperty", schema.Description);
+    }
+
+    [Fact]
+    public void Apply_SetsDescription_FromTypeSummaryTagInAnotherXmlCommentsDocument_WhenPropertyHasNoSummary()
+    {
+        // Arrange
+        var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringProperty));
+        var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(propertyInfo.PropertyType);
+
+        var propertyAssemblyFilter = Subject(
+            """
+            <doc>
+              <members>
+              </members>
+            </doc>
+            """);
+
+        var typeAssemblyFilter = Subject(
+            $"""
+             <doc>
+               <members>
+                 <member name="{typeMemberName}">
+                   <summary>Summary for the property's type</summary>
+                 </member>
+               </members>
+             </doc>
+             """);
+
+        var schema = new OpenApiSchema();
+        var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
+
+        // Act
+        propertyAssemblyFilter.Apply(schema, filterContext);
+        typeAssemblyFilter.Apply(schema, filterContext);
+
+        // Assert
+        Assert.Equal("Summary for the property's type", schema.Description);
+    }
+
     private static XmlCommentsSchemaFilter Subject()
     {
         using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
         var document = new XPathDocument(xml);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
+        return new(members, new());
+    }
+
+    private static XmlCommentsSchemaFilter Subject(string xml)
+    {
+        using var reader = new StringReader(xml);
+        var document = new XPathDocument(reader);
         var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
         return new(members, new());
     }
