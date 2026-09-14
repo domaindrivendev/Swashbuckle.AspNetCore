@@ -18,6 +18,7 @@
     <LangVersion>latest</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <NoWarn>$(NoWarn);SC031</NoWarn>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <!--
     TODO Go through the code and add nullable annotations
@@ -37,6 +38,8 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UseArtifactsOutput>true</UseArtifactsOutput>
+    <Verify_SponsorshipExemption>OpenSource</Verify_SponsorshipExemption>
+    <Verify_SponsorshipExemptionUntil>$([System.DateTime]::UtcNow.AddMonths(12).ToString("yyyy-MM"))</Verify_SponsorshipExemptionUntil>
     <VersionPrefix>10.2.4</VersionPrefix>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
