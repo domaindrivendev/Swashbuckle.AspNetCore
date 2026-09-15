@@ -41,8 +41,25 @@ public class UITests(PlaywrightFixture fixture) : IClassFixture<PlaywrightFixtur
         });
     }
 
+    [Fact]
+    public async Task Relative_Document_Url_Does_Not_Inherit_Query_String_From_Page_Url()
+    {
+        await using var application = new RelativeDocumentUrlFixture();
+        var url = new Uri(new Uri(application.ServerUrl), "swagger/index.html?foo=bar");
+
+        await fixture.VerifyPage(url.ToString(), async (page) =>
+        {
+            var link = await page.WaitForSelectorAsync(".info .url");
+            var documentUrl = (await link.TextContentAsync())?.Trim();
+
+            Assert.EndsWith("/swagger/v1.json", documentUrl);
+        });
+    }
+
     private sealed class RedocFixture : HttpApplicationFixture<ReDocApp.Program>;
 
     private sealed class SwaggerUIFixture : HttpApplicationFixture<Basic.Startup>;
+
+    private sealed class RelativeDocumentUrlFixture : HttpApplicationFixture<TopLevelSwaggerDoc.Program>;
 }
 #endif
