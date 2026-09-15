@@ -5,7 +5,7 @@ namespace Swashbuckle.AspNetCore.Swagger;
 
 public class SwaggerOptions
 {
-    internal const string DefaultRouteTemplate = "/swagger/{documentName}/swagger.{extension:regex(^(json|ya?ml)$)}";
+    internal const string DefaultRouteTemplate = "/swagger/{documentName}/swagger.{extension}";
 
     public SwaggerOptions()
     {
