@@ -1,6 +1,10 @@
 ﻿using Microsoft.OpenApi;
 using Newtonsoft.Json.Linq;
 
+#if NET11_0_OR_GREATER
+using OpenApiMediaType = Microsoft.OpenApi.IOpenApiMediaType;
+#endif
+
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
 public sealed class JsonContentValidator : IContentValidator
