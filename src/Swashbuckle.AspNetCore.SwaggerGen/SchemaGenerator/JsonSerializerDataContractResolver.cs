@@ -108,6 +108,34 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
         return JsonSerializer.Serialize(value, type, _serializerOptions);
     }
 
+#if NET11_0_OR_GREATER
+    // Detects C# union types (introduced in .NET 11). System.Text.Json represents a union
+    // transparently (no discriminator) as an "anyOf" of its case types, which the schema
+    // generator mirrors. Returns false for any non-union type or if metadata is unavailable.
+    internal bool TryGetUnionCaseTypes(Type type, out IReadOnlyList<Type> cases)
+    {
+        cases = null;
+
+        System.Text.Json.Serialization.Metadata.JsonTypeInfo typeInfo;
+        try
+        {
+            typeInfo = _serializerOptions.GetTypeInfo(type);
+        }
+        catch
+        {
+            return false;
+        }
+
+        if (typeInfo.Kind != System.Text.Json.Serialization.Metadata.JsonTypeInfoKind.Union)
+        {
+            return false;
+        }
+
+        cases = [.. typeInfo.UnionCases.Select(static c => c.CaseType)];
+        return true;
+    }
+#endif
+
     public bool IsSupportedDictionary(Type type, out Type keyType, out Type valueType)
     {
         if (type.IsConstructedFrom(typeof(IDictionary<,>), out Type constructedType)
