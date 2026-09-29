@@ -64,7 +64,7 @@ jobs:
       run: npm install --global "@stoplight/spectral-cli@${SPECTRAL_VERSION}"
       env:
         # renovate: datasource=npm packageName=@stoplight/spectral-cli
-        SPECTRAL_VERSION: '6.15.0'
+        SPECTRAL_VERSION: '6.16.3'
 
     - name: Run Spectral
       run: spectral lint "./test/Swashbuckle.AspNetCore.IntegrationTests/snapshots/*" --display-only-failures --fail-severity error --format github-actions
