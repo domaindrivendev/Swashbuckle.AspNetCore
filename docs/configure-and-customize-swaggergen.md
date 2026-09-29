@@ -750,6 +750,14 @@ services.AddSwaggerGen(options =>
 > [!NOTE]
 > See [this GitHub issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2703) for support for nested types.
 
+## Rename Enum Values in Schemas
+
+The enum values in a generated schema come from the serializer, so how you rename a member depends on which serializer your
+application uses:
+
+- `System.Text.Json` does not support `[EnumMember]`. Use [`[JsonStringEnumMemberName]`](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonstringenummembernameattribute) instead (.NET 9 and later).
+- `Newtonsoft.Json` supports [`[EnumMember]`](https://www.newtonsoft.com/json/help/html/T_Newtonsoft_Json_Converters_StringEnumConverter.htm) when you use `StringEnumConverter`.
+
 ## Override Schema for Specific Types
 
 Out-of-the-box, Swashbuckle.AspNetCore performs a best-effort generating JSON schemas that accurately describe your request and response payloads.
