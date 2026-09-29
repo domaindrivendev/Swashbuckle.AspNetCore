@@ -442,7 +442,6 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
 
         using var server = TestSite.CreateServer((app) => app.UseReDoc((options) =>
         {
-            // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3153
             options.ConfigObject.AdditionalItems["theme"] = new { colors = new { primary = "#086eaa" } };
         }));
 

@@ -816,7 +816,6 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         using var server = TestSite.CreateServer((app) => app.UseSwaggerUI((options) =>
         {
-            // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3153
             options.ConfigObject.AdditionalItems["theme"] = new { colors = new { primary = "#086eaa" } };
         }));
 

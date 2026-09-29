@@ -75,11 +75,11 @@ internal sealed partial class ReDocMiddleware
     [UnconditionalSuppressMessage(
         "AOT",
         "IL2026:RequiresUnreferencedCode",
-        Justification = "The reflection-based resolver is only used when dynamic code is supported (i.e. not native AoT) to serialize custom values in ConfigObject.AdditionalItems. See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3153.")]
+        Justification = "The reflection-based resolver is only used when dynamic code is supported.")]
     [UnconditionalSuppressMessage(
         "AOT",
         "IL3050:RequiresDynamicCode",
-        Justification = "The reflection-based resolver is only used when dynamic code is supported (i.e. not native AoT) to serialize custom values in ConfigObject.AdditionalItems. See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3153.")]
+        Justification = "The reflection-based resolver is only used when dynamic code is supported.")]
     private static JsonSerializerOptions CreateDefaultJsonSerializerOptions()
     {
         if (!RuntimeFeature.IsDynamicCodeSupported)
