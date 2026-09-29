@@ -71,6 +71,7 @@ public class XmlCommentsBenchmark
                     {
                         ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
                         ControllerName = nameof(FakeControllerWithXmlComments),
+                        RouteValues = new Dictionary<string, string> { ["controller"] = nameof(FakeControllerWithXmlComments) },
                     },
                 },
                 new ApiDescription
@@ -79,6 +80,7 @@ public class XmlCommentsBenchmark
                     {
                         ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
                         ControllerName = nameof(FakeControllerWithXmlComments),
+                        RouteValues = new Dictionary<string, string> { ["controller"] = nameof(FakeControllerWithXmlComments) },
                     },
                 },
             ],
