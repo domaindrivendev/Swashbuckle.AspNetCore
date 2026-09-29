@@ -19,3 +19,15 @@ It's also worth noting that Swashbuckle.AspNetCore leverages the [swagger-ui pro
 ## Pull Requests
 
 If you've identified a feature/bug fix that aligns to the project goals, or even just an addition to the docs, please submit a Pull Request (PR). If applicable, include tests and ensure all tests are passing locally before you commit.
+
+## AI Agent Usage
+
+When using AI agents to assist with contributions, you must disclose their usage in the pull request description,
+especially when the AI agent has generated a significant portion of the content and opened the pull request autonomously.
+
+Generative AI is permitted, but you are responsible for reviewing, validating, and understanding all AI-generated content.
+If you don't understand what it does, don't submit it.
+
+Avoid having more than three AI-assisted pull requests open at any one time.
+
+Contributors who do not follow these guidelines around responsible AI usage may have their pull requests closed with zero notice.

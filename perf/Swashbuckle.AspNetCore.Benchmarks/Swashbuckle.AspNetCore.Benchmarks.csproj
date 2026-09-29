@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);1591</NoWarn>
     <OutputType>Exe</OutputType>
     <TargetFramework>net11.0</TargetFramework>
     <SignAssembly>True</SignAssembly>

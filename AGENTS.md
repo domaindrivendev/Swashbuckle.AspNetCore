@@ -109,3 +109,23 @@ Packable projects use `Microsoft.CodeAnalysis.PublicApiAnalyzers`. Any change to
 - Bug fixes should **always** include a test that would fail without the corresponding fix.
 - Do not introduce new dependencies unless specifically requested.
 - Do not update existing dependencies unless specifically requested.
+
+## Skills
+
+Task-specific agent skills are located in `.github/skills/`:
+
+| Skill | Purpose |
+| --- | --- |
+| [`code-review`](.github/skills/code-review/SKILL.md) | Reviewing pull requests and code changes |
+| [`performance-benchmark`](.github/skills/performance-benchmark/SKILL.md) | Writing and running BenchmarkDotNet benchmarks to validate performance changes |
+
+## Pull requests
+
+- Pull request descriptions must follow the [pull request template](.github/pull_request_template.md).
+- Agent-authored pull request descriptions **must** disclose which agent was used to generate them with a
+  note at the bottom of the description. For example:
+
+  ```markdown
+  > [!NOTE]
+  > This PR description was generated with GitHub Copilot.
+  ```

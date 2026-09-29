@@ -17,14 +17,14 @@
       "rollForward": false
     },
     "martincostello.waitfornugetpackage": {
-      "version": "1.3.2",
+      "version": "1.3.3",
       "commands": [
         "dotnet-wait-for-package"
       ],
       "rollForward": false
     },
     "meziantou.framework.nugetpackagevalidation.tool": {
-      "version": "2.0.8",
+      "version": "2.0.12",
       "commands": [
         "meziantou.validate-nuget-package"
       ],
