@@ -10,12 +10,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 public static class SwaggerMiddlewareRouteTemplateTests
 {
     [Fact]
-    public static void UseSwagger_Does_Not_Require_Regex_Route_Constraint()
+    public static void UseSwagger_Works_With_AddRoutingCore()
     {
-        // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2951.
-        // AddRoutingCore(), as used by WebApplication.CreateSlimBuilder(), does not
-        // register the regex route constraint, so building the pipeline must not
-        // require it for the default route template.
         var (pipeline, _) = CreatePipeline();
         Assert.NotNull(pipeline);
     }
