@@ -1821,6 +1821,71 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Null(schema.Type);
     }
 
+    [Theory]
+    [InlineData(typeof(object))]
+    [InlineData(typeof(JsonDocument))]
+    [InlineData(typeof(JsonElement?))]
+    public void GenerateSchema_GeneratesOpenSchema_IfPropertyIsNullableDynamicJsonType(Type propertyType)
+    {
+        var schemaRepository = new SchemaRepository();
+        var modelType = typeof(GenericType<,>).MakeGenericType(propertyType, propertyType.MakeArrayType());
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(Subject().GenerateSchema(modelType, schemaRepository));
+
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = schema.Properties["Property1"];
+        Assert.Null(propertySchema.Type);
+        Assert.Null(propertySchema.Enum);
+
+        var arraySchema = schema.Properties["Property2"];
+        Assert.Equal(JsonSchemaTypes.Array | JsonSchemaType.Null, arraySchema.Type);
+        Assert.Null(arraySchema.Items.Type);
+        Assert.Null(arraySchema.Items.Enum);
+    }
+
+    // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/4181
+    [Theory]
+    [InlineData(OpenApiSpecVersion.OpenApi2_0)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_0)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_1)]
+    public void GenerateSchema_SerializesNullableObjectProperty_WithoutTypeOrEnum(OpenApiSpecVersion version)
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(Subject().GenerateSchema(typeof(GenericType<object, object[]>), schemaRepository));
+
+        var schema = Assert.IsType<OpenApiSchema>(schemaRepository.Schemas[referenceSchema.Reference.Id]);
+        var serialized = SerializeSchemaInDocument(schema, version);
+
+        using var json = JsonDocument.Parse(serialized);
+        var schemas = version == OpenApiSpecVersion.OpenApi2_0
+            ? json.RootElement.GetProperty("definitions")
+            : json.RootElement.GetProperty("components").GetProperty("schemas");
+        var properties = schemas.GetProperty("Test").GetProperty("properties");
+        var property = properties.GetProperty("Property1");
+        Assert.False(property.TryGetProperty("type", out _));
+        Assert.False(property.TryGetProperty("enum", out _));
+
+        var arrayProperty = properties.GetProperty("Property2");
+        var arrayType = arrayProperty.GetProperty("type");
+        if (version == OpenApiSpecVersion.OpenApi3_1)
+        {
+            Assert.Equal(["array", "null"], arrayType.EnumerateArray().Select(type => type.GetString()).Order());
+        }
+        else
+        {
+            Assert.Equal("array", arrayType.GetString());
+            if (version == OpenApiSpecVersion.OpenApi3_0)
+            {
+                Assert.True(arrayProperty.GetProperty("nullable").GetBoolean());
+            }
+        }
+
+        var items = arrayProperty.GetProperty("items");
+        Assert.False(items.TryGetProperty("type", out _));
+        Assert.False(items.TryGetProperty("enum", out _));
+    }
+
     [Fact]
     public void GenerateSchema_GeneratesSchema_IfParameterHasMaxLengthRouteConstraint()
     {
