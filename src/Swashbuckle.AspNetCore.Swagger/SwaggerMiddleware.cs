@@ -14,10 +14,13 @@ internal sealed class SwaggerMiddleware
     private static readonly Encoding UTF8WithoutBom = new UTF8Encoding(false);
     private static readonly HashSet<string> AllowedHttpMethods = new(StringComparer.OrdinalIgnoreCase) { HttpMethods.Get, HttpMethods.Head };
 
+    private static readonly HashSet<string> DefaultAllowedExtensions = new(StringComparer.OrdinalIgnoreCase) { "json", "yaml", "yml" };
+
     private readonly RequestDelegate _next;
     private readonly SwaggerOptions _options;
     private readonly TemplateMatcher _requestMatcher;
     private readonly TemplateBinder _templateBinder;
+    private readonly bool _applyDefaultExtensionConstraint;
 
     public SwaggerMiddleware(
         RequestDelegate next,
@@ -25,7 +28,16 @@ internal sealed class SwaggerMiddleware
     {
         _next = next;
         _options = options ?? new SwaggerOptions();
-        _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), []);
+
+        var routeTemplate = TemplateParser.Parse(_options.RouteTemplate);
+        _requestMatcher = new TemplateMatcher(routeTemplate, []);
+
+        // The default route template uses an unconstrained {extension} parameter so that applications
+        // configured with CreateSlimBuilder()/AddRoutingCore(), which do not register the regex route
+        // constraint, can still resolve a TemplateBinder for it (see #2951). To keep only the supported
+        // extensions matching, apply the equivalent allow-list in code when the parameter is unconstrained.
+        _applyDefaultExtensionConstraint = routeTemplate.Parameters.Any(
+            static parameter => parameter.Name == "extension" && !parameter.InlineConstraints.Any());
     }
 
     [ActivatorUtilitiesConstructor]
@@ -150,15 +162,22 @@ internal sealed class SwaggerMiddleware
 
             if (routeValues.TryGetValue("documentName", out var documentNameObject) && documentNameObject is string documentNameString)
             {
-                documentName = documentNameString;
                 if (routeValues.TryGetValue("extension", out var extensionObject))
                 {
+                    if (_applyDefaultExtensionConstraint &&
+                        (extensionObject is not string extensionString || !DefaultAllowedExtensions.Contains(extensionString)))
+                    {
+                        return false;
+                    }
+
                     extension = $".{extensionObject}";
                 }
                 else
                 {
                     extension = Path.GetExtension(request.Path.Value);
                 }
+
+                documentName = documentNameString;
                 return true;
             }
         }

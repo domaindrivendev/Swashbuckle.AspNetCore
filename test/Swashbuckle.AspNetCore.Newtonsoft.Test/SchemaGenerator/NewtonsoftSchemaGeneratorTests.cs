@@ -1009,6 +1009,29 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Null(schema.Type);
     }
 
+    [Theory]
+    [InlineData(typeof(object))]
+    [InlineData(typeof(JToken))]
+    [InlineData(typeof(JObject))]
+    [InlineData(typeof(JArray))]
+    public void GenerateSchema_GeneratesOpenSchema_IfPropertyIsNullableDynamicJsonType(Type propertyType)
+    {
+        var schemaRepository = new SchemaRepository();
+        var modelType = typeof(GenericType<,>).MakeGenericType(propertyType, propertyType.MakeArrayType());
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(Subject().GenerateSchema(modelType, schemaRepository));
+
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = schema.Properties["Property1"];
+        Assert.Null(propertySchema.Type);
+        Assert.Null(propertySchema.Enum);
+
+        var arraySchema = schema.Properties["Property2"];
+        Assert.Equal(JsonSchemaTypes.Array | JsonSchemaType.Null, arraySchema.Type);
+        Assert.Null(arraySchema.Items.Type);
+        Assert.Null(arraySchema.Items.Enum);
+    }
+
     private static SchemaGenerator Subject(
         Action<SchemaGeneratorOptions> configureGenerator = null,
         Action<JsonSerializerSettings> configureSerializer = null)
