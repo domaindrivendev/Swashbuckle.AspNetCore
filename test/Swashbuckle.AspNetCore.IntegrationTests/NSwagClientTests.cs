@@ -1,6 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using TodoApp.NSwagClient;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
@@ -271,5 +269,3 @@ public class NSwagClientTests
         await callback(client);
     }
 }
-
-#endif

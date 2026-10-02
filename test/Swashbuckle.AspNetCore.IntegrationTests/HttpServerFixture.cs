@@ -1,5 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
@@ -17,4 +16,3 @@ public class HttpApplicationFixture<TEntryPoint> : WebApplicationFactory<TEntryP
         }
     }
 }
-#endif

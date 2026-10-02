@@ -28,17 +28,10 @@ public class CrudActionsController
     /// <param name="product"></param>
     /// <returns></returns>
     [HttpPost(Name = "CreateProduct")]
-#if NET10_0_OR_GREATER
     public Ok<Product> Create([FromBody, Required] Product product)
     {
         return TypedResults.Ok(product);
     }
-#else
-    public Product Create([FromBody, Required] Product product)
-    {
-        return product;
-    }
-#endif
 
     /// <summary>Get all products</summary>
     /// <remarks>

@@ -1,6 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -368,5 +366,3 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
         }
     }
 }
-
-#endif
