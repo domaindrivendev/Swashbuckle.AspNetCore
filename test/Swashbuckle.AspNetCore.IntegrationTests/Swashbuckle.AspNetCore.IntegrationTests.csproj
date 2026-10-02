@@ -18,6 +18,7 @@
     <PackageReference Include="MartinCostello.Logging.XUnit.v3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+    <PackageReference Include="Microsoft.Build" />
     <PackageReference Include="Microsoft.Kiota.Bundle" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.OpenApi.YamlReader" />
@@ -31,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
+    <PackageReference Update="Microsoft.Build" VersionOverride="18.9.6" />
     <PackageReference Update="Microsoft.OpenApi.YamlReader" VersionOverride="2.7.3" />
   </ItemGroup>
 
