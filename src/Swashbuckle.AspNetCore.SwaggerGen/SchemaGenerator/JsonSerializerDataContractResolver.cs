@@ -44,11 +44,12 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
         if (effectiveType.IsEnum)
         {
             var enumValues = effectiveType.GetEnumValues();
+            var serializationType = GetEnumSerializationType(type, effectiveType);
 
             // Test to determine if the serializer will treat as string
             var serializeAsString =
                 enumValues.Length > 0 &&
-                JsonConverterFunc(enumValues.GetValue(0), type).StartsWith('\"');
+                JsonConverterFunc(enumValues.GetValue(0), serializationType).StartsWith('\"');
 
             var exampleType = serializeAsString ?
                 typeof(string) :
@@ -60,7 +61,7 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
                 underlyingType: effectiveType,
                 dataType: primitiveTypeAndFormat.Item1,
                 dataFormat: primitiveTypeAndFormat.Item2,
-                jsonConverter: (value) => JsonConverterFunc(value, type));
+                jsonConverter: (value) => JsonConverterFunc(value, serializationType));
         }
 
         if (IsSupportedDictionary(effectiveType, out Type keyType, out Type valueType))
@@ -101,6 +102,29 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
             properties: GetDataPropertiesFor(effectiveType, out Type extensionDataType),
             extensionDataType: extensionDataType,
             jsonConverter: (value) => JsonConverterFunc(value, effectiveType));
+    }
+
+    private Type GetEnumSerializationType(Type type, Type effectiveType)
+    {
+        // Without an explicit resolver the serializer falls back to reflection, which
+        // supports the nullable type, so there is nothing to probe.
+        if (type == effectiveType || _serializerOptions.TypeInfoResolver is null)
+        {
+            return type;
+        }
+
+        // Prefer the nullable contract so that converters registered for Nullable<T> are honored,
+        // but fall back to the enum itself when the serializer has no metadata for the nullable
+        // type (for example a source-generated context that only registers the enum).
+        try
+        {
+            _serializerOptions.GetTypeInfo(type);
+            return type;
+        }
+        catch (NotSupportedException)
+        {
+            return effectiveType;
+        }
     }
 
     private string JsonConverterFunc(object value, Type type)
