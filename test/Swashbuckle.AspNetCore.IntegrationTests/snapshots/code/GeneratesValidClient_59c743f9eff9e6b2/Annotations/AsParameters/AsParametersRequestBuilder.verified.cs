@@ -94,9 +94,23 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Annotations.AsParam
             [QueryParameter("paramFour")]
             public DateTimeOffset? ParamFour { get; set; }
             #pragma warning restore CS1591
+            [Obsolete("This property is deprecated, use ParamNineAsDateTimeKind instead")]
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
             #pragma warning disable CS1591
             [QueryParameter("paramNine")]
-            public int? ParamNine { get; set; }
+            public string? ParamNine { get; set; }
+            #pragma warning restore CS1591
+#nullable restore
+#else
+            #pragma warning disable CS1591
+            [QueryParameter("paramNine")]
+            public string ParamNine { get; set; }
+            #pragma warning restore CS1591
+#endif
+            #pragma warning disable CS1591
+            [QueryParameter("paramNine")]
+            public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.DateTimeKindObject? ParamNineAsDateTimeKind { get; set; }
             #pragma warning restore CS1591
             /// <summary>Description</summary>
             [QueryParameter("paramOne")]
@@ -109,9 +123,23 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Annotations.AsParam
             [QueryParameter("paramSix")]
             public Date? ParamSix { get; set; }
             #pragma warning restore CS1591
+            [Obsolete("This property is deprecated, use ParamTenAsDateTimeKind instead")]
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
             #pragma warning disable CS1591
             [QueryParameter("paramTen")]
-            public int? ParamTen { get; set; }
+            public string? ParamTen { get; set; }
+            #pragma warning restore CS1591
+#nullable restore
+#else
+            #pragma warning disable CS1591
+            [QueryParameter("paramTen")]
+            public string ParamTen { get; set; }
+            #pragma warning restore CS1591
+#endif
+            #pragma warning disable CS1591
+            [QueryParameter("paramTen")]
+            public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.DateTimeKindObject? ParamTenAsDateTimeKind { get; set; }
             #pragma warning restore CS1591
             #pragma warning disable CS1591
             [QueryParameter("paramThree")]
