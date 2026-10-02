@@ -68,6 +68,26 @@ public class JsonSourceGenerationSchemaGeneratorTests
         Assert.Equal(["\"nullable-Low\"", "\"nullable-High\""], schema.Enum.Select((p) => p.ToJsonString()));
     }
 
+    [Fact]
+    public void GenerateSchema_UsesNullableEnumConverter_WithDefaultSerializerOptions()
+    {
+        var serializerOptions = new JsonSerializerOptions()
+        {
+            Converters = { new PrefixedNullableLevelConverter() },
+        };
+
+        var generatorOptions = new SchemaGeneratorOptions();
+        var subject = new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions, generatorOptions));
+        var repository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(SourceGeneratedLevel?), repository);
+
+        var schema = Assert.IsType<OpenApiSchema>(repository.Schemas[nameof(SourceGeneratedLevel)]);
+
+        Assert.Equal(JsonSchemaTypes.String, schema.Type);
+        Assert.Equal(["\"nullable-Low\"", "\"nullable-High\""], schema.Enum.Select((p) => p.ToJsonString()));
+    }
+
     private static OpenApiSchema GenerateSchemaFor(Type type)
     {
         var repository = new SchemaRepository();

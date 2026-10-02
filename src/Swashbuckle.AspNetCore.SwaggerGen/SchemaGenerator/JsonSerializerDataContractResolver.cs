@@ -106,7 +106,9 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
 
     private Type GetEnumSerializationType(Type type, Type effectiveType)
     {
-        if (type == effectiveType)
+        // Without an explicit resolver the serializer falls back to reflection, which
+        // supports the nullable type, so there is nothing to probe.
+        if (type == effectiveType || _serializerOptions.TypeInfoResolver is null)
         {
             return type;
         }
