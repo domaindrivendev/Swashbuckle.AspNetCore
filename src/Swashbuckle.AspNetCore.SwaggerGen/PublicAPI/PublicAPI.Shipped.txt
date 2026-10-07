@@ -158,6 +158,7 @@ Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.GetDataCont
 Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.IsSupportedCollection(System.Type type, out System.Type itemType) -> bool
 Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.IsSupportedDictionary(System.Type type, out System.Type keyType, out System.Type valueType) -> bool
 Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.JsonSerializerDataContractResolver(System.Text.Json.JsonSerializerOptions serializerOptions) -> void
+Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.JsonSerializerDataContractResolver(System.Text.Json.JsonSerializerOptions serializerOptions, Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions generatorOptions) -> void
 Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions
 Swashbuckle.AspNetCore.SwaggerGen.MethodInfoExtensions
 Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions
