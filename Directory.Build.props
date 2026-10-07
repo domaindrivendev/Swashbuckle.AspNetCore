@@ -40,7 +40,7 @@
     <UseArtifactsOutput>true</UseArtifactsOutput>
     <Verify_SponsorshipExemption>OpenSource</Verify_SponsorshipExemption>
     <Verify_SponsorshipExemptionUntil>$([System.DateTime]::UtcNow.AddMonths(12).ToString("yyyy-MM"))</Verify_SponsorshipExemptionUntil>
-    <VersionPrefix>10.2.4</VersionPrefix>
+    <VersionPrefix>10.3.0</VersionPrefix>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' AND '$(DEPENDABOT_JOB_ID)' == '' ">
