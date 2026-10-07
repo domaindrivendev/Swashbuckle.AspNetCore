@@ -17,7 +17,7 @@ It targets the currently released and supported versions of .NET.
 ./build.ps1
 ```
 
-This runs `dotnet pack` followed by `dotnet test`.
+This restores the .NET tools, runs `dotnet pack` followed by `dotnet test`, then generates code coverage reports with ReportGenerator.
 
 **Build only:**
 
@@ -41,7 +41,7 @@ dotnet test test/Swashbuckle.AspNetCore.IntegrationTests/
 **Run a single test:**
 
 ```bash
-dotnet test test/Swashbuckle.AspNetCore.SwaggerGen.Test/ --filter "FullyQualifiedName~MethodName"
+dotnet test test/Swashbuckle.AspNetCore.SwaggerGen.Test/ --filter-method "*MethodName"
 ```
 
 **Restore .NET tools:**
@@ -80,6 +80,10 @@ When snapshot-based tests fail due to intentional changes, update snapshots by r
 5. **Filters** — `IDocumentFilter`, `IOperationFilter`, `IParameterFilter`, `IRequestBodyFilter`, `ISchemaFilter` (sync and async variants) are applied at each pipeline stage and are the primary extension points.
 
 ### Test structure (`test/`)
+
+Tests use xUnit v3 running on [Microsoft Testing Platform](https://learn.microsoft.com/dotnet/core/testing/microsoft-testing-platform-intro)
+(configured via the `test` section of `global.json`), with code coverage collected by `Microsoft.Testing.Extensions.CodeCoverage`
+using the settings in `tests.runsettings`. Coverage reports are written to `artifacts/coverage/{project}/`.
 
 - `Swashbuckle.AspNetCore.SwaggerGen.Test` — unit tests for schema and swagger generation; uses xUnit v3 and Verify for snapshot testing; snapshots stored under `snapshots/{tfm}/`.
 - `Swashbuckle.AspNetCore.IntegrationTests` — end-to-end tests running real `WebApplication` instances; also uses Verify snapshots and Playwright for UI tests.
