@@ -1,4 +1,4 @@
-Microsoft.Extensions.DependencyInjection.NewtonsoftServiceCollectionExtensions
+﻿Microsoft.Extensions.DependencyInjection.NewtonsoftServiceCollectionExtensions
 static Microsoft.Extensions.DependencyInjection.NewtonsoftServiceCollectionExtensions.AddSwaggerGenNewtonsoftSupport(this Microsoft.Extensions.DependencyInjection.IServiceCollection services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection
 static Swashbuckle.AspNetCore.Newtonsoft.JsonPropertyExtensions.IsRequiredSpecified(this Newtonsoft.Json.Serialization.JsonProperty jsonProperty) -> bool
 static Swashbuckle.AspNetCore.Newtonsoft.JsonPropertyExtensions.TryGetMemberInfo(this Newtonsoft.Json.Serialization.JsonProperty jsonProperty, out System.Reflection.MemberInfo memberInfo) -> bool
@@ -6,3 +6,4 @@ Swashbuckle.AspNetCore.Newtonsoft.JsonPropertyExtensions
 Swashbuckle.AspNetCore.Newtonsoft.NewtonsoftDataContractResolver
 Swashbuckle.AspNetCore.Newtonsoft.NewtonsoftDataContractResolver.GetDataContractForType(System.Type type) -> Swashbuckle.AspNetCore.SwaggerGen.DataContract
 Swashbuckle.AspNetCore.Newtonsoft.NewtonsoftDataContractResolver.NewtonsoftDataContractResolver(Newtonsoft.Json.JsonSerializerSettings serializerSettings) -> void
+Swashbuckle.AspNetCore.Newtonsoft.NewtonsoftDataContractResolver.NewtonsoftDataContractResolver(Newtonsoft.Json.JsonSerializerSettings serializerSettings, Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions generatorOptions) -> void
