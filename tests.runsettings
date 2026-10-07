@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <CodeCoverage>
+    <Attributes>
+      <Exclude>
+        <Attribute>^System\.CodeDom\.Compiler\.GeneratedCodeAttribute$</Attribute>
+        <Attribute>^System\.Diagnostics\.CodeAnalysis\.ExcludeFromCodeCoverageAttribute$</Attribute>
+        <Attribute>^System\.Diagnostics\.DebuggerNonUserCodeAttribute$</Attribute>
+      </Exclude>
+    </Attributes>
+    <ModulePaths>
+      <Include>
+        <ModulePath>.*[\\/]Swashbuckle\.AspNetCore\.[^\\/]*\.dll$</ModulePath>
+      </Include>
+      <Exclude>
+        <ModulePath>.*\\obj\\.*</ModulePath>
+        <ModulePath>.*\/obj\/.*</ModulePath>
+        <ModulePath>.*\.Test\.dll$</ModulePath>
+        <ModulePath>.*\.IntegrationTests\.dll$</ModulePath>
+        <ModulePath>.*\.TestSupport\.dll$</ModulePath>
+      </Exclude>
+    </ModulePaths>
+  </CodeCoverage>
+</Configuration>
