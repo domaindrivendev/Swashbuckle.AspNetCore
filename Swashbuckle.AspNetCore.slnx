@@ -38,7 +38,6 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Swashbuckle.AspNetCore.Annotations/Swashbuckle.AspNetCore.Annotations.csproj" />
-    <Project Path="src/Swashbuckle.AspNetCore.ApiTesting.Xunit/Swashbuckle.AspNetCore.ApiTesting.Xunit.csproj" />
     <Project Path="src/Swashbuckle.AspNetCore.ApiTesting/Swashbuckle.AspNetCore.ApiTesting.csproj" />
     <Project Path="src/Swashbuckle.AspNetCore.Cli/Swashbuckle.AspNetCore.Cli.csproj" />
     <Project Path="src/Swashbuckle.AspNetCore.Newtonsoft/Swashbuckle.AspNetCore.Newtonsoft.csproj" />
@@ -76,7 +75,6 @@
     <Project Path="test/WebSites/NswagClientExample/NswagClientExample.csproj" />
     <Project Path="test/WebSites/OAuth2Integration/OAuth2Integration.csproj" />
     <Project Path="test/WebSites/ReDoc/ReDoc.csproj" />
-    <Project Path="test/WebSites/TestFirst.IntegrationTests/TestFirst.IntegrationTests.csproj" />
     <Project Path="test/WebSites/TestFirst/TestFirst.csproj" />
     <Project Path="test/WebSites/TodoApp/TodoApp.csproj" />
     <Project Path="test/WebSites/TopLevelSwaggerDoc/TopLevelSwaggerDoc.csproj" />
