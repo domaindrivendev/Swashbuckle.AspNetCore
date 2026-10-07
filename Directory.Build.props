@@ -65,12 +65,8 @@
     <PublicSign>true</PublicSign>
   </PropertyGroup>
   <PropertyGroup>
-    <CoverletOutputFormat>cobertura,json</CoverletOutputFormat>
-    <CoverletOutputFormat Condition=" '$(GITHUB_ACTIONS)' != '' ">$(CoverletOutputFormat),opencover</CoverletOutputFormat>
-    <Exclude>[System.*]*,[*.Test*]*,[xunit.*]*</Exclude>
-    <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
-    <Include>[Swashbuckle.*]*</Include>
-    <Threshold></Threshold>
+    <CoverageFormat>cobertura</CoverageFormat>
+    <CoverageRunSettings>$(MSBuildThisFileDirectory)tests.runsettings</CoverageRunSettings>
   </PropertyGroup>
   <PropertyGroup>
     <IsDependabotJob Condition=" '$(GITHUB_ACTIONS)' == 'true' AND '$(DEPENDABOT_JOB_ID)' != '' ">true</IsDependabotJob>
