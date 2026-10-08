@@ -81,6 +81,46 @@ public static class SchemaRepositoryTests
     }
 
     [Fact]
+    public static void TryLookupByType_KnownType_ReturnsTrueAndNonNullReference()
+    {
+        var repository = new SchemaRepository();
+        (string schemaId, _) = GenerateSchemaForType(typeof(Example), repository);
+
+        bool result = repository.TryLookupByType(typeof(Example), out var referenceSchema);
+
+        Assert.True(result);
+        Assert.NotNull(referenceSchema);
+        Assert.Equal(schemaId, referenceSchema.Reference.Id);
+    }
+
+    [Fact]
+    public static void TryLookupByType_UnknownType_ReturnsFalseAndNullReference()
+    {
+        var repository = new SchemaRepository();
+
+        bool result = repository.TryLookupByType(typeof(Example), out var referenceSchema);
+
+        Assert.False(result);
+        Assert.Null(referenceSchema);
+    }
+
+    [Fact]
+    public static void TryLookupByType_NotNullWhenAttributeIsAppliedToOutParameter()
+    {
+        var method = typeof(SchemaRepository).GetMethod(nameof(SchemaRepository.TryLookupByType));
+        Assert.NotNull(method);
+
+        var outParameter = method.GetParameters().Single(p => p.IsOut);
+        var attribute = outParameter
+            .GetCustomAttributes(typeof(System.Diagnostics.CodeAnalysis.NotNullWhenAttribute), inherit: false)
+            .Cast<System.Diagnostics.CodeAnalysis.NotNullWhenAttribute>()
+            .SingleOrDefault();
+
+        Assert.NotNull(attribute);
+        Assert.True(attribute.ReturnValue);
+    }
+
+    [Fact]
     public static void ReplaceSchemaId_CanGenerateMultipleTimes()
     {
         var repository = new SchemaRepository();
