@@ -331,7 +331,7 @@ public class SchemaGenerator(
             (modelType.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory));
     }
 
-    private static OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
+    private OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
     {
         var schema = new OpenApiSchema
         {
@@ -353,10 +353,28 @@ public class SchemaGenerator(
                 enumValues = enumValues.Append(null);
             }*/
 
-            schema.Enum = [.. enumValues
+            var jsonValues = enumValues
                 .Select(value => dataContract.JsonConverter(value))
                 .Distinct()
-                .Select(JsonModelFactory.CreateFromJson)];
+                .ToList();
+
+            if (_generatorOptions.UseOneOfForEnumMemberDescriptions)
+            {
+                // OpenAPI 3.1: use oneOf with single-value branches instead of an enum array,
+                // so that per-member descriptions (e.g. from XML comments) can be attached.
+                // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3978
+                // Note: a single-value "enum" is used instead of "const" because
+                // IOpenApiSchema.Const is typed as string in Microsoft.OpenApi.
+                schema.OneOf = [.. jsonValues
+                    .Select(jsonValue => (IOpenApiSchema)new OpenApiSchema
+                    {
+                        Enum = [JsonModelFactory.CreateFromJson(jsonValue)]
+                    })];
+            }
+            else
+            {
+                schema.Enum = [.. jsonValues.Select(JsonModelFactory.CreateFromJson)];
+            }
         }
 
         return schema;

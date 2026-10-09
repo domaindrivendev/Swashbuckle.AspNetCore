@@ -18,6 +18,13 @@ public class SchemaGeneratorOptions
 
     public bool UseInlineDefinitionsForEnums { get; set; }
 
+    /// <summary>
+    /// Generate enums using <c>oneOf</c> with single-value branches instead of an <c>enum</c> array,
+    /// to allow per-member descriptions (e.g. from XML comments) as described in the OpenAPI 3.1 spec.
+    /// Only applicable when generating OpenAPI 3.1 documents; older versions should leave this disabled.
+    /// </summary>
+    public bool UseOneOfForEnumMemberDescriptions { get; set; }
+
     public Func<Type, string> SchemaIdSelector { get; set; }
 
     public bool IgnoreObsoleteProperties { get; set; }

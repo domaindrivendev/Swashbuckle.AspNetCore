@@ -1,1 +1,4 @@
 ﻿
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.UseOneOfForEnumMemberDescriptions(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.UseOneOfForEnumMemberDescriptions.get -> bool
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.UseOneOfForEnumMemberDescriptions.set -> void

@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -228,6 +228,18 @@ public static class SwaggerGenOptionsExtensions
     public static void UseOneOfForPolymorphism(this SwaggerGenOptions swaggerGenOptions)
     {
         swaggerGenOptions.SchemaGeneratorOptions.UseOneOfForPolymorphism = true;
+    }
+
+    /// <summary>
+    /// Generate enums using <c>oneOf</c> with single-value branches instead of an <c>enum</c> array,
+    /// to allow per-member descriptions (e.g. from XML comments) as described in the OpenAPI 3.1 spec.
+    /// Only applicable when generating OpenAPI 3.1 documents; older versions should leave this disabled.
+    /// See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3978
+    /// </summary>
+    /// <param name="swaggerGenOptions"></param>
+    public static void UseOneOfForEnumMemberDescriptions(this SwaggerGenOptions swaggerGenOptions)
+    {
+        swaggerGenOptions.SchemaGeneratorOptions.UseOneOfForEnumMemberDescriptions = true;
     }
 
     /// <summary>
