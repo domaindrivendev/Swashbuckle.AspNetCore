@@ -19,12 +19,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
     <PackageReference Include="Microsoft.Kiota.Bundle" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.OpenApi.YamlReader" />
     <PackageReference Include="Microsoft.Playwright" />
     <PackageReference Include="NJsonSchema" />
     <PackageReference Include="Verify.XunitV3" />
-    <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
 
