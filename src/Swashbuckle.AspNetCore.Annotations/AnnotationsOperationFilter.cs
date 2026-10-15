@@ -117,7 +117,11 @@ public class AnnotationsOperationFilter : IOperationFilter
                 swaggerResponseAttribute.ContentTypes is { } contentTypes)
             {
                 concrete.Content?.Clear();
+#if NET11_0_OR_GREATER
+                concrete.Content ??= new Dictionary<string, IOpenApiMediaType>();
+#else
                 concrete.Content ??= new Dictionary<string, OpenApiMediaType>();
+#endif
 
                 foreach (var contentType in contentTypes)
                 {

@@ -21,7 +21,6 @@ Swashbuckle.AspNetCore.ApiTesting.ContentDoesNotMatchSpecException.ContentDoesNo
 Swashbuckle.AspNetCore.ApiTesting.HttpHeadersExtensions
 Swashbuckle.AspNetCore.ApiTesting.IContentValidator
 Swashbuckle.AspNetCore.ApiTesting.IContentValidator.CanValidate(string mediaType) -> bool
-Swashbuckle.AspNetCore.ApiTesting.IContentValidator.Validate(Microsoft.OpenApi.OpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
 Swashbuckle.AspNetCore.ApiTesting.IJsonValidator
 Swashbuckle.AspNetCore.ApiTesting.IJsonValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
 Swashbuckle.AspNetCore.ApiTesting.IJsonValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
@@ -44,7 +43,6 @@ Swashbuckle.AspNetCore.ApiTesting.JsonBooleanValidator.Validate(Microsoft.OpenAp
 Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator
 Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator.CanValidate(string mediaType) -> bool
 Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator.JsonContentValidator() -> void
-Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator.Validate(Microsoft.OpenApi.OpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
 Swashbuckle.AspNetCore.ApiTesting.JsonNullValidator
 Swashbuckle.AspNetCore.ApiTesting.JsonNullValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
 Swashbuckle.AspNetCore.ApiTesting.JsonNullValidator.JsonNullValidator() -> void

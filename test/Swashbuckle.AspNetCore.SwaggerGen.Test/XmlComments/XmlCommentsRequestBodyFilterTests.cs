@@ -14,7 +14,11 @@ public class XmlCommentsRequestBodyFilterTests
     {
         var requestBody = new OpenApiRequestBody
         {
+#if NET11_0_OR_GREATER
+            Content = new Dictionary<string, IOpenApiMediaType>
+#else
             Content = new Dictionary<string, OpenApiMediaType>
+#endif
             {
                 ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
             }
@@ -41,7 +45,11 @@ public class XmlCommentsRequestBodyFilterTests
     {
         var requestBody = new OpenApiRequestBody
         {
+#if NET11_0_OR_GREATER
+            Content = new Dictionary<string, IOpenApiMediaType>
+#else
             Content = new Dictionary<string, OpenApiMediaType>
+#endif
             {
                 ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
             }
@@ -68,7 +76,11 @@ public class XmlCommentsRequestBodyFilterTests
     {
         var requestBody = new OpenApiRequestBody
         {
+#if NET11_0_OR_GREATER
+            Content = new Dictionary<string, IOpenApiMediaType>
+#else
             Content = new Dictionary<string, OpenApiMediaType>
+#endif
             {
                 ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
             }
@@ -92,7 +104,11 @@ public class XmlCommentsRequestBodyFilterTests
     {
         var requestBody = new OpenApiRequestBody
         {
+#if NET11_0_OR_GREATER
+            Content = new Dictionary<string, IOpenApiMediaType>
+#else
             Content = new Dictionary<string, OpenApiMediaType>
+#endif
             {
                 ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
             }
@@ -116,7 +132,11 @@ public class XmlCommentsRequestBodyFilterTests
     {
         var requestBody = new OpenApiRequestBody
         {
+#if NET11_0_OR_GREATER
+            Content = new Dictionary<string, IOpenApiMediaType>
+#else
             Content = new Dictionary<string, OpenApiMediaType>
+#endif
             {
                 ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
             }
@@ -144,7 +164,11 @@ public class XmlCommentsRequestBodyFilterTests
 
         var requestBody = new OpenApiRequestBody
         {
+#if NET11_0_OR_GREATER
+            Content = new Dictionary<string, IOpenApiMediaType>
+#else
             Content = new Dictionary<string, OpenApiMediaType>
+#endif
             {
                 ["multipart/form-data"] = new OpenApiMediaType
                 {
