@@ -17,7 +17,7 @@
       "rollForward": false
     },
     "markdownsnippets.tool": {
-      "version": "28.5.0",
+      "version": "28.5.1",
       "commands": [
         "mdsnippets"
       ],
@@ -31,14 +31,14 @@
       "rollForward": false
     },
     "meziantou.framework.nugetpackagevalidation.tool": {
-      "version": "2.0.13",
+      "version": "2.0.15",
       "commands": [
         "meziantou.validate-nuget-package"
       ],
       "rollForward": false
     },
     "microsoft.openapi.kiota": {
-      "version": "1.35.0",
+      "version": "1.36.1",
       "commands": [
         "kiota"
       ],

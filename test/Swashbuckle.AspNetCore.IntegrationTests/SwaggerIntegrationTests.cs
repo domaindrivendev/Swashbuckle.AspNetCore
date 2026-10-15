@@ -104,7 +104,9 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         try
         {
             var openApiDocument = await OpenApiDocumentLoader.LoadAsync(contentStream);
+#pragma warning disable CS0618
             var example = openApiDocument.Components.Schemas["Product"].Example;
+#pragma warning restore CS0618
             double price = example["price"].GetValue<double>();
             Assert.Equal(14.37, price);
         }
