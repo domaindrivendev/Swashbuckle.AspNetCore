@@ -1130,6 +1130,11 @@ public class SwaggerGenerator(
         ["HEAD"] = HttpMethod.Head,
         ["PATCH"] = HttpMethod.Patch,
         ["TRACE"] = HttpMethod.Trace,
+#if NET10_0_OR_GREATER
+        ["QUERY"] = HttpMethod.Query,
+#else
+        ["QUERY"] = new HttpMethod("QUERY"),
+#endif
     };
 
     private static bool IsMatchingMetadataParameter(ApiParameterDescription apiParameter, string name, ParameterLocation? location)
