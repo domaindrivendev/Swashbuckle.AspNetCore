@@ -1,12 +1,19 @@
-﻿using Microsoft.OpenApi;
+#nullable enable
+
+// Project-wide PublicAPI tracking has not yet adopted '#nullable enable' (tracked in Directory.Build.props).
+// Suppress RS0037 here so this file can opt into nullable annotations without forcing assembly-wide rollout.
+#pragma warning disable RS0037
+
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class SchemaRepository(string documentName = null)
+public class SchemaRepository(string? documentName = null)
 {
     private readonly Dictionary<Type, string> _reservedIds = [];
 
-    public string DocumentName { get; } = documentName;
+    public string? DocumentName { get; } = documentName;
 
     public Dictionary<string, IOpenApiSchema> Schemas { get; } = [];
 
@@ -24,17 +31,17 @@ public class SchemaRepository(string documentName = null)
         _reservedIds.Add(type, schemaId);
     }
 
-    public bool TryLookupByType(Type type, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out OpenApiSchemaReference referenceSchema)
+    public bool TryLookupByType(Type type, [NotNullWhen(true)] out OpenApiSchemaReference? referenceSchema)
     {
         referenceSchema = null;
-        bool result = _reservedIds.TryGetValue(type, out string schemaId);
 
-        if (result)
+        if (_reservedIds.TryGetValue(type, out string? schemaId) && schemaId is not null)
         {
             referenceSchema = new OpenApiSchemaReference(schemaId);
+            return true;
         }
 
-        return result;
+        return false;
     }
 
     public OpenApiSchemaReference AddDefinition(string schemaId, OpenApiSchema schema)
@@ -57,7 +64,7 @@ public class SchemaRepository(string documentName = null)
         ArgumentNullException.ThrowIfNull(schemaType);
         ArgumentException.ThrowIfNullOrEmpty(replacementSchemaId);
 
-        if (_reservedIds.TryGetValue(schemaType, out string oldSchemaId) &&
+        if (_reservedIds.TryGetValue(schemaType, out string? oldSchemaId) &&
             oldSchemaId != replacementSchemaId &&
             Schemas.TryGetValue(oldSchemaId, out var targetSchema))
         {
