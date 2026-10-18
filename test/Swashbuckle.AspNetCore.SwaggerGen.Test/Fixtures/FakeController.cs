@@ -122,4 +122,25 @@ public class FakeController
     { }
     public void ActionHavingFromFormObjectWithArrayProperty([FromForm] TypeWithArrayProperty param1)
     { }
+
+    public class BaseQueryModel
+    {
+        public string Code { get; set; }
+    }
+
+    public class QueryModelWithHiddenPropertyOfDifferentType : BaseQueryModel
+    {
+        public new int Code { get; set; }
+    }
+
+    public class QueryModelWithHiddenPropertyOfSameType : BaseQueryModel
+    {
+        public new string Code { get; set; }
+    }
+
+    public void ActionWithFromQueryHiddenPropertyModel([FromQuery] QueryModelWithHiddenPropertyOfDifferentType query)
+    { }
+
+    public void ActionWithFromQuerySameTypeHiddenPropertyModel([FromQuery] QueryModelWithHiddenPropertyOfSameType query)
+    { }
 }

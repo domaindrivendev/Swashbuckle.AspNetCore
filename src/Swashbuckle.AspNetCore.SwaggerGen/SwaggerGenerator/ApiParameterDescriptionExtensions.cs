@@ -56,7 +56,7 @@ public static class ApiParameterDescriptionExtensions
     {
         var modelMetadata = apiParameter.ModelMetadata;
 
-        return modelMetadata?.ContainerType?.GetProperty(modelMetadata.PropertyName);
+        return modelMetadata?.ContainerType?.GetProperty(modelMetadata.PropertyName, modelMetadata.ModelType);
     }
 
     public static IEnumerable<object> CustomAttributes(this ApiParameterDescription apiParameter)
