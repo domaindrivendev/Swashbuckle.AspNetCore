@@ -2,6 +2,8 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi;
 using NSubstitute;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
@@ -62,6 +64,23 @@ public static class SwaggerGenServiceCollectionExtensionsTests
         Assert.Equal("helloWorld", Assert.Single(contract.ObjectProperties).Name);
     }
 
+    [Fact]
+    public static async Task AddSwaggerGen_CreatesSchemaFilter_WhenItDependsOnDataContractResolver()
+    {
+        var services = CreateServices();
+        services.AddSwaggerGen((options) => options.SchemaFilter<DataContractResolverSchemaFilter>());
+
+        var provider = services.BuildServiceProvider();
+
+        // A dependency cycle through the options hangs instead of throwing, so resolve
+        // them on another thread to fail the test with a timeout.
+        var options = await Task.Run(() => provider.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value)
+            .WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
+
+        Assert.IsType<DataContractResolverSchemaFilter>(Assert.Single(options.SchemaFilters));
+        await provider.DisposeAsync();
+    }
+
     private static JsonNamingPolicy MinimalApiNamingPolicy { get; } = new SuffixNamingPolicy("-minimal-api");
 
     private static JsonNamingPolicy MvcNamingPolicy { get; } = new SuffixNamingPolicy("-mvc");
@@ -95,5 +114,10 @@ public static class SwaggerGenServiceCollectionExtensionsTests
     private class Dto
     {
         public string HelloWorld { get; set; }
+    }
+
+    private sealed class DataContractResolverSchemaFilter(ISerializerDataContractResolver resolver) : ISchemaFilter
+    {
+        public void Apply(IOpenApiSchema schema, SchemaFilterContext context) => _ = resolver;
     }
 }
