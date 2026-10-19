@@ -13,7 +13,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft;
 public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
 {
     private readonly JsonSerializerSettings _serializerSettings;
-    private readonly SchemaGeneratorOptions _generatorOptions;
+    private readonly Lazy<SchemaGeneratorOptions> _generatorOptions;
     private readonly IContractResolver _contractResolver;
 
     /// <summary>
@@ -31,9 +31,14 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
     /// <param name="serializerSettings">The <see cref="JsonSerializerSettings"/> to use.</param>
     /// <param name="generatorOptions">The <see cref="SchemaGeneratorOptions"/> to use.</param>
     public NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings, SchemaGeneratorOptions generatorOptions)
+        : this(serializerSettings, new Lazy<SchemaGeneratorOptions>(() => generatorOptions ?? new SchemaGeneratorOptions()))
+    {
+    }
+
+    internal NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings, Lazy<SchemaGeneratorOptions> generatorOptions)
     {
         _serializerSettings = serializerSettings;
-        _generatorOptions = generatorOptions ?? new SchemaGeneratorOptions();
+        _generatorOptions = generatorOptions ?? new Lazy<SchemaGeneratorOptions>(() => new SchemaGeneratorOptions());
         _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
     }
 
@@ -219,7 +224,7 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
     {
         var nullable = propertyType.IsReferenceOrNullableType();
 
-        if ((_generatorOptions.SupportNonNullableReferenceTypes || _generatorOptions.NonNullableReferenceTypesAsRequired)
+        if ((_generatorOptions.Value.SupportNonNullableReferenceTypes || _generatorOptions.Value.NonNullableReferenceTypesAsRequired)
             && memberInfo != null)
         {
             nullable &= !memberInfo.IsNonNullableReferenceType();

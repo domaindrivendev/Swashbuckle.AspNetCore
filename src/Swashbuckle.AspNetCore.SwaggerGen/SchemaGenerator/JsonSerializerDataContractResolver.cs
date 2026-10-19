@@ -9,7 +9,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen;
 public class JsonSerializerDataContractResolver : ISerializerDataContractResolver
 {
     private readonly JsonSerializerOptions _serializerOptions;
-    private readonly SchemaGeneratorOptions _generatorOptions;
+    private readonly Lazy<SchemaGeneratorOptions> _generatorOptions;
 
     public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions)
         : this(serializerOptions, new SchemaGeneratorOptions())
@@ -17,9 +17,14 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
     }
 
     public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions, SchemaGeneratorOptions generatorOptions)
+        : this(serializerOptions, new Lazy<SchemaGeneratorOptions>(() => generatorOptions ?? new SchemaGeneratorOptions()))
+    {
+    }
+
+    internal JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions, Lazy<SchemaGeneratorOptions> generatorOptions)
     {
         _serializerOptions = serializerOptions;
-        _generatorOptions = generatorOptions ?? new SchemaGeneratorOptions();
+        _generatorOptions = generatorOptions ?? new Lazy<SchemaGeneratorOptions>(() => new SchemaGeneratorOptions());
     }
 
     public DataContract GetDataContractForType(Type type)
@@ -286,8 +291,8 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
     {
         var nullable = propertyType.IsReferenceOrNullableType();
 
-        if (_generatorOptions.SupportNonNullableReferenceTypes ||
-            _generatorOptions.NonNullableReferenceTypesAsRequired)
+        if (_generatorOptions.Value.SupportNonNullableReferenceTypes ||
+            _generatorOptions.Value.NonNullableReferenceTypesAsRequired)
         {
             nullable &= !propertyInfo.IsNonNullableReferenceType();
         }
