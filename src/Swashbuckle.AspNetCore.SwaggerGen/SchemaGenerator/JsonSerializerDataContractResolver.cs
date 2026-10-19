@@ -22,8 +22,6 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
     {
     }
 
-    // The options are read on first use, as schema filters created while they are
-    // being configured can depend on this resolver.
     internal JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions, IOptions<SchemaGeneratorOptions> generatorOptions)
     {
         _serializerOptions = serializerOptions;

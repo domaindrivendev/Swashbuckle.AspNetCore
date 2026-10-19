@@ -36,8 +36,6 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
     {
     }
 
-    // The options are read on first use, as schema filters created while they are
-    // being configured can depend on this resolver.
     internal NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings, IOptions<SchemaGeneratorOptions> generatorOptions)
     {
         _serializerSettings = serializerSettings;

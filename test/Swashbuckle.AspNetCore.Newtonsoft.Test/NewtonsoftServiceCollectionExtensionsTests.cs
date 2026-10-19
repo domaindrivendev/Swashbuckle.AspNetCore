@@ -20,7 +20,7 @@ public static class NewtonsoftServiceCollectionExtensionsTests
         // A dependency cycle through the options hangs instead of throwing, so resolve
         // them on another thread to fail the test with a timeout.
         var options = await Task.Run(() => provider.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value)
-            .WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
+            .WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
 
         Assert.IsType<DataContractResolverSchemaFilter>(Assert.Single(options.SchemaFilters));
         await provider.DisposeAsync();
