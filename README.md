@@ -306,6 +306,17 @@ Additionally, there are add-on packages (CLI tools, [an alternate UI using Redoc
 | [Swashbuckle.AspNetCore.Cli][swashbuckle-aspnetcore-cli] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Cli?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-cli] | Provides a command line interface (CLI) for retrieving OpenAPI documents directly from an application start-up assembly and then writing to a file. |
 | [Swashbuckle.AspNetCore.ReDoc][swashbuckle-aspnetcore-redoc] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.ReDoc?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-redoc] | Exposes an embedded version of the [Redoc UI][redoc] (an alternative to [swagger-ui][swagger-ui]). |
 
+> [!NOTE]
+> Swashbuckle.AspNetCore.ReDoc embeds [Redoc 3][redoc-v3], which [collects anonymous usage telemetry by default][redoc-telemetry].
+> To turn it off, set the `disableTelemetry` option when configuring the middleware:
+>
+> ```csharp
+> app.UseReDoc(options =>
+> {
+>     options.ConfigObject.AdditionalItems["disableTelemetry"] = true;
+> });
+> ```
+
 ### Community Packages
 
 These packages are provided by the .NET open-source community.
@@ -397,6 +408,8 @@ Check out the table below for the full list of possible configuration options.
 [package-badge-version]: https://img.shields.io/nuget/v/Swashbuckle.AspNetCore?logo=nuget&label=Latest&color=blue
 [package-download]: https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet"
 [redoc]: https://github.com/Redocly/redoc "The Redoc project in GitHub"
+[redoc-telemetry]: https://redocly.com/docs/redoc/v3.x/telemetry "Redoc telemetry"
+[redoc-v3]: https://github.com/Redocly/redoc/releases/tag/redoc%403.0.0 "Redoc 3.0.0 release notes"
 [scorecard-badge]: https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge
 [scorecard-report]: https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore "OpenSSF Scorecard for this project"
 [swashbuckle-aspnetcore-annotations]: https://www.nuget.org/packages/Swashbuckle.AspNetCore.Annotations "Swashbuckle.AspNetCore.Annotations NuGet package"

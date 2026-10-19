@@ -17,7 +17,7 @@ app.UseSwagger(options =>
     options.RouteTemplate = "api-docs/{documentName}/swagger.json";
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L201-L206' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-RouteTemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L209-L214' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-RouteTemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -50,7 +50,7 @@ app.UseSwagger(options =>
     });
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L208-L216' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-ModifyWithHttpRequest' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L216-L224' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-ModifyWithHttpRequest' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -73,7 +73,7 @@ app.UseSwagger(options =>
     options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L218-L223' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-OpenAPI3.1' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L226-L231' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-OpenAPI3.1' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -90,7 +90,7 @@ app.UseSwagger(options =>
     options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_2;
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L226-L231' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-OpenAPI3.2' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L234-L239' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-OpenAPI3.2' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -114,7 +114,7 @@ app.UseSwagger(options =>
     options.OpenApiVersion = OpenApiSpecVersion.OpenApi2_0;
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L234-L239' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-Swagger2.0' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L242-L247' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-Swagger2.0' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -139,7 +139,7 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("v1/swagger.json", "My API V1");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L241-L247' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-ReverseProxy' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L249-L255' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-ReverseProxy' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -177,6 +177,6 @@ app.UseSwagger(options =>
     options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L249-L254' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-CustomSerializerMiddleware' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L257-L262' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-CustomSerializerMiddleware' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->

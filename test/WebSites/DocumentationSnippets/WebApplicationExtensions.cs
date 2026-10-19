@@ -159,17 +159,10 @@ public static class WebApplicationExtensions
             options.SpecUrl("/v1/swagger.json");
             options.EnableUntrustedSpec();
             options.ScrollYOffset(10);
-            options.HideHostname();
             options.HideDownloadButton();
-            options.ExpandResponses("200,201");
             options.RequiredPropsFirst();
-            options.NoAutoAuth();
-            options.PathInMiddlePanel();
             options.HideLoading();
-            options.NativeScrollbars();
-            options.DisableSearch();
             options.OnlyRequiredInSamples();
-            options.SortPropsAlphabetically();
         });
         // end-snippet
 
@@ -180,13 +173,28 @@ public static class WebApplicationExtensions
         });
         // end-snippet
 
-        // begin-snippet: Redoc-ModifyTheme
+        // begin-snippet: Redoc-AdditionalOptions
         app.UseReDoc(options =>
         {
             options.ConfigObject.AdditionalItems = new Dictionary<string, object>
             {
-                // Configured additional options
+                ["layout"] = "stacked",
+                ["disableTelemetry"] = true,
             };
+        });
+        // end-snippet
+
+        // begin-snippet: Redoc-ModifyTheme
+        app.UseReDoc(options =>
+        {
+            options.HeadContent =
+                """
+                <style>
+                    :root.light, :root.dark {
+                        --font-family-base: 'Segoe UI', sans-serif;
+                    }
+                </style>
+                """;
         });
         // end-snippet
 
