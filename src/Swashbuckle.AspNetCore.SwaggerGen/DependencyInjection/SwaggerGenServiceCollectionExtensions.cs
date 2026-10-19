@@ -33,7 +33,7 @@ public static class SwaggerGenServiceCollectionExtensions
         services.TryAddSingleton<ISerializerDataContractResolver>(s =>
         {
             var serializerOptions = s.GetRequiredService<JsonSerializerOptionsProvider>().Options;
-            var generatorOptions = s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value;
+            var generatorOptions = s.GetRequiredService<IOptions<SchemaGeneratorOptions>>();
             return new JsonSerializerDataContractResolver(serializerOptions, generatorOptions);
         });
 

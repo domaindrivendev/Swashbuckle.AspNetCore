@@ -888,6 +888,70 @@ public class SwaggerGeneratorTests
         Assert.True(parameter.Required);
     }
 
+    [Fact]
+    public void GetSwagger_SupportsFromQueryParameter_WhenModelHidesBasePropertyWithDifferentType()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create(
+                    methodInfo: typeof(FakeController).GetMethod(nameof(FakeController.ActionWithFromQueryHiddenPropertyModel)),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "code",
+                            Source = BindingSource.Query,
+                            ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(FakeController.QueryModelWithHiddenPropertyOfDifferentType), "Code")
+                        }
+                    ])
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Get];
+        var parameter = Assert.Single(operation.Parameters);
+        Assert.Equal("code", parameter.Name);
+        Assert.Equal(ParameterLocation.Query, parameter.In);
+        Assert.Equal(JsonSchemaTypes.Integer, parameter.Schema.Type);
+    }
+
+    [Fact]
+    public void GetSwagger_SupportsFromQueryParameter_WhenModelHidesBasePropertyWithSameType()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create(
+                    methodInfo: typeof(FakeController).GetMethod(nameof(FakeController.ActionWithFromQuerySameTypeHiddenPropertyModel)),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "code",
+                            Source = BindingSource.Query,
+                            ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(FakeController.QueryModelWithHiddenPropertyOfSameType), "Code")
+                        }
+                    ])
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Get];
+        var parameter = Assert.Single(operation.Parameters);
+        Assert.Equal("code", parameter.Name);
+        Assert.Equal(ParameterLocation.Query, parameter.In);
+        Assert.Equal(JsonSchemaTypes.String, parameter.Schema.Type);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

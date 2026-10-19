@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
@@ -9,7 +10,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen;
 public class JsonSerializerDataContractResolver : ISerializerDataContractResolver
 {
     private readonly JsonSerializerOptions _serializerOptions;
-    private readonly SchemaGeneratorOptions _generatorOptions;
+    private readonly IOptions<SchemaGeneratorOptions> _generatorOptions;
 
     public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions)
         : this(serializerOptions, new SchemaGeneratorOptions())
@@ -17,9 +18,14 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
     }
 
     public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions, SchemaGeneratorOptions generatorOptions)
+        : this(serializerOptions, Options.Create(generatorOptions ?? new SchemaGeneratorOptions()))
+    {
+    }
+
+    internal JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions, IOptions<SchemaGeneratorOptions> generatorOptions)
     {
         _serializerOptions = serializerOptions;
-        _generatorOptions = generatorOptions ?? new SchemaGeneratorOptions();
+        _generatorOptions = generatorOptions;
     }
 
     public DataContract GetDataContractForType(Type type)
@@ -313,9 +319,10 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
     private bool IsNullable(PropertyInfo propertyInfo, Type propertyType)
     {
         var nullable = propertyType.IsReferenceOrNullableType();
+        var generatorOptions = _generatorOptions.Value;
 
-        if (_generatorOptions.SupportNonNullableReferenceTypes ||
-            _generatorOptions.NonNullableReferenceTypesAsRequired)
+        if (generatorOptions.SupportNonNullableReferenceTypes ||
+            generatorOptions.NonNullableReferenceTypesAsRequired)
         {
             nullable &= !propertyInfo.IsNonNullableReferenceType();
         }
