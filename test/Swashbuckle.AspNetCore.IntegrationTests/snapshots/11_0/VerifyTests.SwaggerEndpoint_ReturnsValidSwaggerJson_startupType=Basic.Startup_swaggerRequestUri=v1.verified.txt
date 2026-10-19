@@ -1012,6 +1012,51 @@
         "x-purpose": "test"
       }
     },
+    "/products/query": {
+      "x-oai-additionalOperations": {
+        "QUERY": {
+          "tags": [
+            "QueryActions"
+          ],
+          "summary": "Searches the collection of products using a request body",
+          "operationId": "QueryProducts",
+          "requestBody": {
+            "description": "The search criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductQuery"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductQuery"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductQuery"
+                }
+              }
+            },
+            "x-purpose": "test"
+          },
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ProductQueryResult"
+                  }
+                }
+              }
+            }
+          },
+          "x-purpose": "test"
+        }
+      }
+    },
     "/orders": {
       "post": {
         "tags": [
@@ -1553,6 +1598,41 @@
           "price": 14.37
         }
       },
+      "ProductQuery": {
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "type": "string",
+            "description": "Keywords to search for",
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "description": "The maximum number of results to return",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductQueryResult": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "$ref": "#/components/schemas/ProductQuery"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "The identifiers of the matching products",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProductStatus": {
         "enum": [
           0,
@@ -1742,6 +1822,9 @@
     },
     {
       "name": "PolymorphicTypes"
+    },
+    {
+      "name": "QueryActions"
     },
     {
       "name": "ResponseTypeAnnotations"

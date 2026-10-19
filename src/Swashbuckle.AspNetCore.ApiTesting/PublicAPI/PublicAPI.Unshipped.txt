@@ -1,1 +1,2 @@
-﻿
+﻿Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions.OpenApiVersion.get -> Microsoft.OpenApi.OpenApiSpecVersion
+Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions.OpenApiVersion.set -> void

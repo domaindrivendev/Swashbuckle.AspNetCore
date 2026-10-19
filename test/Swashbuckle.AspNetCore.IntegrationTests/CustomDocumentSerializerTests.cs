@@ -27,6 +27,25 @@ public class CustomDocumentSerializerTests(ITestOutputHelper outputHelper)
         Assert.Equal("DocumentSerializerTest3.1", swaggerInfo);
     }
 
+#if NET11_0_OR_GREATER
+    [Fact]
+    public async Task TestSite_Writes_Custom_V3_2_Document()
+    {
+        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);
+        var client = testSite.BuildClient();
+
+        var swaggerResponse = await client.GetAsync($"/swagger/v1/swaggerv3_2.json", TestContext.Current.CancellationToken);
+
+        swaggerResponse.EnsureSuccessStatusCode();
+        var contentStream = await swaggerResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
+        using var document = JsonDocument.Parse(contentStream);
+
+        // verify that the custom serializer wrote the swagger info
+        var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
+        Assert.Equal("DocumentSerializerTest3.2", swaggerInfo);
+    }
+#endif
+
     [Fact]
     public async Task TestSite_Writes_Custom_V3_Document()
     {
@@ -113,6 +132,36 @@ public class CustomDocumentSerializerTests(ITestOutputHelper outputHelper)
         var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
         Assert.Equal("DocumentSerializerTest3.1", swaggerInfo);
     }
+
+#if NET11_0_OR_GREATER
+    [Fact]
+    public async Task DocumentProvider_Writes_Custom_V3_2_Document()
+    {
+        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);
+        var server = testSite.BuildServer();
+        var services = server.Services;
+
+        var documentProvider = services.GetService<IDocumentProvider>();
+        var options = services.GetService<IOptions<SwaggerOptions>>();
+        options.Value.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_2;
+
+        using var stream = new MemoryStream();
+
+        using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
+        {
+            await documentProvider.GenerateAsync("v1", writer);
+            await writer.FlushAsync(TestContext.Current.CancellationToken);
+        }
+
+        stream.Position = 0L;
+
+        using var document = JsonDocument.Parse(stream);
+
+        // verify that the custom serializer wrote the swagger info
+        var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
+        Assert.Equal("DocumentSerializerTest3.2", swaggerInfo);
+    }
+#endif
 
     [Fact]
     public async Task DocumentProvider_Writes_Custom_V2_Document()

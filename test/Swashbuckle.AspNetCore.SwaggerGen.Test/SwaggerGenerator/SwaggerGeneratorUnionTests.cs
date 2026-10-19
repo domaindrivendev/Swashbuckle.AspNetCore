@@ -26,6 +26,7 @@ public class SwaggerGeneratorUnionTests
     [Theory]
     [InlineData(OpenApiSpecVersion.OpenApi3_0)]
     [InlineData(OpenApiSpecVersion.OpenApi3_1)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_2)]
     public void GetSwagger_EmitsUnionResponseAsAnyOfOfReferences_AndDeduplicatesSharedCaseType(OpenApiSpecVersion specVersion)
     {
         // Endpoint 1 returns a union (Pet), endpoint 2 returns one of its cases (Cat) explicitly.

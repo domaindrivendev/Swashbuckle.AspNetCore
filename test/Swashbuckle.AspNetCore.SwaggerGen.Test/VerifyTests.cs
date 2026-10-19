@@ -1739,6 +1739,38 @@ public partial class VerifyTests
         await Verify(document, OpenApiSpecVersion.OpenApi3_1);
     }
 
+#if NET11_0_OR_GREATER
+    [Theory]
+    [InlineData(OpenApiSpecVersion.OpenApi3_0)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_2)]
+    public async Task GetSwagger_QueryOperation_RendersCorrectly(OpenApiSpecVersion version)
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "GET", relativePath: "resource"),
+
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "QUERY", relativePath: "resource"),
+            ],
+            options: new SwaggerGeneratorOptions
+            {
+                SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                {
+                    ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                }
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        await Verifier.Verify(ToJson(document, version))
+                      .UseDirectory(SnapshotsDirectory)
+                      .UseParameters(version);
+    }
+#endif
+
     private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,

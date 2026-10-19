@@ -28,6 +28,9 @@ public class Startup
             endpoints.MapSwagger("swagger/{documentName}/swagger.json");
             endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c => c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
             endpoints.MapSwagger("swagger/{documentName}/swaggerv3_1.json", c => c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1);
+#if NET11_0_OR_GREATER
+            endpoints.MapSwagger("swagger/{documentName}/swaggerv3_2.json", c => c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_2);
+#endif
         });
     }
 }

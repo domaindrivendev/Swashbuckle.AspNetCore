@@ -19,6 +19,9 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv2.json")]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv3_1.json")]
+#if NET11_0_OR_GREATER
+    [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv3_2.json")]
+#endif
     [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net10.0.json")]
     [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
@@ -121,6 +124,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [InlineData("/swagger/v1/swaggerv2.json", "swagger", "2.0")]
 #if NET11_0_OR_GREATER
     [InlineData("/swagger/v1/swaggerv3_1.json", "openapi", "3.1.2")]
+    [InlineData("/swagger/v1/swaggerv3_2.json", "openapi", "3.2.0")]
 #else
     [InlineData("/swagger/v1/swaggerv3_1.json", "openapi", "3.1.1")]
 #endif

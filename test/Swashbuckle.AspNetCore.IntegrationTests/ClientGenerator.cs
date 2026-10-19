@@ -23,6 +23,9 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
                 OpenApiSpecVersion.OpenApi2_0 => true,
                 OpenApiSpecVersion.OpenApi3_0 => true,
                 OpenApiSpecVersion.OpenApi3_1 => true,
+#if NET11_0_OR_GREATER
+                OpenApiSpecVersion.OpenApi3_2 => true,
+#endif
                 _ => false,
             },
             _ => false,

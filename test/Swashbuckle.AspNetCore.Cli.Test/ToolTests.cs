@@ -31,7 +31,9 @@ public static class ToolTests
     [Theory]
     [InlineData("a")]
     [InlineData("1.9")]
+#if !NET11_0_OR_GREATER
     [InlineData("3.2")]
+#endif
     public static async Task Error_When_OpenApiVersion_Is_Not_Supported(string version)
     {
         string[] args =
@@ -110,6 +112,34 @@ public static class ToolTests
         var productsPath = paths.GetProperty("/products");
         Assert.True(productsPath.TryGetProperty("post", out _));
     }
+
+#if NET11_0_OR_GREATER
+    [Fact]
+    public static async Task Can_Generate_Swagger_Json_v3_2()
+    {
+        using var document = await RunToJsonCommandAsync((outputPath) =>
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            "--openapiversion",
+            "3.2",
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ]);
+
+        Assert.StartsWith("3.2.", document.RootElement.GetProperty("openapi").GetString());
+
+        // verify one of the endpoints
+        var paths = document.RootElement.GetProperty("paths");
+        var productsPath = paths.GetProperty("/products");
+        Assert.True(productsPath.TryGetProperty("post", out _));
+
+        // verify that QUERY operations are first-class operations in OpenAPI 3.2
+        var queryPath = paths.GetProperty("/products/query");
+        Assert.True(queryPath.TryGetProperty("query", out _));
+    }
+#endif
 
     [Fact]
     public static async Task Can_Generate_Swagger_Json_v3_OpenApiVersion()

@@ -27,6 +27,9 @@ public partial class CodeGenerationTests(ITestOutputHelper outputHelper)
                 { Major: 2 } => OpenApiSpecVersion.OpenApi2_0,
                 { Major: 3, Minor: 0 } => OpenApiSpecVersion.OpenApi3_0,
                 { Major: 3, Minor: 1 } => OpenApiSpecVersion.OpenApi3_1,
+#if NET11_0_OR_GREATER
+                { Major: 3, Minor: 2 } => OpenApiSpecVersion.OpenApi3_2,
+#endif
                 _ => throw new NotSupportedException(path),
             };
 
@@ -44,7 +47,7 @@ public partial class CodeGenerationTests(ITestOutputHelper outputHelper)
 
                     if (!fileName.Contains("=v1."))
                     {
-                        // Ignore duplicative test cases for Swagger 2.0 and OpenAPI 3.1
+                        // Ignore duplicative test cases for Swagger 2.0 and OpenAPI 3.1/3.2
                         continue;
                     }
                 }
