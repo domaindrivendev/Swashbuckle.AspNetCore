@@ -279,7 +279,7 @@ public static class SwaggerGenOptionsExtensions
     /// If the serializer supports polymorphic deserialization of payloads that do not contain a discriminator property, or that contain
     /// a discriminator value that is not in the discriminator mapping, you can provide a custom selector to tell Swashbuckle which type
     /// such payloads should be validated against. The selected type is emitted as the <c>defaultMapping</c> of the discriminator, which is only
-    /// supported by OpenAPI 3.2, and therefore only when targeting .NET 11 or later.
+    /// supported by OpenAPI 3.2.
     /// This setting is only applicable when used in conjunction with UseOneOfForPolymorphism or UseAllOfForInheritance.
     /// </summary>
     /// <param name="swaggerGenOptions"></param>

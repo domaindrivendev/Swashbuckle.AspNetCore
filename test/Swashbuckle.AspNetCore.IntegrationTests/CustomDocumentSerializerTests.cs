@@ -27,7 +27,6 @@ public class CustomDocumentSerializerTests(ITestOutputHelper outputHelper)
         Assert.Equal("DocumentSerializerTest3.1", swaggerInfo);
     }
 
-#if NET11_0_OR_GREATER
     [Fact]
     public async Task TestSite_Writes_Custom_V3_2_Document()
     {
@@ -44,7 +43,6 @@ public class CustomDocumentSerializerTests(ITestOutputHelper outputHelper)
         var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
         Assert.Equal("DocumentSerializerTest3.2", swaggerInfo);
     }
-#endif
 
     [Fact]
     public async Task TestSite_Writes_Custom_V3_Document()
@@ -133,7 +131,6 @@ public class CustomDocumentSerializerTests(ITestOutputHelper outputHelper)
         Assert.Equal("DocumentSerializerTest3.1", swaggerInfo);
     }
 
-#if NET11_0_OR_GREATER
     [Fact]
     public async Task DocumentProvider_Writes_Custom_V3_2_Document()
     {
@@ -161,7 +158,6 @@ public class CustomDocumentSerializerTests(ITestOutputHelper outputHelper)
         var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
         Assert.Equal("DocumentSerializerTest3.2", swaggerInfo);
     }
-#endif
 
     [Fact]
     public async Task DocumentProvider_Writes_Custom_V2_Document()

@@ -39,7 +39,7 @@ public class SchemaGeneratorOptions
     /// </summary>
     /// <remarks>
     /// The selected type is emitted as the <c>defaultMapping</c> of the discriminator, which is only supported by
-    /// OpenAPI 3.2 and therefore only when targeting .NET 11 or later. Return <see langword="null"/> to not emit a default mapping.
+    /// OpenAPI 3.2. Return <see langword="null"/> to not emit a default mapping.
     /// </remarks>
     public Func<Type, Type> DiscriminatorDefaultMappingSelector { get; set; }
 

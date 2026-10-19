@@ -1333,9 +1333,9 @@ services.AddSwaggerGen(options =>
 #### Discriminator Default Mapping
 
 OpenAPI 3.2 adds a `defaultMapping` field to the discriminator description, which identifies the schema that a payload should be
-validated against when the discriminator property is not present, or has a value that is not in the `mapping`. When targeting .NET 11 or
-later and producing OpenAPI 3.2 documents, you can provide a selector function to determine the type to use as the default mapping for
-a given base type. The selector is ignored when producing documents using earlier versions of the OpenAPI specification.
+validated against when the discriminator property is not present, or has a value that is not in the `mapping`. When producing OpenAPI 3.2
+documents, you can provide a selector function to determine the type to use as the default mapping for a given base type. The selector is
+ignored when producing documents using earlier versions of the OpenAPI specification.
 
 > [!NOTE]
 > Versions of Microsoft.OpenApi earlier than 3.9.0 serialize `defaultMapping` as a reference object rather than as the string

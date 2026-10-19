@@ -304,7 +304,7 @@ public enum ShapeType
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
-When targeting .NET 11 or later and producing OpenAPI 3.2 documents, the discriminator's `defaultMapping` is also populated if the base
+When producing OpenAPI 3.2 documents, the discriminator's `defaultMapping` is also populated if the base
 type is annotated with `[SwaggerDiscriminator]` and its `DefaultMapping` property is set, or if the base type is a concrete type annotated
 with `[JsonPolymorphic]` and its `UnknownDerivedTypeHandling` property is set to fall back to the base type. See
 [Discriminator Default Mapping](configure-and-customize-swaggergen.md#discriminator-default-mapping) for more details.

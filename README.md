@@ -26,8 +26,8 @@ for more details.
 
 > [!IMPORTANT]  
 > Version 11.0 of Swashbuckle.AspNetCore introduces breaking changes due to dropping support for .NET 8 and .NET 9, upgrading our dependency on
-> [Microsoft.OpenApi][microsoft-openapi] to version 3.x.x when targeting .NET 11 to add support for generating OpenAPI 3.2 documents, and
-> upgrading the embedded [Redoc][redoc] UI to version 3.x. Please see _[Migrating to Swashbuckle.AspNetCore v11][v11-migration]_ for more details.
+> [Microsoft.OpenApi][microsoft-openapi] to version 3.x.x to add support for generating OpenAPI 3.2 documents, and upgrading the embedded
+> [Redoc][redoc] UI to version 3.x. Please see _[Migrating to Swashbuckle.AspNetCore v11][v11-migration]_ for more details.
 >
 > Version 10.0 of Swashbuckle.AspNetCore introduced breaking changes due to upgrading our dependency on [Microsoft.OpenApi][microsoft-openapi]
 > to version 2.x.x to add support for generating OpenAPI 3.1 documents. Please see _[Migrating to Swashbuckle.AspNetCore v10][v10-migration]_ for more details.
@@ -36,12 +36,10 @@ for more details.
 
 | **Swashbuckle Version**                                                                                          | **ASP.NET Core**           | **OpenAPI/Swagger Versions** | **Microsoft.OpenApi**                                                                        | **swagger-ui**                                                                            | **Redoc**                                                                    |
 |:-----------------------------------------------------------------------------------------------------------------|:---------------------------|:-----------------------------|:---------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------|
-| [![CI Swashbuckle.AspNetCore version][swashbuckle-version-vnext-badge]][swashbuckle-version-vnext-release]       | >= 8.0.0                   | 3.2*, 3.1, **3.0**, 2.0      | [![Microsoft.OpenApi version][openapi-version-vnext-badge]][openapi-version-vnext-release]   | [![swagger-ui version][swaggerui-version-vnext-badge]][swaggerui-version-vnext-release]   | [![Redoc version][redoc-version-vnext-badge]][redoc-version-vnext-release]   |
+| [![CI Swashbuckle.AspNetCore version][swashbuckle-version-vnext-badge]][swashbuckle-version-vnext-release]       | >= 8.0.0                   | 3.2, 3.1, **3.0**, 2.0       | [![Microsoft.OpenApi version][openapi-version-vnext-badge]][openapi-version-vnext-release]   | [![swagger-ui version][swaggerui-version-vnext-badge]][swaggerui-version-vnext-release]   | [![Redoc version][redoc-version-vnext-badge]][redoc-version-vnext-release]   |
 | [![Latest Swashbuckle.AspNetCore version][swashbuckle-version-latest-badge]][swashbuckle-version-latest-release] | >= 8.0.0                   | 3.1, **3.0**, 2.0            | [![Microsoft.OpenApi version][openapi-version-latest-badge]][openapi-version-latest-release] | [![swagger-ui version][swaggerui-version-latest-badge]][swaggerui-version-latest-release] | [![Redoc version][redoc-version-latest-badge]][redoc-version-latest-release] |
 | [![Last v9 Swashbuckle.AspNetCore version][swashbuckle-version-v9-badge]][swashbuckle-version-v9-release]        | 9.0.x, 8.0.x               | **3.0**, 2.0                 | [![Microsoft.OpenApi version][openapi-version-v9-badge]][openapi-version-v9-release]         | [![swagger-ui version][swaggerui-version-v9-badge]][swaggerui-version-v9-release]         | [![Redoc version][redoc-version-v9-badge]][redoc-version-v9-release]         |
 | [![Last v8 Swashbuckle.AspNetCore version][swashbuckle-version-v8-badge]][swashbuckle-version-v8-release]        | 9.0.x, 8.0.x, 2.3.x        | **3.0**, 2.0                 | [![Microsoft.OpenApi version][openapi-version-v8-badge]][openapi-version-v8-release]         | [![swagger-ui version][swaggerui-version-v8-badge]][swaggerui-version-v8-release]         | [![Redoc version][redoc-version-v8-badge]][redoc-version-v8-release]         |
-
-\* OpenAPI 3.2 is supported when targeting .NET 11 or later.
 
 [swashbuckle-version-vnext-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2FHEAD%2FDirectory.Build.props&query=(%2F%2FProject%2FPropertyGroup%2FVersionPrefix)%5B1%5D&prefix=v&suffix=-*&logo=github&label=CI
 [swashbuckle-version-vnext-release]: https://www.myget.org/gallery/domaindrivendev

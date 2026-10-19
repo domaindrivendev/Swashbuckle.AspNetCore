@@ -39,9 +39,7 @@ public class ApiTestRunnerBaseTests
     [InlineData(OpenApiSpecVersion.OpenApi2_0, "swagger", "2.0")]
     [InlineData(OpenApiSpecVersion.OpenApi3_0, "openapi", "3.0.")]
     [InlineData(OpenApiSpecVersion.OpenApi3_1, "openapi", "3.1.")]
-#if NET11_0_OR_GREATER
     [InlineData(OpenApiSpecVersion.OpenApi3_2, "openapi", "3.2.")]
-#endif
     public void Dispose_WritesOpenApiFiles_UsingConfiguredVersion(
         OpenApiSpecVersion version,
         string expectedPropertyName,

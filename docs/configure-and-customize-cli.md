@@ -66,9 +66,6 @@ dotnet tool install -g Swashbuckle.AspNetCore.Cli
     | `--host <value>`           | A specific host to include in the generated document.                                             |
     | `--basepath <value>`       | A specific base path to include in the generated document.                                        |
 
-    > [!NOTE]
-    > `--openapiversion 3.2` is only supported when the tool is run using the .NET 11 SDK or later.
-
     For example, to generate an OpenAPI 3.1 document as YAML:
 
     ```terminal

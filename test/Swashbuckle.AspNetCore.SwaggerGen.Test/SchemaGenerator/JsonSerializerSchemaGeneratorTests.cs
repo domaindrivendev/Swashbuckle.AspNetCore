@@ -1088,7 +1088,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal("TypeName", schema.Discriminator.PropertyName);
     }
 
-#if NET11_0_OR_GREATER
     [Fact]
     public void GenerateSchema_SupportsOption_DiscriminatorDefaultMappingSelector()
     {
@@ -1129,7 +1128,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.NotNull(schema.Discriminator);
         Assert.Null(schema.Discriminator.DefaultMapping);
     }
-#endif
 
     [Fact]
     public void GenerateSchema_SupportsOption_UseAllOfForPolymorphism()

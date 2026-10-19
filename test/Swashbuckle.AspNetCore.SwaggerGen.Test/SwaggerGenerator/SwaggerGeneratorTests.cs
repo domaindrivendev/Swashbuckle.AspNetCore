@@ -208,11 +208,7 @@ public class SwaggerGeneratorTests
                     {
                         ["200"] = new OpenApiResponse()
                         {
-#if NET11_0_OR_GREATER
                             Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                            Content = new Dictionary<string, OpenApiMediaType>
-#endif
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -268,11 +264,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-#if NET11_0_OR_GREATER
                             Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                            Content = new Dictionary<string, OpenApiMediaType>
-#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2362,35 +2354,6 @@ public class SwaggerGeneratorTests
         Assert.Equal("v1", ((JsonNodeExtension)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
     }
 
-#if !NET11_0_OR_GREATER
-    [Theory]
-    [InlineData("connect")]
-    [InlineData("CONNECT")]
-    [InlineData("FOO")]
-    [InlineData("QUERY")]
-    public void GetSwagger_GeneratesSwaggerDocument_ThrowsIfHttpMethodNotSupported(string httpMethod)
-    {
-        var subject = Subject(
-            apiDescriptions:
-            [
-                ApiDescriptionFactory.Create<FakeController>(
-                    c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: httpMethod, relativePath: "resource"),
-            ],
-            options: new SwaggerGeneratorOptions
-            {
-                SwaggerDocs = new Dictionary<string, OpenApiInfo>
-                {
-                    ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
-                }
-            }
-        );
-
-        var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
-        Assert.Equal($"The \"{httpMethod}\" HTTP method is not supported.", exception.Message);
-    }
-#endif
-
-#if NET11_0_OR_GREATER
     [Theory]
     [InlineData("query", "QUERY")]
     [InlineData("QUERY", "QUERY")]
@@ -2421,7 +2384,6 @@ public class SwaggerGeneratorTests
         Assert.Equal(expected, operation.Key.Method);
         Assert.NotNull(operation.Value);
     }
-#endif
 
     [Fact]
     public void GetSwagger_Throws_Exception_When_FromForm_Attribute_Used_With_IFormFile()
@@ -2774,11 +2736,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-#if NET11_0_OR_GREATER
                         Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                        Content = new Dictionary<string, OpenApiMediaType>
-#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2843,11 +2801,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-#if NET11_0_OR_GREATER
                         Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                        Content = new Dictionary<string, OpenApiMediaType>
-#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2909,11 +2863,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-#if NET11_0_OR_GREATER
                         Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                        Content = new Dictionary<string, OpenApiMediaType>
-#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2977,11 +2927,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-#if NET11_0_OR_GREATER
                         Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                        Content = new Dictionary<string, OpenApiMediaType>
-#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -3041,11 +2987,7 @@ public class SwaggerGeneratorTests
                 {
                     RequestBody = new OpenApiRequestBody()
                     {
-#if NET11_0_OR_GREATER
                         Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                        Content = new Dictionary<string, OpenApiMediaType>
-#endif
                         {
                             { "text/plain", new OpenApiMediaType() }
                         }

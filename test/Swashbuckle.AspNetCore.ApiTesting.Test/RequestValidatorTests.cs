@@ -275,11 +275,7 @@ public class RequestValidatorTests
             RequestBody = new OpenApiRequestBody
             {
                 Required = true,
-#if NET11_0_OR_GREATER
                 Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                Content = new Dictionary<string, OpenApiMediaType>
-#endif
                 {
                     [ "text/plain" ] = new OpenApiMediaType()
                 }
@@ -311,11 +307,7 @@ public class RequestValidatorTests
         {
             RequestBody = new OpenApiRequestBody
             {
-#if NET11_0_OR_GREATER
                 Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                Content = new Dictionary<string, OpenApiMediaType>
-#endif
                 {
                     [ "application/json" ] = new OpenApiMediaType()
                 }
@@ -347,11 +339,7 @@ public class RequestValidatorTests
         {
             RequestBody = new OpenApiRequestBody
             {
-#if NET11_0_OR_GREATER
                 Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                Content = new Dictionary<string, OpenApiMediaType>
-#endif
                 {
                     [ "application/json" ] = new OpenApiMediaType
                     {

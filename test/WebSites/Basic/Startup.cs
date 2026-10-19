@@ -25,12 +25,10 @@ public class Startup : StartupBase
             c.SwaggerEndpoint("/swagger/v1/swaggerv3_1.json", "V1 Docs (OpenAPI 3.1)");
         });
 
-#if NET11_0_OR_GREATER
         app.UseSwaggerUI(c =>
         {
             c.RoutePrefix = "swagger-v3_2";
             c.SwaggerEndpoint("/swagger/v1/swaggerv3_2.json", "V1 Docs (OpenAPI 3.2)");
         });
-#endif
     }
 }

@@ -1,5 +1,5 @@
 ﻿{
-  "openapi": "3.1.1",
+  "openapi": "3.1.2",
   "info": {
     "title": "Test API V1",
     "description": "A sample API for testing Swashbuckle",

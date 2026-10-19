@@ -141,11 +141,7 @@ public partial class VerifyTests
                     {
                         ["200"] = new OpenApiResponse()
                         {
-#if NET11_0_OR_GREATER
                             Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                            Content = new Dictionary<string, OpenApiMediaType>
-#endif
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -196,11 +192,7 @@ public partial class VerifyTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-#if NET11_0_OR_GREATER
                         Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                        Content = new Dictionary<string, OpenApiMediaType>
-#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -1498,11 +1490,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-#if NET11_0_OR_GREATER
                             Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                            Content = new Dictionary<string, OpenApiMediaType>
-#endif
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1559,11 +1547,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-#if NET11_0_OR_GREATER
                             Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                            Content = new Dictionary<string, OpenApiMediaType>
-#endif
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1614,11 +1598,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-#if NET11_0_OR_GREATER
                             Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                            Content = new Dictionary<string, OpenApiMediaType>
-#endif
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1669,11 +1649,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-#if NET11_0_OR_GREATER
                             Content = new Dictionary<string, IOpenApiMediaType>
-#else
-                            Content = new Dictionary<string, OpenApiMediaType>
-#endif
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1739,7 +1715,6 @@ public partial class VerifyTests
         await Verify(document, OpenApiSpecVersion.OpenApi3_1);
     }
 
-#if NET11_0_OR_GREATER
     [Theory]
     [InlineData(OpenApiSpecVersion.OpenApi3_0)]
     [InlineData(OpenApiSpecVersion.OpenApi3_2)]
@@ -1772,7 +1747,6 @@ public partial class VerifyTests
                       .UseDirectory(SnapshotsDirectory)
                       .UseParameters(version);
     }
-#endif
 
     private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,

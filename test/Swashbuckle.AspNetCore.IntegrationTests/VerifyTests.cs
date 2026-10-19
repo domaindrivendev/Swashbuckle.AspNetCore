@@ -12,9 +12,7 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv2.json", "2.0")]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv3_1.json", "3.1")]
-#if NET11_0_OR_GREATER
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv3_2.json", "3.2")]
-#endif
     [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net10.0.json")]
     [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
@@ -25,10 +23,8 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
     [InlineData(typeof(MultipleVersions.Startup), "/swagger/1.0/swagger.json")]
     [InlineData(typeof(MultipleVersions.Startup), "/swagger/2.0/swagger.json")]
     [InlineData(typeof(OAuth2Integration.Startup), "/resource-server/swagger/v1/swagger.json")]
-#if NET11_0_OR_GREATER
     [InlineData(typeof(QueryOperations.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(QueryOperations.Startup), "/swagger/v1/swaggerv3_2.json", "3.2")]
-#endif
     [InlineData(typeof(ReDocApp.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(TestFirst.Startup), "/swagger/v1-generated/openapi.json")]
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson(

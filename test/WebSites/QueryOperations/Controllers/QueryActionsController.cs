@@ -1,5 +1,4 @@
-﻿#if NET11_0_OR_GREATER
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace QueryOperations.Controllers;
 
@@ -82,4 +81,3 @@ public class ProductQueryResult
     /// </summary>
     public int[] ProductIds { get; set; }
 }
-#endif

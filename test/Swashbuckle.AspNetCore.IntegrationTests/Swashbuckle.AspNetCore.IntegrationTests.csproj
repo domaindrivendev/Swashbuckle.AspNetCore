@@ -31,7 +31,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
     <PackageReference Update="Microsoft.Build" VersionOverride="18.9.6" />
-    <PackageReference Update="Microsoft.OpenApi.YamlReader" VersionOverride="2.12.2" />
   </ItemGroup>
 
   <ItemGroup>

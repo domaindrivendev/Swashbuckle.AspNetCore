@@ -29,9 +29,7 @@ public class UITests(PlaywrightFixture fixture) : IClassFixture<PlaywrightFixtur
 
     [Theory]
     [InlineData("swagger-v3_1/index.html")]
-#if NET11_0_OR_GREATER
     [InlineData("swagger-v3_2/index.html")]
-#endif
     public async Task Can_Load_SwaggerUI_Page_For_Other_OpenApi_Versions(string path)
     {
         // Arrange
@@ -51,9 +49,7 @@ public class UITests(PlaywrightFixture fixture) : IClassFixture<PlaywrightFixtur
     [Theory]
     [InlineData("api-docs/index.html")]
     [InlineData("api-docs-v3_1/index.html")]
-#if NET11_0_OR_GREATER
     [InlineData("api-docs-v3_2/index.html")]
-#endif
     public async Task Can_Load_Redoc_Page(string path)
     {
         // Arrange

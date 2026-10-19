@@ -79,7 +79,7 @@ app.UseSwagger(options =>
 
 ## Serialize OpenAPI in the 3.2 format
 
-When targeting .NET 11 or later, you can also opt into version 3.2 of the OpenAPI specification with the following option:
+You can also opt into version 3.2 of the OpenAPI specification with the following option:
 
 <!-- markdownlint-disable MD031 MD033 -->
 <!-- snippet: Swagger-OpenAPI3.2 -->
@@ -90,14 +90,14 @@ app.UseSwagger(options =>
     options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_2;
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L234-L239' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-OpenAPI3.2' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L233-L238' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-OpenAPI3.2' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
-> OpenAPI 3.2 support requires version 3.x of the [Microsoft.OpenApi](https://www.nuget.org/packages/Microsoft.OpenApi) package,
-> which Swashbuckle.AspNetCore only uses when targeting .NET 11 or later. Actions using the HTTP `QUERY` method are emitted
-> as first-class operations in OpenAPI 3.2 documents, and via the `x-oai-additionalOperations` extension in earlier versions.
+> Actions using the HTTP `QUERY` method are emitted as first-class operations in OpenAPI 3.2 documents, and actions using any other
+> non-standard HTTP method are emitted using `additionalOperations`. In documents using earlier versions of the specification, both
+> are emitted using the `x-oai-additionalOperations` extension.
 
 ## Serialize Swagger in the 2.0 format
 
@@ -114,7 +114,7 @@ app.UseSwagger(options =>
     options.OpenApiVersion = OpenApiSpecVersion.OpenApi2_0;
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L242-L247' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-Swagger2.0' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L240-L245' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-Swagger2.0' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -139,7 +139,7 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("v1/swagger.json", "My API V1");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L249-L255' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-ReverseProxy' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L247-L253' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-ReverseProxy' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -177,6 +177,6 @@ app.UseSwagger(options =>
     options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L257-L262' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-CustomSerializerMiddleware' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L255-L260' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-CustomSerializerMiddleware' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
