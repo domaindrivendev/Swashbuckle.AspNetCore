@@ -650,6 +650,39 @@ public partial class VerifyTests
     }
 
     [Theory]
+    [InlineData(nameof(FakeController.ActionWithFromQueryHiddenPropertyModel), typeof(FakeController.QueryModelWithHiddenPropertyOfDifferentType))]
+    [InlineData(nameof(FakeController.ActionWithFromQuerySameTypeHiddenPropertyModel), typeof(FakeController.QueryModelWithHiddenPropertyOfSameType))]
+    public async Task ActionWithFromQueryHiddenPropertyModel(string action, Type modelType)
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create(
+                    methodInfo: typeof(FakeController).GetMethod(action),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "code",
+                            Source = BindingSource.Query,
+                            ModelMetadata = ModelMetadataFactory.CreateForProperty(
+                                modelType,
+                                nameof(FakeController.BaseQueryModel.Code))
+                        }
+                    ])
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+        await Verifier.Verify(ToJson(document))
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(action);
+    }
+
+    [Theory]
     [InlineData(nameof(FakeController.ActionWithParameterWithRequiredAttribute))]
     [InlineData(nameof(FakeController.ActionWithParameterWithBindRequiredAttribute))]
     public async Task ActionWithRequiredQueryParameter(string action)
