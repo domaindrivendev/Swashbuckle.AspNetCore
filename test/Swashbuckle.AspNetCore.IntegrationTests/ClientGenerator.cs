@@ -23,7 +23,8 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
                 OpenApiSpecVersion.OpenApi2_0 => true,
                 OpenApiSpecVersion.OpenApi3_0 => true,
                 OpenApiSpecVersion.OpenApi3_1 => true,
-                // Kiota does not yet support OpenAPI 3.2 documents containing QUERY operations
+                // TODO Kiota does not yet support OpenAPI 3.2 documents containing QUERY operations.
+                // See https://github.com/microsoft/kiota-dotnet/pull/805.
                 _ => false,
             },
             _ => false,
