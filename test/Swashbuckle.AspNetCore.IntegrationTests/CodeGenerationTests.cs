@@ -82,10 +82,12 @@ public partial class CodeGenerationTests(ITestOutputHelper outputHelper)
 
         outputHelper.WriteLine($"{nameof(tool)}={tool}, {nameof(snapshot)}={snapshot} [{hashString}]");
 
+        var projectPath = project.Path;
+
         await VerifyDirectory(
-            project.Path,
+            projectPath,
             pattern: "*.cs",
-            include: (p) => !p.Contains("bin") && !p.Contains("obj"),
+            include: (p) => !IsBuildOutput(projectPath, p),
             options: new() { RecurseSubdirectories = true })
             .UseDirectory(SnapshotsDirectory)
             .UseFileName($"{nameof(GeneratesValidClient)}_{hashString}")
@@ -121,6 +123,36 @@ public partial class CodeGenerationTests(ITestOutputHelper outputHelper)
             Path.Combine(GetProjectRoot(), "NSwagTodoClient"),
             pattern: "*.cs",
             options: new() { RecurseSubdirectories = true }).UseDirectory(SnapshotsDirectory);
+    }
+
+    [Theory]
+    [InlineData("Client.cs", false)]
+    [InlineData("Models/Product.cs", false)]
+    [InlineData("bin/Release/net10.0/Client.cs", true)]
+    [InlineData("obj/Release/net10.0/Client.AssemblyInfo.cs", true)]
+    [InlineData("obj/Client.GlobalUsings.g.cs", true)]
+    [InlineData("Binary/Objects/Client.cs", false)]
+    public static void IsBuildOutput_Only_Matches_Directory_Segments_Under_Project(string relativePath, bool expected)
+    {
+        // Arrange - Temporary directory names are random and can contain "bin" or "obj" as substrings
+        var root = Path.Combine(Path.GetTempPath(), "sfkobjtq.3yc");
+        var path = Path.Combine(root, relativePath.Replace('/', Path.DirectorySeparatorChar));
+
+        // Act
+        var actual = IsBuildOutput(root, path);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    private static bool IsBuildOutput(string projectPath, string filePath)
+    {
+        var relativePath = Path.GetRelativePath(projectPath, filePath);
+        var segments = relativePath.Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries);
+
+        // Only exclude the project's own build output directories, not paths that
+        // happen to contain "bin" or "obj" (e.g. a random temporary directory name)
+        return segments.Length > 1 && segments[..^1].Any((p) => p is "bin" or "obj");
     }
 
     private static string GetProjectRoot() =>
