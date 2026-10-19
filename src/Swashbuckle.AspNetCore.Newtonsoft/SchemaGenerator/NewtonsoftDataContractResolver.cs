@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -13,7 +14,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft;
 public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
 {
     private readonly JsonSerializerSettings _serializerSettings;
-    private readonly SchemaGeneratorOptions _generatorOptions;
+    private readonly IOptions<SchemaGeneratorOptions> _generatorOptions;
     private readonly IContractResolver _contractResolver;
 
     /// <summary>
@@ -31,9 +32,14 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
     /// <param name="serializerSettings">The <see cref="JsonSerializerSettings"/> to use.</param>
     /// <param name="generatorOptions">The <see cref="SchemaGeneratorOptions"/> to use.</param>
     public NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings, SchemaGeneratorOptions generatorOptions)
+        : this(serializerSettings, Options.Create(generatorOptions ?? new SchemaGeneratorOptions()))
+    {
+    }
+
+    internal NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings, IOptions<SchemaGeneratorOptions> generatorOptions)
     {
         _serializerSettings = serializerSettings;
-        _generatorOptions = generatorOptions ?? new SchemaGeneratorOptions();
+        _generatorOptions = generatorOptions;
         _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
     }
 
@@ -218,8 +224,9 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
     private bool IsNullable(MemberInfo memberInfo, Type propertyType)
     {
         var nullable = propertyType.IsReferenceOrNullableType();
+        var generatorOptions = _generatorOptions.Value;
 
-        if ((_generatorOptions.SupportNonNullableReferenceTypes || _generatorOptions.NonNullableReferenceTypesAsRequired)
+        if ((generatorOptions.SupportNonNullableReferenceTypes || generatorOptions.NonNullableReferenceTypesAsRequired)
             && memberInfo != null)
         {
             nullable &= !memberInfo.IsNonNullableReferenceType();
