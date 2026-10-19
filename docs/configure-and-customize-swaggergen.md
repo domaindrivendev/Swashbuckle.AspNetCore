@@ -1330,4 +1330,34 @@ services.AddSwaggerGen(options =>
 > class definitions. This way, you can use simple attributes to explicitly provide discriminator metadata. To enable this behavior, check
 > out the [Annotations documentation](configure-and-customize-annotations.md#enrich-polymorphic-base-classes-with-discriminator-metadata).
 
+#### Discriminator Default Mapping
+
+OpenAPI 3.2 adds a `defaultMapping` field to the discriminator description, which identifies the schema that a payload should be
+validated against when the discriminator property is not present, or has a value that is not in the `mapping`. When targeting .NET 11 or
+later and producing OpenAPI 3.2 documents, you can provide a selector function to determine the type to use as the default mapping for
+a given base type. The selector is ignored when producing documents using earlier versions of the OpenAPI specification.
+
+> [!NOTE]
+> Versions of Microsoft.OpenApi earlier than 3.9.0 serialize `defaultMapping` as a reference object rather than as the string
+> required by the OpenAPI 3.2 specification. Ensure your application uses Microsoft.OpenApi 3.9.0 or later if you use this option.
+
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-DiscriminatorDefaultMapping -->
+<a id='snippet-SwaggerGen-DiscriminatorDefaultMapping'></a>
+```cs
+services.AddSwaggerGen(options =>
+{
+    options.UseOneOfForPolymorphism();
+
+    options.SelectDiscriminatorNameUsing((baseType) => "TypeName");
+    options.SelectDiscriminatorValueUsing((subType) => subType.Name);
+
+    // Payloads without a recognized discriminator value are validated against the base type
+    options.SelectDiscriminatorDefaultMappingUsing((baseType) => baseType.IsAbstract ? null : baseType);
+});
+```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L262-L273' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-DiscriminatorDefaultMapping' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
+
 [swagger-specification]: https://swagger.io/specification/ "OpenAPI Specification"

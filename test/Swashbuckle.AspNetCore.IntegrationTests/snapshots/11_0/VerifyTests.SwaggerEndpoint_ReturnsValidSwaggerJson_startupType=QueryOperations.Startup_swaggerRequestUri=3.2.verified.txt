@@ -77,6 +77,32 @@
             }
           }
         }
+      },
+      "additionalOperations": {
+        "PURGE": {
+          "tags": [
+            "QueryActions"
+          ],
+          "summary": "Purges a product from the cache using a non-standard HTTP method",
+          "operationId": "PurgeProduct",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "The product identifier",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            }
+          }
+        }
       }
     }
   },

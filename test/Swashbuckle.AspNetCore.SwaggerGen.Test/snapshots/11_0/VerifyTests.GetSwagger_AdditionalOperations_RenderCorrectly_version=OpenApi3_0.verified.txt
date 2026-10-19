@@ -26,6 +26,16 @@
               "description": "OK"
             }
           }
+        },
+        "PURGE": {
+          "tags": [
+            "Fake"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            }
+          }
         }
       }
     }

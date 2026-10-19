@@ -1088,6 +1088,49 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal("TypeName", schema.Discriminator.PropertyName);
     }
 
+#if NET11_0_OR_GREATER
+    [Fact]
+    public void GenerateSchema_SupportsOption_DiscriminatorDefaultMappingSelector()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.DiscriminatorNameSelector = (baseType) => "TypeName";
+            c.DiscriminatorValueSelector = (subType) => subType.Name;
+            c.DiscriminatorDefaultMappingSelector = (baseType) => typeof(SubType2);
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+        var schema = schemaRepository.Schemas["BaseType"];
+        Assert.NotNull(schema.Discriminator);
+        Assert.NotNull(schema.Discriminator.DefaultMapping);
+        Assert.Equal("SubType2", schema.Discriminator.DefaultMapping.Reference.Id);
+    }
+
+    [Fact]
+    public void GenerateSchema_DiscriminatorDefaultMappingSelector_ReturningNull_DoesNotSetDefaultMapping()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.DiscriminatorNameSelector = (baseType) => "TypeName";
+            c.DiscriminatorValueSelector = (subType) => subType.Name;
+            c.DiscriminatorDefaultMappingSelector = (baseType) => null;
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+        var schema = schemaRepository.Schemas["BaseType"];
+        Assert.NotNull(schema.Discriminator);
+        Assert.Null(schema.Discriminator.DefaultMapping);
+    }
+#endif
+
     [Fact]
     public void GenerateSchema_SupportsOption_UseAllOfForPolymorphism()
     {

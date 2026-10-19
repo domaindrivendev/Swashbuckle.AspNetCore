@@ -319,9 +319,18 @@ public class SwaggerGenerator(
 
         if (!OperationTypeMap.TryGetValue(httpMethod, out var operationType))
         {
+#if NET11_0_OR_GREATER
+            // OpenAPI 3.2 allows any other HTTP method to be described using "additionalOperations".
+            // Microsoft.OpenApi emits such operations under that keyword for OpenAPI 3.2 documents, and
+            // under the "x-oai-additionalOperations" extension for earlier versions of the specification.
+            // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2600 and
+            // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2740.
+            operationType = new HttpMethod(httpMethod.ToUpperInvariant());
+#else
             // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2600 and
             // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2740.
             throw new SwaggerGeneratorException($"The \"{httpMethod}\" HTTP method is not supported.");
+#endif
         }
 
         return (operationType, apiDescription);

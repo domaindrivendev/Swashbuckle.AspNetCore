@@ -25,6 +25,18 @@
             "description": "OK"
           }
         }
+      },
+      "additionalOperations": {
+        "PURGE": {
+          "tags": [
+            "Fake"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            }
+          }
+        }
       }
     }
   },

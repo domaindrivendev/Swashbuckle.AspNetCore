@@ -584,6 +584,16 @@ public class SchemaGenerator(
             }
         }
 
+#if NET11_0_OR_GREATER
+        // The default mapping is only supported by OpenAPI 3.2, so it is only emitted when serializing
+        // as that version. Microsoft.OpenApi ignores it for earlier versions of the specification.
+        if (_generatorOptions.DiscriminatorDefaultMappingSelector?.Invoke(dataContract.UnderlyingType) is { } defaultMappingType &&
+            GenerateConcreteSchema(GetDataContractFor(defaultMappingType), schemaRepository) is OpenApiSchemaReference defaultMapping)
+        {
+            discriminator.DefaultMapping = defaultMapping;
+        }
+#endif
+
         return true;
     }
 

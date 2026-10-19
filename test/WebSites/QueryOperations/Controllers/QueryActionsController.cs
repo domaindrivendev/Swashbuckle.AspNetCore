@@ -31,6 +31,17 @@ public class QueryActionsController
     {
         return new OkObjectResult(new Product { Id = id });
     }
+
+    /// <summary>
+    /// Purges a product from the cache using a non-standard HTTP method
+    /// </summary>
+    /// <param name="id">The product identifier</param>
+    [AcceptVerbs("PURGE", Route = "{id}", Name = "PurgeProduct")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public IActionResult Purge(int id)
+    {
+        return new NoContentResult();
+    }
 }
 
 public class Product

@@ -1743,7 +1743,7 @@ public partial class VerifyTests
     [Theory]
     [InlineData(OpenApiSpecVersion.OpenApi3_0)]
     [InlineData(OpenApiSpecVersion.OpenApi3_2)]
-    public async Task GetSwagger_QueryOperation_RendersCorrectly(OpenApiSpecVersion version)
+    public async Task GetSwagger_AdditionalOperations_RenderCorrectly(OpenApiSpecVersion version)
     {
         var subject = Subject(
             apiDescriptions:
@@ -1753,6 +1753,9 @@ public partial class VerifyTests
 
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "QUERY", relativePath: "resource"),
+
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "PURGE", relativePath: "resource"),
             ],
             options: new SwaggerGeneratorOptions
             {

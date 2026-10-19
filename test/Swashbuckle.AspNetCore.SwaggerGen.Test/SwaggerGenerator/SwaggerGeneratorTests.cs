@@ -2362,13 +2362,12 @@ public class SwaggerGeneratorTests
         Assert.Equal("v1", ((JsonNodeExtension)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
     }
 
+#if !NET11_0_OR_GREATER
     [Theory]
     [InlineData("connect")]
     [InlineData("CONNECT")]
     [InlineData("FOO")]
-#if !NET11_0_OR_GREATER
     [InlineData("QUERY")]
-#endif
     public void GetSwagger_GeneratesSwaggerDocument_ThrowsIfHttpMethodNotSupported(string httpMethod)
     {
         var subject = Subject(
@@ -2389,12 +2388,17 @@ public class SwaggerGeneratorTests
         var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
         Assert.Equal($"The \"{httpMethod}\" HTTP method is not supported.", exception.Message);
     }
+#endif
 
 #if NET11_0_OR_GREATER
     [Theory]
-    [InlineData("query")]
-    [InlineData("QUERY")]
-    public void GetSwagger_GeneratesSwaggerDocument_SupportsQueryHttpMethod(string httpMethod)
+    [InlineData("query", "QUERY")]
+    [InlineData("QUERY", "QUERY")]
+    [InlineData("connect", "CONNECT")]
+    [InlineData("CONNECT", "CONNECT")]
+    [InlineData("purge", "PURGE")]
+    [InlineData("FOO", "FOO")]
+    public void GetSwagger_GeneratesSwaggerDocument_SupportsNonStandardHttpMethods(string httpMethod, string expected)
     {
         var subject = Subject(
             apiDescriptions:
@@ -2414,7 +2418,7 @@ public class SwaggerGeneratorTests
         var document = subject.GetSwagger("v1");
 
         var operation = Assert.Single(document.Paths["/resource"].Operations);
-        Assert.Equal(HttpMethod.Query, operation.Key);
+        Assert.Equal(expected, operation.Key.Method);
         Assert.NotNull(operation.Value);
     }
 #endif

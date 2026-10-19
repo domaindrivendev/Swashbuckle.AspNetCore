@@ -86,10 +86,13 @@ app.UseSwagger(options =>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
-OpenAPI 3.2 introduces the HTTP `QUERY` method as a first-class operation. When targeting .NET 11 or later, actions that use the
-`QUERY` method (for example with `[AcceptVerbs("QUERY")]`) are included in the generated documents. They are emitted as `query`
-operations in OpenAPI 3.2 documents, and via the `x-oai-additionalOperations` extension in documents using earlier versions of the
-specification. When targeting .NET 10, such actions still cause a `SwaggerGeneratorException` to be thrown, as in v10.
+OpenAPI 3.2 introduces the HTTP `QUERY` method as a first-class operation, and allows any other HTTP method to be described using
+the new `additionalOperations` keyword. When targeting .NET 11 or later, actions that use the `QUERY` method or any other non-standard
+HTTP method (for example with `[AcceptVerbs("QUERY")]` or `[AcceptVerbs("PURGE")]`) are included in the generated documents instead of
+causing a `SwaggerGeneratorException` to be thrown. `QUERY` is emitted as a `query` operation and other methods are emitted using
+`additionalOperations` in OpenAPI 3.2 documents. In documents using earlier versions of the specification, all such operations are
+emitted using the `x-oai-additionalOperations` extension. When targeting .NET 10, such actions still cause a `SwaggerGeneratorException`
+to be thrown, as in v10.
 
 > [!NOTE]
 > Not all tooling supports OpenAPI 3.2 yet. For example, at the time of writing, [Kiota][kiota-openapi-32] cannot generate clients
@@ -103,6 +106,13 @@ System.Text.Json serializes a union value as whichever of its case types it hold
 an `anyOf` schema that references the schema for each case type of the union, matching the behaviour of
 [Microsoft.AspNetCore.OpenApi][microsoft-aspnetcore-openapi-package]. No configuration is required, and union types are not supported
 when targeting .NET 10. See _[C# unions schema support #4103][swashbuckle-aspnetcore-unions]_ for more details.
+
+### Discriminator default mapping
+
+OpenAPI 3.2 adds a `defaultMapping` field to discriminators. When targeting .NET 11 or later, it can be populated using the new
+`SelectDiscriminatorDefaultMappingUsing()` option, or with the `Swashbuckle.AspNetCore.Annotations` package using the new
+`DefaultMapping` property of `[SwaggerDiscriminator]`, or `[JsonPolymorphic]` with a fallback `UnknownDerivedTypeHandling` on a
+concrete base type. See _[Discriminator Default Mapping][discriminator-default-mapping]_ for more details.
 
 ### Swashbuckle.AspNetCore.ApiTesting
 
@@ -208,6 +218,7 @@ Migrating to Swashbuckle.AspNetCore v11+ will likely involve changes in the foll
 <!-- TODO Update this link to the "What's new in ASP.NET Core 11.0" release notes once published, before merging #3786 -->
 [aspnetcore-11]: https://learn.microsoft.com/aspnet/core/ "ASP.NET Core documentation"
 [csharp-unions]: https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/union "C# union types"
+[discriminator-default-mapping]: configure-and-customize-swaggergen.md#discriminator-default-mapping "Discriminator Default Mapping"
 [kiota-openapi-32]: https://github.com/microsoft/kiota-dotnet/pull/805 "Kiota support for OpenAPI 3.2"
 [microsoft-aspnetcore-openapi-package]: https://www.nuget.org/packages/Microsoft.AspNetCore.OpenApi/ "Microsoft.AspNetCore.OpenApi NuGet package"
 [microsoft-openapi-package]: https://www.nuget.org/packages/Microsoft.OpenApi/ "Microsoft.OpenApi NuGet package"

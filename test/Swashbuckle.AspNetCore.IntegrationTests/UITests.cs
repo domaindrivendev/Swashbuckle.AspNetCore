@@ -27,16 +27,43 @@ public class UITests(PlaywrightFixture fixture) : IClassFixture<PlaywrightFixtur
         });
     }
 
-    [Fact]
-    public async Task Can_Load_Redoc_Page()
+    [Theory]
+    [InlineData("swagger-v3_1/index.html")]
+#if NET11_0_OR_GREATER
+    [InlineData("swagger-v3_2/index.html")]
+#endif
+    public async Task Can_Load_SwaggerUI_Page_For_Other_OpenApi_Versions(string path)
+    {
+        // Arrange
+        await using var application = new SwaggerUIFixture();
+        var url = new Uri(new Uri(application.ServerUrl), path);
+
+        // Act and Assert
+        await fixture.VerifyPage(url.ToString(), async (page) =>
+        {
+            var operation = await page.WaitForSelectorAsync("text=Searches the collection of products by description key words");
+            await operation.ClickAsync();
+
+            await page.WaitForSelectorAsync("text=Try it out");
+        });
+    }
+
+    [Theory]
+    [InlineData("api-docs/index.html")]
+    [InlineData("api-docs-v3_1/index.html")]
+#if NET11_0_OR_GREATER
+    [InlineData("api-docs-v3_2/index.html")]
+#endif
+    public async Task Can_Load_Redoc_Page(string path)
     {
         // Arrange
         await using var application = new RedocFixture();
+        var url = new Uri(new Uri(application.ServerUrl), path);
 
         // Act and Assert
-        await fixture.VerifyPage(application.ServerUrl, async (page) =>
+        await fixture.VerifyPage(url.ToString(), async (page) =>
         {
-            await page.QuerySelectorAsync("text=/products");
+            await page.WaitForSelectorAsync("text=/products");
         });
     }
 

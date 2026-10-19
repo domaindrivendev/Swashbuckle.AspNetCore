@@ -57,6 +57,24 @@ dotnet tool install -g Swashbuckle.AspNetCore.Cli
     * `[startupassembly]`: the relative path to your application's startup assembly;
     * `[swaggerdoc]`: the name of the OpenAPI document you want to generate, as configured in your application.
 
+    The `tofile` command also supports the following options:
+
+    | Option                     | Description                                                                                       |
+    |:---------------------------|:--------------------------------------------------------------------------------------------------|
+    | `--openapiversion <value>` | The version of the OpenAPI specification to use: `2.0`, `3.0`, `3.1` or `3.2`. Defaults to `3.0`. |
+    | `--yaml`                   | Output the document as YAML instead of JSON.                                                      |
+    | `--host <value>`           | A specific host to include in the generated document.                                             |
+    | `--basepath <value>`       | A specific base path to include in the generated document.                                        |
+
+    > [!NOTE]
+    > `--openapiversion 3.2` is only supported when the tool is run using the .NET 11 SDK or later.
+
+    For example, to generate an OpenAPI 3.1 document as YAML:
+
+    ```terminal
+    swagger tofile --output openapi.yaml --openapiversion 3.1 --yaml [startupassembly] [swaggerdoc]
+    ```
+
 ## Use the CLI Tool with a Custom Host Configuration
 
 By default, the tool will execute in the context of a "default" web host. However, in some cases you may want to
