@@ -74,6 +74,7 @@
     <Project Path="test/WebSites/MvcWithNullable/MvcWithNullable.csproj" />
     <Project Path="test/WebSites/NswagClientExample/NswagClientExample.csproj" />
     <Project Path="test/WebSites/OAuth2Integration/OAuth2Integration.csproj" />
+    <Project Path="test/WebSites/QueryOperations/QueryOperations.csproj" />
     <Project Path="test/WebSites/ReDoc/ReDoc.csproj" />
     <Project Path="test/WebSites/TestFirst/TestFirst.csproj" />
     <Project Path="test/WebSites/TodoApp/TodoApp.csproj" />

@@ -6,7 +6,6 @@ using Microsoft.Kiota.Abstractions;
 using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models;
 using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Products.All;
 using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Products.Item;
-using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Products.Query;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -24,11 +23,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Products
         public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Products.All.AllRequestBuilder All
         {
             get => new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Products.All.AllRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The query property</summary>
-        public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Products.Query.QueryRequestBuilder Query
-        {
-            get => new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Products.Query.QueryRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.products.item collection</summary>
         /// <param name="position">The product id</param>

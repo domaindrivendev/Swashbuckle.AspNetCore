@@ -793,45 +793,6 @@
         "x-purpose": "test"
       }
     },
-    "/products/query": {
-      "x-oai-additionalOperations": {
-        "QUERY": {
-          "tags": [
-            "QueryActions"
-          ],
-          "summary": "Searches the collection of products using a request body",
-          "operationId": "QueryProducts",
-          "consumes": [
-            "application/json",
-            "text/json",
-            "application/*+json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "parameters": [
-            {
-              "in": "body",
-              "name": "body",
-              "description": "The search criteria",
-              "schema": {
-                "$ref": "#/definitions/ProductQuery"
-              },
-              "x-purpose": "test"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "$ref": "#/definitions/ProductQueryResult"
-              }
-            }
-          },
-          "x-purpose": "test"
-        }
-      }
-    },
     "/orders": {
       "post": {
         "tags": [
@@ -1291,6 +1252,7 @@
         "description": {
           "type": "string",
           "description": "Describes the product",
+          "example": null,
           "x-nullable": true
         },
         "status": {
@@ -1315,41 +1277,6 @@
         "description": "foobar",
         "price": 14.37
       }
-    },
-    "ProductQuery": {
-      "type": "object",
-      "properties": {
-        "keywords": {
-          "type": "string",
-          "description": "Keywords to search for",
-          "x-nullable": true
-        },
-        "limit": {
-          "type": "integer",
-          "description": "The maximum number of results to return",
-          "format": "int32",
-          "x-nullable": true
-        }
-      },
-      "additionalProperties": false
-    },
-    "ProductQueryResult": {
-      "type": "object",
-      "properties": {
-        "query": {
-          "$ref": "#/definitions/ProductQuery"
-        },
-        "productIds": {
-          "type": "array",
-          "description": "The identifiers of the matching products",
-          "items": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "x-nullable": true
-        }
-      },
-      "additionalProperties": false
     },
     "ProductStatus": {
       "type": "integer",
@@ -1533,9 +1460,6 @@
     },
     {
       "name": "PolymorphicTypes"
-    },
-    {
-      "name": "QueryActions"
     },
     {
       "name": "ResponseTypeAnnotations"

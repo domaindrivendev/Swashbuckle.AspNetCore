@@ -1,12 +1,12 @@
 ﻿#if NET11_0_OR_GREATER
 using Microsoft.AspNetCore.Mvc;
 
-namespace Basic.Controllers;
+namespace QueryOperations.Controllers;
 
 /// <summary>
 /// Actions using the HTTP QUERY method, which is a first-class operation in OpenAPI 3.2
 /// </summary>
-[Route("/products/query")]
+[Route("/products")]
 [Produces("application/json")]
 public class QueryActionsController
 {
@@ -20,6 +20,30 @@ public class QueryActionsController
     {
         return new OkObjectResult(new ProductQueryResult { Query = query });
     }
+
+    /// <summary>
+    /// Gets a product by its identifier
+    /// </summary>
+    /// <param name="id">The product identifier</param>
+    [HttpGet("{id}", Name = "GetProduct")]
+    [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
+    public IActionResult Get(int id)
+    {
+        return new OkObjectResult(new Product { Id = id });
+    }
+}
+
+public class Product
+{
+    /// <summary>
+    /// The product identifier
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// The product name
+    /// </summary>
+    public string Name { get; set; }
 }
 
 public class ProductQuery

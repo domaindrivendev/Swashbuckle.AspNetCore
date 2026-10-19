@@ -138,6 +138,7 @@ public class Product
     /// <summary>
     /// Describes the product
     /// </summary>
+    /// <example>null</example>
     public string Description { get; set; }
 
     public ProductStatus Status { get; set; }

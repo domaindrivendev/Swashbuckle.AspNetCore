@@ -67,4 +67,4 @@ jobs:
         SPECTRAL_VERSION: '6.17.0'
 
     - name: Run Spectral
-      run: spectral lint "./test/Swashbuckle.AspNetCore.IntegrationTests/snapshots/*" --display-only-failures --fail-severity error --format github-actions
+      run: spectral lint "./test/Swashbuckle.AspNetCore.IntegrationTests/snapshots/**/*.verified.txt" --display-only-failures --fail-severity error --format github-actions

@@ -134,10 +134,6 @@ public static class ToolTests
         var paths = document.RootElement.GetProperty("paths");
         var productsPath = paths.GetProperty("/products");
         Assert.True(productsPath.TryGetProperty("post", out _));
-
-        // verify that QUERY operations are first-class operations in OpenAPI 3.2
-        var queryPath = paths.GetProperty("/products/query");
-        Assert.True(queryPath.TryGetProperty("query", out _));
     }
 #endif
 

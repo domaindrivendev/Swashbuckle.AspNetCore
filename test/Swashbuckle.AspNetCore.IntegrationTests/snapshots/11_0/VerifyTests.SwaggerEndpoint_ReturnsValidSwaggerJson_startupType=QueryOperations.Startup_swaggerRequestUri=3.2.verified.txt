@@ -1,0 +1,152 @@
+﻿{
+  "openapi": "3.2.0",
+  "info": {
+    "title": "QueryOperations",
+    "version": "v1"
+  },
+  "paths": {
+    "/products": {
+      "query": {
+        "tags": [
+          "QueryActions"
+        ],
+        "summary": "Searches the collection of products using a request body",
+        "operationId": "QueryProducts",
+        "requestBody": {
+          "description": "The search criteria",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductQueryResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": [
+          "QueryActions"
+        ],
+        "summary": "Gets a product by its identifier",
+        "operationId": "GetProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The product identifier",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The product identifier",
+            "format": "int32"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "The product name"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductQuery": {
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Keywords to search for"
+          },
+          "limit": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "description": "The maximum number of results to return",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductQueryResult": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "description": "The query that was executed",
+            "$ref": "#/components/schemas/ProductQuery"
+          },
+          "productIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "The identifiers of the matching products"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "QueryActions"
+    }
+  ]
+}

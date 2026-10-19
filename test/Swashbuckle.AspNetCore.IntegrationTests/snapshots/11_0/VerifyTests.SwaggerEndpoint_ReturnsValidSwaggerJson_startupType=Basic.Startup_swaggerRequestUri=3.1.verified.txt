@@ -839,10 +839,8 @@
             "description": "3-letter ISO country code",
             "required": true,
             "schema": {
-              "type": "string",
-              "example": null
-            },
-            "example": null
+              "type": "string"
+            }
           },
           {
             "name": "city",
@@ -1024,51 +1022,6 @@
           }
         },
         "x-purpose": "test"
-      }
-    },
-    "/products/query": {
-      "x-oai-additionalOperations": {
-        "QUERY": {
-          "tags": [
-            "QueryActions"
-          ],
-          "summary": "Searches the collection of products using a request body",
-          "operationId": "QueryProducts",
-          "requestBody": {
-            "description": "The search criteria",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductQuery"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductQuery"
-                }
-              },
-              "application/*+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductQuery"
-                }
-              }
-            },
-            "x-purpose": "test"
-          },
-          "responses": {
-            "200": {
-              "description": "OK",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ProductQueryResult"
-                  }
-                }
-              }
-            }
-          },
-          "x-purpose": "test"
-        }
       }
     },
     "/orders": {
@@ -1594,7 +1547,8 @@
               "null",
               "string"
             ],
-            "description": "Describes the product"
+            "description": "Describes the product",
+            "example": null
           },
           "status": {
             "$ref": "#/components/schemas/ProductStatus"
@@ -1619,48 +1573,6 @@
           "description": "foobar",
           "price": 14.37
         }
-      },
-      "ProductQuery": {
-        "type": "object",
-        "properties": {
-          "keywords": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "description": "Keywords to search for"
-          },
-          "limit": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "description": "The maximum number of results to return",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ProductQueryResult": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "description": "The query that was executed",
-            "$ref": "#/components/schemas/ProductQuery"
-          },
-          "productIds": {
-            "type": [
-              "null",
-              "array"
-            ],
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "description": "The identifiers of the matching products"
-          }
-        },
-        "additionalProperties": false
       },
       "ProductStatus": {
         "enum": [
@@ -1871,9 +1783,6 @@
     },
     {
       "name": "PolymorphicTypes"
-    },
-    {
-      "name": "QueryActions"
     },
     {
       "name": "ResponseTypeAnnotations"
