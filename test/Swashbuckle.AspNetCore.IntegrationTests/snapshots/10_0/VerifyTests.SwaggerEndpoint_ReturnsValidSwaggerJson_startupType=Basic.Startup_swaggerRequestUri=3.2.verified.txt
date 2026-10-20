@@ -21,18 +21,39 @@
             "application/json": {
               "schema": {
                 "description": "Represents a product",
+                "examples": [
+                  {
+                    "id": 123,
+                    "description": "foobar",
+                    "price": 14.37
+                  }
+                ],
                 "$ref": "#/components/schemas/Product"
               }
             },
             "text/json": {
               "schema": {
                 "description": "Represents a product",
+                "examples": [
+                  {
+                    "id": 123,
+                    "description": "foobar",
+                    "price": 14.37
+                  }
+                ],
                 "$ref": "#/components/schemas/Product"
               }
             },
             "application/*+json": {
               "schema": {
                 "description": "Represents a product",
+                "examples": [
+                  {
+                    "id": 123,
+                    "description": "foobar",
+                    "price": 14.37
+                  }
+                ],
                 "$ref": "#/components/schemas/Product"
               }
             }
@@ -650,9 +671,11 @@
                 "type": "object",
                 "properties": {
                   "name": {
+                    "examples": [
+                      "MyName"
+                    ],
                     "type": "string",
-                    "description": "Summary for Name",
-                    "example": "MyName"
+                    "description": "Summary for Name"
                   },
                   "phoneNumbers": {
                     "type": "array",
@@ -749,9 +772,11 @@
                 "type": "object",
                 "properties": {
                   "name": {
+                    "examples": [
+                      "MyName"
+                    ],
                     "type": "string",
-                    "description": "Summary for Name",
-                    "example": "MyName"
+                    "description": "Summary for Name"
                   },
                   "phoneNumbers": {
                     "type": "array",
@@ -1535,6 +1560,13 @@
         "additionalProperties": false
       },
       "Product": {
+        "examples": [
+          {
+            "id": 123,
+            "description": "foobar",
+            "price": 14.37
+          }
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -1543,12 +1575,14 @@
             "format": "int32"
           },
           "description": {
+            "examples": [
+              null
+            ],
             "type": [
               "null",
               "string"
             ],
-            "description": "Describes the product",
-            "example": null
+            "description": "Describes the product"
           },
           "status": {
             "$ref": "#/components/schemas/ProductStatus"
@@ -1567,12 +1601,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Represents a product",
-        "example": {
-          "id": 123,
-          "description": "foobar",
-          "price": 14.37
-        }
+        "description": "Represents a product"
       },
       "ProductStatus": {
         "enum": [

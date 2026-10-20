@@ -182,16 +182,19 @@ public class ItemSchemaFilter : ISchemaFilter
     {
         if (schema is OpenApiSchema concrete)
         {
-            concrete.Example = new JsonObject
-            {
-                ["Id"] = 1,
-                ["Description"] = "An awesome item"
-            };
+            concrete.Examples =
+            [
+                new JsonObject
+                {
+                    ["Id"] = 1,
+                    ["Description"] = "An awesome item"
+                },
+            ];
         }
     }
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/ItemSchemaFilter.cs#L7-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SchemaFilter' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/ItemSchemaFilter.cs#L7-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SchemaFilter' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 

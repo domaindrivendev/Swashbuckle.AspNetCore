@@ -10,7 +10,6 @@
         "operationId": "OperationIdSetInMetadata",
         "responses": {
           "200": {
-            "description": null,
             "content": {
               "application/someMediaType": {
                 "schema": {
