@@ -46,7 +46,7 @@ public class SchemaGenerator(
         var dataContract = GetDataContractFor(modelType);
 
         var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
-            ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
+            ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
         if (schema is OpenApiSchemaReference reference)
@@ -149,7 +149,7 @@ public class SchemaGenerator(
         var dataContract = GetDataContractFor(modelType);
 
         var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
-            ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
+            ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
         if (schema is OpenApiSchemaReference reference)
@@ -199,7 +199,7 @@ public class SchemaGenerator(
     }
 
 #if NET11_0_OR_GREATER
-    private bool TryGenerateUnionSchema(Type modelType, SchemaRepository schemaRepository, out IOpenApiSchema schema)
+    private bool TryGenerateUnionSchema(Type modelType, SchemaRepository schemaRepository, out OpenApiSchema schema)
     {
         schema = null;
 
@@ -212,7 +212,7 @@ public class SchemaGenerator(
         // A union that has been registered as a component is referenced instead of being inlined
         if (schemaRepository.TryLookupByType(modelType, out var reference))
         {
-            schema = reference;
+            schema = CreateUnionReferenceSchema(reference);
             return true;
         }
 
@@ -222,7 +222,7 @@ public class SchemaGenerator(
         {
             schemaRepository.RegisterType(modelType, _generatorOptions.SchemaIdSelector(modelType));
             schemaRepository.TryLookupByType(modelType, out reference);
-            schema = reference;
+            schema = CreateUnionReferenceSchema(reference);
             return true;
         }
 
@@ -236,7 +236,7 @@ public class SchemaGenerator(
             if (schemaRepository.TryLookupByType(modelType, out reference))
             {
                 ApplyFilters(unionSchema, modelType, schemaRepository);
-                schema = schemaRepository.AddDefinition(reference.Reference.Id, unionSchema);
+                schema = CreateUnionReferenceSchema(schemaRepository.AddDefinition(reference.Reference.Id, unionSchema));
             }
             else
             {
@@ -250,6 +250,11 @@ public class SchemaGenerator(
             schemaRepository.UnionTypesInProgress.Remove(modelType);
         }
     }
+
+    // A reference cannot be made nullable, so a referenced union is wrapped in an anyOf, the same as
+    // an inlined union, so that null can be added as one of its members if the union is nullable.
+    private static OpenApiSchema CreateUnionReferenceSchema(OpenApiSchemaReference reference)
+        => new() { AnyOf = [reference] };
 #endif
 
     private IOpenApiSchema GenerateSchemaForType(Type modelType, SchemaRepository schemaRepository)
@@ -257,7 +262,7 @@ public class SchemaGenerator(
         var dataContract = GetDataContractFor(modelType);
 
         var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
-            ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
+            ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
         ApplyFilters(schema, modelType, schemaRepository);
@@ -300,13 +305,44 @@ public class SchemaGenerator(
     }
 
     private OpenApiSchema GeneratePolymorphicSchema(
+        DataContract dataContract,
         SchemaRepository schemaRepository,
         IEnumerable<DataContract> knownTypesDataContracts)
     {
         return new OpenApiSchema
         {
-            OneOf = [.. knownTypesDataContracts.Select(allowedTypeDataContract => GenerateConcreteSchema(allowedTypeDataContract, schemaRepository))]
+            OneOf = [.. knownTypesDataContracts.Select(allowedTypeDataContract => GenerateKnownTypeSchema(dataContract, allowedTypeDataContract, schemaRepository))]
         };
+    }
+
+    private IOpenApiSchema GenerateKnownTypeSchema(
+        DataContract baseTypeDataContract,
+        DataContract knownTypeDataContract,
+        SchemaRepository schemaRepository)
+    {
+        var schema = GenerateConcreteSchema(knownTypeDataContract, schemaRepository);
+
+        // If the default mapping of a concrete base type is one of its subtypes, then payloads without the discriminator
+        // property are only valid for that subtype. The discriminator property cannot be required by the schema of the
+        // base type as it is extended by the schema of the subtype, so it is instead required by the alternative for it.
+        if (knownTypeDataContract.UnderlyingType == baseTypeDataContract.UnderlyingType &&
+            GetDiscriminatorDefaultMappingType(baseTypeDataContract) is { } defaultMappingType &&
+            defaultMappingType != baseTypeDataContract.UnderlyingType &&
+            GetDiscriminatorName(baseTypeDataContract) is { } discriminatorName)
+        {
+            // The requirement is a separate member of the allOf, as some tools treat an allOf with a single
+            // member as a reference to that member and ignore any other keywords alongside the allOf.
+            return new OpenApiSchema
+            {
+                AllOf =
+                [
+                    schema,
+                    new OpenApiSchema { Required = new SortedSet<string>() { discriminatorName } },
+                ],
+            };
+        }
+
+        return schema;
     }
 
     private static readonly Type[] BinaryStringTypes =

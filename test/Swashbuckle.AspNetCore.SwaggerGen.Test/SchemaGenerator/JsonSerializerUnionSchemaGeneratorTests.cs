@@ -95,8 +95,7 @@ public class JsonSerializerUnionSchemaGeneratorTests
 
         var schema = Subject(configureSerializer: UseReflectionResolver).GenerateSchema(typeof(RecursiveValue), schemaRepository);
 
-        var reference = Assert.IsType<OpenApiSchemaReference>(schema);
-        Assert.Equal(nameof(RecursiveValue), reference.Reference.Id);
+        AssertIsUnionReference(schema, nullable: false);
 
         var definition = Assert.IsType<OpenApiSchema>(schemaRepository.Schemas[nameof(RecursiveValue)]);
         Assert.NotNull(definition.AnyOf);
@@ -108,13 +107,56 @@ public class JsonSerializerUnionSchemaGeneratorTests
         var arrayCase = Assert.IsType<OpenApiSchema>(definition.AnyOf[1]);
         Assert.Equal(JsonSchemaType.Array, arrayCase.Type);
 
-        var itemsReference = Assert.IsType<OpenApiSchemaReference>(arrayCase.Items);
-        Assert.Equal(nameof(RecursiveValue), itemsReference.Reference.Id);
+        AssertIsUnionReference(arrayCase.Items, nullable: false);
 
         // Subsequent usages reference the same component
         var other = Subject(configureSerializer: UseReflectionResolver).GenerateSchema(typeof(RecursiveValue), schemaRepository);
-        Assert.Equal(nameof(RecursiveValue), Assert.IsType<OpenApiSchemaReference>(other).Reference.Id);
+        AssertIsUnionReference(other, nullable: false);
         Assert.Single(schemaRepository.Schemas);
+    }
+
+    [Fact]
+    public void GenerateSchema_GeneratesNullableSchema_ForNullableRecursiveUnionType()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var schema = Subject(configureSerializer: UseReflectionResolver).GenerateSchema(typeof(RecursiveValue?), schemaRepository);
+
+        AssertIsUnionReference(schema, nullable: true);
+
+        // The component itself is not nullable
+        var definition = Assert.IsType<OpenApiSchema>(schemaRepository.Schemas[nameof(RecursiveValue)]);
+        Assert.NotNull(definition.AnyOf);
+        Assert.DoesNotContain(definition.AnyOf, (s) => s.Type == JsonSchemaType.Null);
+    }
+
+    [Fact]
+    public void GenerateSchema_GeneratesNullableSchema_ForNullableRecursiveUnionTypeProperty()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        Subject(configureSerializer: UseReflectionResolver).GenerateSchema(typeof(RecursiveEnvelope), schemaRepository);
+
+        var schema = schemaRepository.Schemas[nameof(RecursiveEnvelope)];
+        Assert.NotNull(schema.Properties);
+
+        AssertIsUnionReference(schema.Properties[nameof(RecursiveEnvelope.Value)], nullable: false);
+        AssertIsUnionReference(schema.Properties[nameof(RecursiveEnvelope.NullableValue)], nullable: true);
+    }
+
+    private static void AssertIsUnionReference(IOpenApiSchema? schema, bool nullable)
+    {
+        var concrete = Assert.IsType<OpenApiSchema>(schema);
+        Assert.NotNull(concrete.AnyOf);
+        Assert.Equal(nullable ? 2 : 1, concrete.AnyOf.Count);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(concrete.AnyOf[0]);
+        Assert.Equal(nameof(RecursiveValue), reference.Reference.Id);
+
+        if (nullable)
+        {
+            Assert.Equal(JsonSchemaType.Null, concrete.AnyOf[1].Type);
+        }
     }
 
     private static SchemaGenerator Subject(
@@ -139,5 +181,7 @@ public class JsonSerializerUnionSchemaGeneratorTests
     public record Envelope(Pet Value);
 
     public union RecursiveValue(int, RecursiveValue[]);
+
+    public record RecursiveEnvelope(RecursiveValue Value, RecursiveValue? NullableValue);
 }
 #endif

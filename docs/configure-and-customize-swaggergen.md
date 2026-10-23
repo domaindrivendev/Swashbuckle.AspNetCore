@@ -1337,7 +1337,8 @@ validated against when the discriminator property is not present, or has a value
 documents, you can provide a selector function to determine the type to use as the default mapping for a given base type. The
 `defaultMapping` is omitted when producing documents using earlier versions of the OpenAPI specification. When a default mapping is
 selected, OpenAPI 3.2 documents do not mark the discriminator property as required in the base type's schema, but do in the schemas of
-the other subtypes, so that only the default mapping is valid for payloads without the discriminator property. Documents produced using
+the other subtypes (and in the `oneOf` alternative for a concrete base type if the default mapping is one of its subtypes), so that only
+the default mapping is valid for payloads without the discriminator property. Documents produced using
 earlier versions of the OpenAPI specification always mark the discriminator property as required.
 
 <!-- markdownlint-disable MD031 MD033 -->

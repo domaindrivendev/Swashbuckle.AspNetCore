@@ -1101,7 +1101,7 @@ public class JsonSerializerSchemaGeneratorTests
 
         var schemaRepository = new SchemaRepository();
 
-        subject.GenerateSchema(typeof(BaseType), schemaRepository);
+        var polymorphicSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
 
         var schema = schemaRepository.Schemas["BaseType"];
         Assert.NotNull(schema.Discriminator);
@@ -1113,6 +1113,44 @@ public class JsonSerializerSchemaGeneratorTests
         // Only the default mapping is valid for payloads without the discriminator property
         Assert.Contains("TypeName", schemaRepository.Schemas["SubType1"].Required);
         Assert.DoesNotContain("TypeName", schemaRepository.Schemas["SubType2"].Required ?? new HashSet<string>());
+
+        // The alternative for the concrete base type requires the discriminator property, as the default mapping is a subtype
+        Assert.NotNull(polymorphicSchema.OneOf);
+
+        var baseAlternative = Assert.IsType<OpenApiSchema>(polymorphicSchema.OneOf[0]);
+        Assert.NotNull(baseAlternative.AllOf);
+        Assert.Equal(2, baseAlternative.AllOf.Count);
+
+        var baseReference = Assert.IsType<OpenApiSchemaReference>(baseAlternative.AllOf[0]);
+        Assert.Equal("BaseType", baseReference.Reference.Id);
+
+        var baseRequirement = Assert.IsType<OpenApiSchema>(baseAlternative.AllOf[1]);
+        Assert.Equal(["TypeName"], baseRequirement.Required);
+
+        Assert.All(polymorphicSchema.OneOf.Skip(1), (alternative) => Assert.IsType<OpenApiSchemaReference>(alternative));
+    }
+
+    [Fact]
+    public void GenerateSchema_DiscriminatorDefaultMappingSelector_ReturningBaseType_DoesNotWrapBaseTypeAlternative()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.DiscriminatorNameSelector = (baseType) => "TypeName";
+            c.DiscriminatorValueSelector = (subType) => subType.Name;
+            c.DiscriminatorDefaultMappingSelector = (baseType) => baseType;
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        var polymorphicSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+        Assert.NotNull(polymorphicSchema.OneOf);
+        Assert.All(polymorphicSchema.OneOf, (alternative) => Assert.IsType<OpenApiSchemaReference>(alternative));
+
+        Assert.DoesNotContain("TypeName", schemaRepository.Schemas["BaseType"].Required);
+        Assert.Contains("TypeName", schemaRepository.Schemas["SubType1"].Required);
+        Assert.Contains("TypeName", schemaRepository.Schemas["SubType2"].Required);
     }
 
     [Theory]
