@@ -1,0 +1,326 @@
+﻿{
+  "openapi": "3.1.2",
+  "info": {
+    "title": "Unions",
+    "version": "v1"
+  },
+  "paths": {
+    "/Pets/{id}": {
+      "get": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Gets a pet.",
+        "operationId": "GetPet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The Id of the pet.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "description": "A cat.",
+                      "$ref": "#/components/schemas/Cat"
+                    },
+                    {
+                      "description": "A dog.",
+                      "$ref": "#/components/schemas/Dog"
+                    }
+                  ],
+                  "description": "A pet, which is either a cat or a dog."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Pets": {
+      "post": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Creates a pet.",
+        "operationId": "CreatePet",
+        "requestBody": {
+          "description": "The pet to create.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "description": "A cat.",
+                    "$ref": "#/components/schemas/Cat"
+                  },
+                  {
+                    "description": "A dog.",
+                    "$ref": "#/components/schemas/Dog"
+                  }
+                ],
+                "description": "A pet, which is either a cat or a dog."
+              }
+            },
+            "text/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "description": "A cat.",
+                    "$ref": "#/components/schemas/Cat"
+                  },
+                  {
+                    "description": "A dog.",
+                    "$ref": "#/components/schemas/Dog"
+                  }
+                ],
+                "description": "A pet, which is either a cat or a dog."
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "description": "A cat.",
+                    "$ref": "#/components/schemas/Cat"
+                  },
+                  {
+                    "description": "A dog.",
+                    "$ref": "#/components/schemas/Dog"
+                  }
+                ],
+                "description": "A pet, which is either a cat or a dog."
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "description": "A cat.",
+                      "$ref": "#/components/schemas/Cat"
+                    },
+                    {
+                      "description": "A dog.",
+                      "$ref": "#/components/schemas/Dog"
+                    }
+                  ],
+                  "description": "A pet, which is either a cat or a dog."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Pets/owners/{id}": {
+      "get": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Gets the owner of some pets.",
+        "operationId": "GetOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The Id of the owner.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "The owner of some pets.",
+                  "$ref": "#/components/schemas/Owner"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Pets/values": {
+      "get": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Gets a JSON value that may contain nested values.",
+        "operationId": "GetValue",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "description": "A value that is either a number, a string or an array of values.",
+                      "$ref": "#/components/schemas/NestedValue"
+                    }
+                  ],
+                  "description": "A value that is either a number, a string or an array of values."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Cat": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "The name of the cat."
+          },
+          "lives": {
+            "type": "integer",
+            "description": "The number of lives the cat has left.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A cat."
+      },
+      "Dog": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "The name of the dog."
+          },
+          "goodBoy": {
+            "type": "boolean",
+            "description": "Whether the dog is a good boy."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A dog."
+      },
+      "NestedValue": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/NestedValue"
+                }
+              ],
+              "description": "A value that is either a number, a string or an array of values."
+            }
+          }
+        ],
+        "description": "A value that is either a number, a string or an array of values."
+      },
+      "Owner": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "The name of the owner."
+          },
+          "pet": {
+            "anyOf": [
+              {
+                "description": "A cat.",
+                "$ref": "#/components/schemas/Cat"
+              },
+              {
+                "description": "A dog.",
+                "$ref": "#/components/schemas/Dog"
+              }
+            ],
+            "description": "The owner's current pet."
+          },
+          "previousPet": {
+            "anyOf": [
+              {
+                "description": "A cat.",
+                "$ref": "#/components/schemas/Cat"
+              },
+              {
+                "description": "A dog.",
+                "$ref": "#/components/schemas/Dog"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The owner's previous pet, if any."
+          },
+          "otherPets": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "anyOf": [
+                {
+                  "description": "A cat.",
+                  "$ref": "#/components/schemas/Cat"
+                },
+                {
+                  "description": "A dog.",
+                  "$ref": "#/components/schemas/Dog"
+                }
+              ],
+              "description": "A pet, which is either a cat or a dog."
+            },
+            "description": "The owner's other pets."
+          }
+        },
+        "additionalProperties": false,
+        "description": "The owner of some pets."
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Pets"
+    }
+  ]
+}

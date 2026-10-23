@@ -4,8 +4,8 @@ namespace QueryOperations;
 
 /// <summary>
 /// A web site using the HTTP QUERY method, which is a first-class operation in OpenAPI 3.2.
-/// The QUERY action is only available when targeting .NET 11 or later, as earlier versions
-/// of Microsoft.OpenApi cannot serialize it correctly for OpenAPI 3.1 and earlier.
+/// Earlier versions of the OpenAPI specification describe it using the
+/// <c>x-oai-additionalOperations</c> extension instead.
 /// </summary>
 public class Startup
 {

@@ -12,6 +12,11 @@
     <ProjectReference Include="..\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj" />
     <ProjectReference Include="..\WebSites\**\*.csproj" />
     <ProjectReference Remove="..\WebSites\TestFirst.IntegrationTests\TestFirst.IntegrationTests.csproj" />
+    <ProjectReference Remove="..\WebSites\Unions\Unions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
+    <ProjectReference Include="..\WebSites\Unions\Unions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

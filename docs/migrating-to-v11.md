@@ -41,6 +41,8 @@ users are:
   create or mutate media types, in the same way as `IOpenApiSchema` and `OpenApiSchema`.
 - The `Attribute` and `Wrapped` properties of `OpenApiXml` are replaced by the `NodeType` property.
 - Visitor methods (`OpenApiVisitorBase`) that previously accepted `OpenApiMediaType` now accept `IOpenApiMediaType`.
+- The `Example` property of `IOpenApiSchema` (and of `OpenApiSchema` and `OpenApiSchemaReference`) is obsolete. Use the `Examples`
+  property instead.
 
 For example, the signature of the `IContentValidator.Validate()` method in the `Swashbuckle.AspNetCore.ApiTesting` package has changed
 as shown below:
@@ -49,6 +51,58 @@ as shown below:
 - void Validate(Microsoft.OpenApi.OpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content)
 + void Validate(Microsoft.OpenApi.IOpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content)
 ```
+
+### Schema examples
+
+As the `Example` property of `IOpenApiSchema` is obsolete, examples from XML comments (`<example>`) for types and properties are now
+added to schemas using the `Examples` property instead. OpenAPI 2.0 and 3.0 documents are unchanged, as the first example is still
+written as `example`, but OpenAPI 3.1 and 3.2 documents now contain an `examples` array instead of an `example` value:
+
+```diff
+- "example": "hello"
++ "examples": [
++   "hello"
++ ]
+```
+
+If you have custom schema filters that read or set the `Example` property, update them to use the `Examples` property instead. If a
+custom filter sets `Example` on a schema that also has an example from XML comments, both examples are written to the document.
+
+```diff
+  public class MySchemaFilter : ISchemaFilter
+  {
+      public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+      {
+          if (schema is OpenApiSchema concrete)
+          {
+-             concrete.Example = "hello";
++             concrete.Examples = ["hello"];
+          }
+      }
+  }
+```
+
+### Multiple response types for the same status code
+
+When targeting .NET 11 or later, ASP.NET Core's API explorer reports every response type that an endpoint declares for a status code,
+whereas earlier versions only report the last one. Swashbuckle.AspNetCore combines the schemas of multiple response types for the same
+status code and content type into an `anyOf` schema, so the documents generated for an application may change when it is upgraded
+to .NET 11 if it has any of the following:
+
+- Actions with more than one `[ProducesResponseType]` attribute for the same status code.
+- Minimal API endpoints with more than one `Produces<T>()` call for the same status code.
+- Minimal API endpoints whose handler returns a different type to the one declared for the status code using `Produces<T>()`, as the
+  type returned by the handler is also reported.
+
+For example, the response of the following endpoint is described as a `Cat` when targeting .NET 10, but as an `anyOf` of `Cat`
+and `Dog` when targeting .NET 11:
+
+```cs
+app.MapGet("/pets/{id}", (int id) => new Dog("Rex", true))
+   .Produces<Cat>(StatusCodes.Status200OK);
+```
+
+If this is not the intended behaviour, update the declared response types so that they match the types returned by your endpoints.
 
 ## How do I enable OpenAPI 3.2 support?
 
@@ -190,6 +244,9 @@ Migrating to Swashbuckle.AspNetCore v11+ will likely involve changes in the foll
 - Update any explicit NuGet package references for Microsoft.OpenApi to v3.x and follow the
   [v3 upgrade guide for Microsoft.OpenApi][microsoft-openapi-v3-migration-guide], in particular replacing `OpenApiMediaType` with
   `IOpenApiMediaType` in custom filters and `IContentValidator` implementations.
+- Update any custom schema filters that use the obsolete `Example` property of schemas to use the `Examples` property instead.
+- If your application targets .NET 11, check for endpoints that declare more than one response type for the same status code, as
+  these are now described using `anyOf`.
 - If you use `Swashbuckle.AspNetCore.ReDoc`:
   - Update any custom `index.html` page to load `index.js` as an ES module.
   - Remove any use of the removed `ConfigObject` properties and `ReDocOptions` extension methods listed above.

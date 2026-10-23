@@ -27,6 +27,11 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
     [InlineData(typeof(QueryOperations.Startup), "/swagger/v1/swaggerv3_2.json", "3.2")]
     [InlineData(typeof(ReDocApp.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(TestFirst.Startup), "/swagger/v1-generated/openapi.json")]
+#if NET11_0_OR_GREATER
+    [InlineData(typeof(Unions.Startup), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(Unions.Startup), "/swagger/v1/swaggerv3_1.json", "3.1")]
+    [InlineData(typeof(Unions.Startup), "/swagger/v1/swaggerv3_2.json", "3.2")]
+#endif
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson(
         Type startupType,
         string swaggerRequestUri,
