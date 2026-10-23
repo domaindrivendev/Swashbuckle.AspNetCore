@@ -109,14 +109,15 @@ public static class AnnotationsSwaggerGenOptionsExtensions
             return discriminatorAttribute.DefaultMapping;
         }
 
-        // System.Text.Json serializes derived types that are not declared with [JsonDerivedType] as the
-        // base type (without a discriminator) when configured to fall back, so payloads without a
-        // discriminator are described by the base type's schema if it can be deserialized.
+        // System.Text.Json deserializes payloads without a discriminator as the base type, but it only
+        // deserializes payloads with a discriminator value that is not recognized as the base type if
+        // configured to ignore unrecognized type discriminators, so only then are all payloads that are
+        // not in the mapping described by the base type's schema (if it can be deserialized).
         var jsonPolymorphicAttribute = baseType.GetCustomAttributes(false)
             .OfType<JsonPolymorphicAttribute>()
             .FirstOrDefault();
 
-        if (jsonPolymorphicAttribute is { UnknownDerivedTypeHandling: not JsonUnknownDerivedTypeHandling.FailSerialization } &&
+        if (jsonPolymorphicAttribute is { IgnoreUnrecognizedTypeDiscriminators: true } &&
             !baseType.IsAbstract &&
             !baseType.IsInterface)
         {

@@ -23,14 +23,6 @@ public class SchemaGenerator(
         ParameterInfo parameterInfo = null,
         ApiParameterRouteInfo routeInfo = null)
     {
-#if NET11_0_OR_GREATER
-        if (TryGenerateUnionSchema(modelType, schemaRepository, out var unionSchema))
-        {
-            ApplyFilters(unionSchema, modelType, schemaRepository, memberInfo, parameterInfo);
-            return unionSchema;
-        }
-#endif
-
         if (memberInfo != null)
         {
             return GenerateSchemaForMember(modelType, schemaRepository, memberInfo);
@@ -297,6 +289,13 @@ public class SchemaGenerator(
             return customSchemaFactory();
         }
 
+#if NET11_0_OR_GREATER
+        if (TryGenerateUnionSchema(dataContract.UnderlyingType, schemaRepository, out var unionSchema))
+        {
+            return unionSchema;
+        }
+#endif
+
         if (dataContract.UnderlyingType.IsAssignableToOneOf(BinaryStringTypes))
         {
             return new OpenApiSchema { Type = JsonSchemaTypes.String, Format = "binary" };
@@ -476,7 +475,13 @@ public class SchemaGenerator(
                 if (TryGetDiscriminatorFor(dataContract, schemaRepository, knownTypesDataContracts, out var discriminator))
                 {
                     schema.Properties.Add(discriminator.PropertyName, new OpenApiSchema { Type = JsonSchemaTypes.String });
-                    schema.Required.Add(discriminator.PropertyName);
+
+                    // If there is a default mapping then payloads without the discriminator property are valid
+                    if (discriminator.DefaultMapping == null)
+                    {
+                        schema.Required.Add(discriminator.PropertyName);
+                    }
+
                     schema.Discriminator = discriminator;
                 }
             }

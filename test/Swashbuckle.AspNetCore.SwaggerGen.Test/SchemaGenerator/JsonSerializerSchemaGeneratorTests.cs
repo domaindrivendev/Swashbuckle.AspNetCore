@@ -1107,6 +1107,8 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.NotNull(schema.Discriminator);
         Assert.NotNull(schema.Discriminator.DefaultMapping);
         Assert.Equal("SubType2", schema.Discriminator.DefaultMapping.Reference.Id);
+        Assert.Contains("TypeName", schema.Properties.Keys);
+        Assert.DoesNotContain("TypeName", schema.Required);
     }
 
     [Fact]
@@ -1127,6 +1129,7 @@ public class JsonSerializerSchemaGeneratorTests
         var schema = schemaRepository.Schemas["BaseType"];
         Assert.NotNull(schema.Discriminator);
         Assert.Null(schema.Discriminator.DefaultMapping);
+        Assert.Contains("TypeName", schema.Required);
     }
 
     [Fact]
