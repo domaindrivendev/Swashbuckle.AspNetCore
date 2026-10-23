@@ -310,7 +310,7 @@ public enum ShapeType
 When producing OpenAPI 3.2 documents, the discriminator's `defaultMapping` is also populated if the base
 type is annotated with `[SwaggerDiscriminator]` and its `DefaultMapping` property is set, or if the base type is a concrete type annotated
 with `[JsonPolymorphic]` and its `IgnoreUnrecognizedTypeDiscriminators` property is set to `true`. When a default mapping is
-present, the discriminator property is not marked as required. See
+present, the discriminator property is only marked as required by the schemas of the other subtypes. See
 [Discriminator Default Mapping](configure-and-customize-swaggergen.md#discriminator-default-mapping) for more details.
 
 This indicates that the corresponding payload will have a `"shapeType"` property to discriminate between subtypes, and that property

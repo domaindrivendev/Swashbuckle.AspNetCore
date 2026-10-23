@@ -1109,6 +1109,65 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal("SubType2", schema.Discriminator.DefaultMapping.Reference.Id);
         Assert.Contains("TypeName", schema.Properties.Keys);
         Assert.DoesNotContain("TypeName", schema.Required);
+
+        // Only the default mapping is valid for payloads without the discriminator property
+        Assert.Contains("TypeName", schemaRepository.Schemas["SubType1"].Required);
+        Assert.DoesNotContain("TypeName", schemaRepository.Schemas["SubType2"].Required ?? new HashSet<string>());
+    }
+
+    [Theory]
+    [InlineData(OpenApiSpecVersion.OpenApi2_0, false)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_0, false)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_1, false)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_2, true)]
+    public void GenerateSchema_DiscriminatorDefaultMappingSelector_DiscriminatorIsOnlyOptionalForOpenApi32(
+        OpenApiSpecVersion version,
+        bool expectedOptional)
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.DiscriminatorNameSelector = (baseType) => "TypeName";
+            c.DiscriminatorValueSelector = (subType) => subType.Name;
+            c.DiscriminatorDefaultMappingSelector = (baseType) => baseType;
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+        var document = new OpenApiDocument
+        {
+            Info = new() { Title = "Test", Version = "1.0" },
+            Paths = [],
+            Components = new() { Schemas = schemaRepository.Schemas },
+        };
+
+        using var writer = new StringWriter();
+        document.SerializeAs(version, new OpenApiJsonWriter(writer));
+
+        using var json = JsonDocument.Parse(writer.ToString());
+
+        var schemas = version == OpenApiSpecVersion.OpenApi2_0
+            ? json.RootElement.GetProperty("definitions")
+            : json.RootElement.GetProperty("components").GetProperty("schemas");
+
+        var schema = schemas.GetProperty("BaseType");
+
+        var required = schema.TryGetProperty("required", out var value)
+            ? value.EnumerateArray().Select((p) => p.GetString()).ToArray()
+            : [];
+
+        var hasDefaultMapping =
+            schema.TryGetProperty("discriminator", out var discriminator) &&
+            discriminator.ValueKind == JsonValueKind.Object &&
+            discriminator.TryGetProperty("defaultMapping", out _);
+
+        Assert.Equal(expectedOptional, !required.Contains("TypeName"));
+        Assert.Equal(expectedOptional, hasDefaultMapping);
+
+        // The schema in the document itself is not modified by serialization
+        Assert.DoesNotContain("TypeName", schemaRepository.Schemas["BaseType"].Required);
     }
 
     [Fact]

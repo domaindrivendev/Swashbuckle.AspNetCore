@@ -95,7 +95,7 @@ when targeting .NET 10. See _[C# unions schema support #4103][swashbuckle-aspnet
 OpenAPI 3.2 adds a `defaultMapping` field to discriminators. It can be populated using the new
 `SelectDiscriminatorDefaultMappingUsing()` option, or with the `Swashbuckle.AspNetCore.Annotations` package using the new
 `DefaultMapping` property of `[SwaggerDiscriminator]`, or `[JsonPolymorphic]` with `IgnoreUnrecognizedTypeDiscriminators = true` on a
-concrete base type. When a default mapping is present, the discriminator property is no longer marked as required. See _[Discriminator Default Mapping][discriminator-default-mapping]_ for more details.
+concrete base type. When a default mapping is present, the discriminator property is no longer marked as required by the base type in OpenAPI 3.2 documents. See _[Discriminator Default Mapping][discriminator-default-mapping]_ for more details.
 
 ### Swashbuckle.AspNetCore.ApiTesting
 

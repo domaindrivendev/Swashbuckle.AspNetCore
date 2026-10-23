@@ -92,7 +92,7 @@ public class AnnotationsSwaggerGenOptionsExtensionsTests
         var repository = new SchemaRepository();
         generator.GenerateSchema(type, repository);
 
-        return Assert.IsType<OpenApiSchema>(repository.Schemas[type.Name]);
+        return Assert.IsAssignableFrom<OpenApiSchema>(repository.Schemas[type.Name]);
     }
 
     [SwaggerDiscriminator("kind", DefaultMapping = typeof(CircleShape))]

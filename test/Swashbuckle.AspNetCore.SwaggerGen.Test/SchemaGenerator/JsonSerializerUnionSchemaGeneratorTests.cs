@@ -82,6 +82,41 @@ public class JsonSerializerUnionSchemaGeneratorTests
         Assert.Same(expected, schema);
     }
 
+    [Fact]
+    public void GenerateSchema_GeneratesReferencedAnyOfSchema_ForRecursiveUnionType()
+    {
+        var serializerOptions = new JsonSerializerOptions();
+        UseReflectionResolver(serializerOptions);
+
+        RecursiveValue value = new RecursiveValue[] { 1, new RecursiveValue[] { 2 } };
+        Assert.Equal("[1,[2]]", JsonSerializer.Serialize(value, serializerOptions));
+
+        var schemaRepository = new SchemaRepository();
+
+        var schema = Subject(configureSerializer: UseReflectionResolver).GenerateSchema(typeof(RecursiveValue), schemaRepository);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(schema);
+        Assert.Equal(nameof(RecursiveValue), reference.Reference.Id);
+
+        var definition = Assert.IsType<OpenApiSchema>(schemaRepository.Schemas[nameof(RecursiveValue)]);
+        Assert.NotNull(definition.AnyOf);
+        Assert.Equal(2, definition.AnyOf.Count);
+
+        var integerCase = Assert.IsType<OpenApiSchema>(definition.AnyOf[0]);
+        Assert.Equal(JsonSchemaType.Integer, integerCase.Type);
+
+        var arrayCase = Assert.IsType<OpenApiSchema>(definition.AnyOf[1]);
+        Assert.Equal(JsonSchemaType.Array, arrayCase.Type);
+
+        var itemsReference = Assert.IsType<OpenApiSchemaReference>(arrayCase.Items);
+        Assert.Equal(nameof(RecursiveValue), itemsReference.Reference.Id);
+
+        // Subsequent usages reference the same component
+        var other = Subject(configureSerializer: UseReflectionResolver).GenerateSchema(typeof(RecursiveValue), schemaRepository);
+        Assert.Equal(nameof(RecursiveValue), Assert.IsType<OpenApiSchemaReference>(other).Reference.Id);
+        Assert.Single(schemaRepository.Schemas);
+    }
+
     private static SchemaGenerator Subject(
         Action<SchemaGeneratorOptions>? configureGenerator = null,
         Action<JsonSerializerOptions>? configureSerializer = null)
@@ -102,5 +137,7 @@ public class JsonSerializerUnionSchemaGeneratorTests
     public union Pet(Cat, Dog);
 
     public record Envelope(Pet Value);
+
+    public union RecursiveValue(int, RecursiveValue[]);
 }
 #endif
