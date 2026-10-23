@@ -172,6 +172,49 @@ public class XmlCommentsRequestBodyFilterTests
         Assert.Equal("Parameter from form body", requestBody.Content["multipart/form-data"].Schema.Properties[parameterInfo.Name].Description);
     }
 
+    [Fact]
+    public void Apply_SetsDescriptionAndExamples_ForParameterFromFormWithExample()
+    {
+        var parameterInfo = typeof(FakeControllerWithXmlComments)
+            .GetMethod(nameof(FakeControllerWithXmlComments.PostFormWithExample))
+            .GetParameters()[0];
+
+        var requestBody = new OpenApiRequestBody
+        {
+            Content = new Dictionary<string, IOpenApiMediaType>
+            {
+                ["multipart/form-data"] = new OpenApiMediaType
+                {
+                    Schema = new OpenApiSchema
+                    {
+                        Type = JsonSchemaTypes.Object,
+                        Properties = new Dictionary<string, IOpenApiSchema>()
+                        {
+                            [parameterInfo.Name] = new OpenApiSchema { Type = JsonSchemaTypes.String }
+                        }
+                    },
+                }
+            }
+        };
+
+        var bodyParameterDescription = new ApiParameterDescription
+        {
+            ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo },
+            Name = parameterInfo.Name,
+            Source = BindingSource.Form
+        };
+        var filterContext = new RequestBodyFilterContext(null, [bodyParameterDescription], null, new SchemaRepository(), null);
+
+        Subject().Apply(requestBody, filterContext);
+
+        var property = requestBody.Content["multipart/form-data"].Schema.Properties[parameterInfo.Name];
+        Assert.Equal("Parameter from form body with an example", property.Description);
+        Assert.NotNull(property.Examples);
+
+        var example = Assert.Single(property.Examples);
+        Assert.Equal("\"Example for name\"", example.ToJson());
+    }
+
     private static XmlCommentsRequestBodyFilter Subject()
     {
         using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");

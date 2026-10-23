@@ -1230,6 +1230,31 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_DiscriminatorDefaultMappingSelector_Null_DoesNotSetDefaultMapping()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.DiscriminatorNameSelector = (baseType) => "TypeName";
+            c.DiscriminatorValueSelector = (subType) => subType.Name;
+            c.DiscriminatorDefaultMappingSelector = null;
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        var polymorphicSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+        var schema = schemaRepository.Schemas["BaseType"];
+        Assert.IsNotType<DefaultMappingDiscriminatorSchema>(schema);
+        Assert.NotNull(schema.Discriminator);
+        Assert.Null(schema.Discriminator.DefaultMapping);
+        Assert.Contains("TypeName", schema.Required);
+
+        Assert.NotNull(polymorphicSchema.OneOf);
+        Assert.All(polymorphicSchema.OneOf, (alternative) => Assert.IsType<OpenApiSchemaReference>(alternative));
+    }
+
+    [Fact]
     public void GenerateSchema_SupportsOption_UseAllOfForPolymorphism()
     {
         var subject = Subject(configureGenerator: c =>
