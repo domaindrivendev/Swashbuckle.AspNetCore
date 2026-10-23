@@ -179,7 +179,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         using var client = application.CreateDefaultClient();
 
         // Act
-        using var response = await client.GetAsync("/swagger/v1/swagger.json", TestContext.Current.CancellationToken);
+        using var response = await client.GetAsync("/swagger/runtime/swagger.json", TestContext.Current.CancellationToken);
 
         // Assert
         var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);

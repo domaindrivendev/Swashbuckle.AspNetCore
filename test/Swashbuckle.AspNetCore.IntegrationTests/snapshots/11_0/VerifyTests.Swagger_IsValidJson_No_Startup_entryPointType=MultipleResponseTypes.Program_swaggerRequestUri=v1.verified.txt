@@ -41,93 +41,6 @@
           }
         }
       }
-    },
-    "/pets/{id}": {
-      "get": {
-        "tags": [
-          "MultipleResponseTypes"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Cat"
-                    },
-                    {
-                      "$ref": "#/components/schemas/Dog"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Shelter/animal": {
-      "get": {
-        "tags": [
-          "Shelter"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Cat"
-                    },
-                    {
-                      "$ref": "#/components/schemas/Dog"
-                    }
-                  ]
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Cat"
-                    },
-                    {
-                      "$ref": "#/components/schemas/Dog"
-                    }
-                  ]
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Cat"
-                    },
-                    {
-                      "$ref": "#/components/schemas/Dog"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -164,9 +77,6 @@
   "tags": [
     {
       "name": "MultipleResponseTypes"
-    },
-    {
-      "name": "Shelter"
     }
   ]
 }

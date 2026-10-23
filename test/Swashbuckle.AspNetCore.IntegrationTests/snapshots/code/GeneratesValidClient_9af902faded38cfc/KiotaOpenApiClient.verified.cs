@@ -7,8 +7,6 @@ using Microsoft.Kiota.Serialization.Json;
 using Microsoft.Kiota.Serialization.Multipart;
 using Microsoft.Kiota.Serialization.Text;
 using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Animals;
-using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Pets;
-using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Shelter;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -25,16 +23,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests
         public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Animals.AnimalsRequestBuilder Animals
         {
             get => new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Animals.AnimalsRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The pets property</summary>
-        public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Pets.PetsRequestBuilder Pets
-        {
-            get => new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Pets.PetsRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The Shelter property</summary>
-        public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Shelter.ShelterRequestBuilder Shelter
-        {
-            get => new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Shelter.ShelterRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.KiotaOpenApiClient"/> and sets the default values.

@@ -9,7 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => options.SwaggerDoc("v1", new() { Title = "MultipleResponseTypes", Version = "v1" }));
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new() { Title = "MultipleResponseTypes", Version = "v1" });
+
+    // Endpoints whose documentation differs between versions of ASP.NET Core are described in a separate document
+    options.SwaggerDoc("runtime", new() { Title = "MultipleResponseTypes", Version = "runtime" });
+});
 
 // Exercises Swashbuckle's multiple-response-types-per-status-code handling end-to-end.
 // From .NET 11, ASP.NET Core's API explorer reports every response type for a status code.
@@ -38,7 +44,8 @@ app.MapGet("/animals/{id}", (int id) => new Cat("Whiskers", 9))
 // handler (Dog). From .NET 11, ASP.NET Core's API explorer reports both types, so the generated
 // document contains an "anyOf" of the two schemas. Earlier versions only report Cat.
 app.MapGet("/pets/{id}", (int id) => new Dog("Rex", true))
-   .Produces<Cat>(StatusCodes.Status200OK);
+   .Produces<Cat>(StatusCodes.Status200OK)
+   .WithGroupName("runtime");
 
 app.MapControllers();
 
@@ -62,6 +69,7 @@ namespace MultipleResponseTypes
     /// contains an "anyOf" of the two schemas. Earlier versions only report the last one (Dog).
     /// </summary>
     [ApiController]
+    [ApiExplorerSettings(GroupName = "runtime")]
     [Route("[controller]")]
     public class ShelterController : ControllerBase
     {
