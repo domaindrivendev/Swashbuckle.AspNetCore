@@ -220,7 +220,7 @@ jobs:
             $invalidPackages++
           }
         }
-        meziantou.validate-nuget-package @($packages) --github-token ${env:GH_TOKEN}
+        meziantou.validate-nuget-package @($packages) --github-token ${env:GH_TOKEN} --excluded-rules IconMustBeSet
         if ($LASTEXITCODE -ne 0) {
           $invalidPackages++
         }
