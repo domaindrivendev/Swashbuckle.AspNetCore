@@ -1,1 +1,2 @@
-﻿
+﻿Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.DefaultMapping.get -> System.Type
+Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.DefaultMapping.set -> void

@@ -47,4 +47,12 @@ public class FakeControllerWithXmlComments
     public void PostForm([FromForm] string name)
     {
     }
+
+    /// <summary>
+    /// An action with a form body with an example
+    /// </summary>
+    /// <param name="name" example="Example for name">Parameter from form body with an example</param>
+    public void PostFormWithExample([FromForm] string name)
+    {
+    }
 }

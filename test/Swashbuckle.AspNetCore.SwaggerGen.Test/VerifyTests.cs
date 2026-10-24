@@ -141,7 +141,7 @@ public partial class VerifyTests
                     {
                         ["200"] = new OpenApiResponse()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -192,7 +192,7 @@ public partial class VerifyTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+                        Content = new Dictionary<string, IOpenApiMediaType>
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -1490,7 +1490,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1547,7 +1547,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1598,7 +1598,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1649,7 +1649,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1713,6 +1713,39 @@ public partial class VerifyTests
         };
 
         await Verify(document, OpenApiSpecVersion.OpenApi3_1);
+    }
+
+    [Theory]
+    [InlineData(OpenApiSpecVersion.OpenApi3_0)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_2)]
+    public async Task GetSwagger_AdditionalOperations_RenderCorrectly(OpenApiSpecVersion version)
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "GET", relativePath: "resource"),
+
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "QUERY", relativePath: "resource"),
+
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "PURGE", relativePath: "resource"),
+            ],
+            options: new SwaggerGeneratorOptions
+            {
+                SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                {
+                    ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                }
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        await Verifier.Verify(ToJson(document, version))
+                      .UseDirectory(SnapshotsDirectory)
+                      .UseParameters(version);
     }
 
     private static SwaggerGenerator Subject(

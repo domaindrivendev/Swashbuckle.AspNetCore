@@ -11,11 +11,14 @@ public class ItemSchemaFilter : ISchemaFilter
     {
         if (schema is OpenApiSchema concrete)
         {
-            concrete.Example = new JsonObject
-            {
-                ["Id"] = 1,
-                ["Description"] = "An awesome item"
-            };
+            concrete.Examples =
+            [
+                new JsonObject
+                {
+                    ["Id"] = 1,
+                    ["Description"] = "An awesome item"
+                },
+            ];
         }
     }
 }

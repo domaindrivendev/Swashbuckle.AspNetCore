@@ -14,7 +14,7 @@ public class XmlCommentsRequestBodyFilterTests
     {
         var requestBody = new OpenApiRequestBody
         {
-            Content = new Dictionary<string, OpenApiMediaType>
+            Content = new Dictionary<string, IOpenApiMediaType>
             {
                 ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
             }
@@ -41,7 +41,7 @@ public class XmlCommentsRequestBodyFilterTests
     {
         var requestBody = new OpenApiRequestBody
         {
-            Content = new Dictionary<string, OpenApiMediaType>
+            Content = new Dictionary<string, IOpenApiMediaType>
             {
                 ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
             }
@@ -68,7 +68,7 @@ public class XmlCommentsRequestBodyFilterTests
     {
         var requestBody = new OpenApiRequestBody
         {
-            Content = new Dictionary<string, OpenApiMediaType>
+            Content = new Dictionary<string, IOpenApiMediaType>
             {
                 ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
             }
@@ -86,13 +86,12 @@ public class XmlCommentsRequestBodyFilterTests
         Assert.Equal("\"Example for StringProperty\"", requestBody.Content["application/json"].Example.ToJson());
     }
 
-
     [Fact]
     public void Apply_SetsDescriptionAndExample_FromUriTypePropertySummaryAndExampleTags()
     {
         var requestBody = new OpenApiRequestBody
         {
-            Content = new Dictionary<string, OpenApiMediaType>
+            Content = new Dictionary<string, IOpenApiMediaType>
             {
                 ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
             }
@@ -116,7 +115,7 @@ public class XmlCommentsRequestBodyFilterTests
     {
         var requestBody = new OpenApiRequestBody
         {
-            Content = new Dictionary<string, OpenApiMediaType>
+            Content = new Dictionary<string, IOpenApiMediaType>
             {
                 ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
             }
@@ -144,7 +143,7 @@ public class XmlCommentsRequestBodyFilterTests
 
         var requestBody = new OpenApiRequestBody
         {
-            Content = new Dictionary<string, OpenApiMediaType>
+            Content = new Dictionary<string, IOpenApiMediaType>
             {
                 ["multipart/form-data"] = new OpenApiMediaType
                 {
@@ -171,6 +170,49 @@ public class XmlCommentsRequestBodyFilterTests
         Subject().Apply(requestBody, filterContext);
 
         Assert.Equal("Parameter from form body", requestBody.Content["multipart/form-data"].Schema.Properties[parameterInfo.Name].Description);
+    }
+
+    [Fact]
+    public void Apply_SetsDescriptionAndExamples_ForParameterFromFormWithExample()
+    {
+        var parameterInfo = typeof(FakeControllerWithXmlComments)
+            .GetMethod(nameof(FakeControllerWithXmlComments.PostFormWithExample))
+            .GetParameters()[0];
+
+        var requestBody = new OpenApiRequestBody
+        {
+            Content = new Dictionary<string, IOpenApiMediaType>
+            {
+                ["multipart/form-data"] = new OpenApiMediaType
+                {
+                    Schema = new OpenApiSchema
+                    {
+                        Type = JsonSchemaTypes.Object,
+                        Properties = new Dictionary<string, IOpenApiSchema>()
+                        {
+                            [parameterInfo.Name] = new OpenApiSchema { Type = JsonSchemaTypes.String }
+                        }
+                    },
+                }
+            }
+        };
+
+        var bodyParameterDescription = new ApiParameterDescription
+        {
+            ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo },
+            Name = parameterInfo.Name,
+            Source = BindingSource.Form
+        };
+        var filterContext = new RequestBodyFilterContext(null, [bodyParameterDescription], null, new SchemaRepository(), null);
+
+        Subject().Apply(requestBody, filterContext);
+
+        var property = requestBody.Content["multipart/form-data"].Schema.Properties[parameterInfo.Name];
+        Assert.Equal("Parameter from form body with an example", property.Description);
+        Assert.NotNull(property.Examples);
+
+        var example = Assert.Single(property.Examples);
+        Assert.Equal("\"Example for name\"", example.ToJson());
     }
 
     private static XmlCommentsRequestBodyFilter Subject()
