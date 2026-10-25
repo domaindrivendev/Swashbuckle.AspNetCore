@@ -17,6 +17,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" VersionOverride="10.0.13" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" VersionOverride="11.0.0-rc.2.26504.105" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" VersionOverride="11.0.0-rc.3.26522.148" />
   </ItemGroup>
 </Project>
