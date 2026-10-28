@@ -86,7 +86,7 @@ public abstract class ApiTestRunnerBase : IDisposable
             using var streamWriter = new StreamWriter(Path.Combine(outputDir, "openapi.json"));
 
             var openApiJsonWriter = new OpenApiJsonWriter(streamWriter);
-            entry.Value.SerializeAsV3(openApiJsonWriter);
+            entry.Value.SerializeAs(_options.OpenApiVersion, openApiJsonWriter);
         }
 
         GC.SuppressFinalize(this);

@@ -31,7 +31,6 @@ public static class ToolTests
     [Theory]
     [InlineData("a")]
     [InlineData("1.9")]
-    [InlineData("3.2")]
     public static async Task Error_When_OpenApiVersion_Is_Not_Supported(string version)
     {
         string[] args =
@@ -104,6 +103,28 @@ public static class ToolTests
         ]);
 
         Assert.StartsWith("3.1.", document.RootElement.GetProperty("openapi").GetString());
+
+        // verify one of the endpoints
+        var paths = document.RootElement.GetProperty("paths");
+        var productsPath = paths.GetProperty("/products");
+        Assert.True(productsPath.TryGetProperty("post", out _));
+    }
+
+    [Fact]
+    public static async Task Can_Generate_Swagger_Json_v3_2()
+    {
+        using var document = await RunToJsonCommandAsync((outputPath) =>
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            "--openapiversion",
+            "3.2",
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ]);
+
+        Assert.StartsWith("3.2.", document.RootElement.GetProperty("openapi").GetString());
 
         // verify one of the endpoints
         var paths = document.RootElement.GetProperty("paths");

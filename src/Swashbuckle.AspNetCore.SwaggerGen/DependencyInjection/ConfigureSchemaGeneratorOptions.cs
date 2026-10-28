@@ -31,6 +31,7 @@ internal class ConfigureSchemaGeneratorOptions(
         target.SubTypesSelector = source.SubTypesSelector;
         target.DiscriminatorNameSelector = source.DiscriminatorNameSelector;
         target.DiscriminatorValueSelector = source.DiscriminatorValueSelector;
+        target.DiscriminatorDefaultMappingSelector = source.DiscriminatorDefaultMappingSelector;
         target.UseAllOfToExtendReferenceSchemas = source.UseAllOfToExtendReferenceSchemas;
         target.SupportNonNullableReferenceTypes = source.SupportNonNullableReferenceTypes;
         target.NonNullableReferenceTypesAsRequired = source.NonNullableReferenceTypesAsRequired;

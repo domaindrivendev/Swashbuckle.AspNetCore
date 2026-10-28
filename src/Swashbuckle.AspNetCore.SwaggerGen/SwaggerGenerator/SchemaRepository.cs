@@ -10,6 +10,8 @@ public class SchemaRepository(string documentName = null)
 
     public Dictionary<string, IOpenApiSchema> Schemas { get; } = [];
 
+    internal HashSet<Type> UnionTypesInProgress { get; } = [];
+
     public void RegisterType(Type type, string schemaId)
     {
         if (_reservedIds.ContainsValue(schemaId))

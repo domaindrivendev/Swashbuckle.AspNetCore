@@ -8,6 +8,10 @@ public class ConfigObject
     /// If set, the spec is considered untrusted and all HTML/markdown is sanitized to prevent XSS.
     /// Disabled by default for performance reasons. Enable this option if you work with untrusted user data!
     /// </summary>
+    /// <remarks>
+    /// This option is serialized as <c>sanitize</c>, which is the name used by Redoc 3.
+    /// </remarks>
+    [JsonPropertyName("sanitize")]
     public bool UntrustedSpec { get; set; }
 
     /// <summary>
@@ -17,36 +21,22 @@ public class ConfigObject
     public int? ScrollYOffset { get; set; }
 
     /// <summary>
-    /// If set, the protocol and hostname is not shown in the operation definition
-    /// </summary>
-    public bool HideHostname { get; set; }
-
-    /// <summary>
     /// Do not show "Download" spec button. THIS DOESN'T MAKE YOUR SPEC PRIVATE, it just hides the button
     /// </summary>
+    /// <remarks>
+    /// This option is serialized as <c>hideDownloadButtons</c>, which is the name used by Redoc 3.
+    /// </remarks>
+    [JsonPropertyName("hideDownloadButtons")]
     public bool HideDownloadButton { get; set; }
-
-    /// <summary>
-    /// Specify which responses to expand by default by response codes.
-    /// Values should be passed as comma-separated list without spaces e.g. "200,201". Special value "all" expands all responses by default.
-    /// Be careful: this option can slow-down documentation rendering time.
-    /// </summary>
-    public string ExpandResponses { get; set; } = "all";
 
     /// <summary>
     /// Show required properties first ordered in the same order as in required array
     /// </summary>
+    /// <remarks>
+    /// This option is serialized as <c>sortRequiredPropsFirst</c>, which is the name used by Redoc 3.
+    /// </remarks>
+    [JsonPropertyName("sortRequiredPropsFirst")]
     public bool RequiredPropsFirst { get; set; }
-
-    /// <summary>
-    /// Do not inject Authentication section automatically
-    /// </summary>
-    public bool NoAutoAuth { get; set; }
-
-    /// <summary>
-    /// Show path link and HTTP verb in the middle panel instead of the right one
-    /// </summary>
-    public bool PathInMiddlePanel { get; set; }
 
     /// <summary>
     /// Do not show loading animation. Useful for small docs
@@ -54,24 +44,9 @@ public class ConfigObject
     public bool HideLoading { get; set; }
 
     /// <summary>
-    /// Use native scrollbar for sidemenu instead of perfect-scroll (scrolling performance optimization for big specs)
-    /// </summary>
-    public bool NativeScrollbars { get; set; }
-
-    /// <summary>
-    /// Disable search indexing and search box
-    /// </summary>
-    public bool DisableSearch { get; set; }
-
-    /// <summary>
     /// Show only required fields in request samples
     /// </summary>
     public bool OnlyRequiredInSamples { get; set; }
-
-    /// <summary>
-    /// Sort properties alphabetically
-    /// </summary>
-    public bool SortPropsAlphabetically { get; set; }
 
     [JsonExtensionData]
     public Dictionary<string, object> AdditionalItems { get; set; } = [];

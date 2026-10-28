@@ -1,0 +1,275 @@
+# Migrating to Swashbuckle.AspNetCore v11
+
+> [!IMPORTANT]  
+> This document describes the breaking changes introduced in Swashbuckle.AspNetCore v11, and how to migrate from v10.x to v11+.
+
+## Why breaking changes?
+
+Swashbuckle.AspNetCore v11 adds support for [ASP.NET Core 11][aspnetcore-11] and for producing documents that use
+[version 3.2 of the OpenAPI specification][openapi-specification]. As with OpenAPI 3.1 before it, OpenAPI 3.2 is a minor release
+of the specification that nevertheless required a new major version of [Microsoft.OpenApi][microsoft-openapi-package], the library
+that Swashbuckle.AspNetCore builds upon: [Microsoft.OpenApi v3][microsoft-openapi-v3-migration-guide]. ASP.NET Core 11 also depends on
+Microsoft.OpenApi v3, so Swashbuckle.AspNetCore follows it to avoid version conflicts in applications that use both.
+
+At the same time, v11 drops support for .NET 8 and .NET 9, and upgrades the embedded [Redoc][redoc] UI to [Redoc 3][redoc-v3], which
+itself contains breaking changes.
+
+## Supported frameworks
+
+Swashbuckle.AspNetCore v11 targets .NET 10 and .NET 11, and depends on Microsoft.OpenApi v3.x for both target frameworks. Applications
+that target .NET 8 or .NET 9 should continue to use [Swashbuckle.AspNetCore v10.x][swashbuckle-aspnetcore-10], which remains the latest
+version that supports those frameworks.
+
+## How do I migrate to Swashbuckle.AspNetCore v11+?
+
+> [!TIP]
+> It is strongly recommended that you upgrade to the latest [Swashbuckle.AspNetCore v10.x][swashbuckle-aspnetcore-10] release
+> **before** upgrading to v11, so that the changes described in _[Migrating to Swashbuckle.AspNetCore v10][v10-migration]_ are dealt with first.
+
+### Microsoft.OpenApi v3
+
+Swashbuckle.AspNetCore v11 uses Microsoft.OpenApi v3.x. As with the v10 upgrade, the breaking changes you may encounter depend on how
+extensively you use the Swashbuckle.AspNetCore extensibility points, such as custom filters, because the types from Microsoft.OpenApi are
+exposed in the public API of Swashbuckle.AspNetCore. The [v3 upgrade guide for Microsoft.OpenApi][microsoft-openapi-v3-migration-guide]
+should be your primary reference when migrating.
+
+The changes in Microsoft.OpenApi v3 are much smaller in scope than those in v2. The most likely ones to affect Swashbuckle.AspNetCore
+users are:
+
+- `OpenApiMediaType` is replaced by the `IOpenApiMediaType` interface in collection properties, for example `OpenApiResponse.Content`
+  and `OpenApiRequestBody.Content` are now `IDictionary<string, IOpenApiMediaType>`. Use `OpenApiMediaType` as the concrete type to
+  create or mutate media types, in the same way as `IOpenApiSchema` and `OpenApiSchema`.
+- The `Attribute` and `Wrapped` properties of `OpenApiXml` are replaced by the `NodeType` property.
+- Visitor methods (`OpenApiVisitorBase`) that previously accepted `OpenApiMediaType` now accept `IOpenApiMediaType`.
+- The `Example` property of `IOpenApiSchema` (and of `OpenApiSchema` and `OpenApiSchemaReference`) is obsolete. Use the `Examples`
+  property instead.
+
+For example, the signature of the `IContentValidator.Validate()` method in the `Swashbuckle.AspNetCore.ApiTesting` package has changed
+as shown below:
+
+```diff
+- void Validate(Microsoft.OpenApi.OpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content)
++ void Validate(Microsoft.OpenApi.IOpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content)
+```
+
+### Schema examples
+
+As the `Example` property of `IOpenApiSchema` is obsolete, examples from XML comments (`<example>`) for types and properties are now
+added to schemas using the `Examples` property instead. OpenAPI 2.0 and 3.0 documents are unchanged, as the first example is still
+written as `example`, but OpenAPI 3.1 and 3.2 documents now contain an `examples` array instead of an `example` value:
+
+```diff
+- "example": "hello"
++ "examples": [
++   "hello"
++ ]
+```
+
+If you have custom schema filters that read or set the `Example` property, update them to use the `Examples` property instead. If a
+custom filter sets `Example` on a schema that also has an example from XML comments, both examples are written to the document.
+
+```diff
+  public class MySchemaFilter : ISchemaFilter
+  {
+      public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+      {
+          if (schema is OpenApiSchema concrete)
+          {
+-             concrete.Example = "hello";
++             concrete.Examples = ["hello"];
+          }
+      }
+  }
+```
+
+### Multiple response types for the same status code
+
+When targeting .NET 11 or later, ASP.NET Core's API explorer reports every response type that an endpoint declares for a status code,
+whereas earlier versions only report the last one. Swashbuckle.AspNetCore combines the schemas of multiple response types for the same
+status code and content type into an `anyOf` schema, so the documents generated for an application may change when it is upgraded
+to .NET 11 if it has any of the following:
+
+- Actions with more than one `[ProducesResponseType]` attribute for the same status code.
+- Minimal API endpoints with more than one `Produces<T>()` call for the same status code.
+- Minimal API endpoints whose handler returns a different type to the one declared for the status code using `Produces<T>()`, as the
+  type returned by the handler is also reported.
+
+For example, the response of the following endpoint is described as a `Cat` when targeting .NET 10, but as an `anyOf` of `Cat`
+and `Dog` when targeting .NET 11:
+
+```cs
+app.MapGet("/pets/{id}", (int id) => new Dog("Rex", true))
+   .Produces<Cat>(StatusCodes.Status200OK);
+```
+
+If this is not the intended behaviour, update the declared response types so that they match the types returned by your endpoints.
+
+## How do I enable OpenAPI 3.2 support?
+
+By default, to minimise breaking _behavioural_ changes, Swashbuckle.AspNetCore v11+ continues to produce OpenAPI 3.0 documents by default.
+
+You can opt into version 3.2 of the OpenAPI specification as shown in the code snippet below. The `Swashbuckle.AspNetCore.Cli` tool
+also accepts `--openapiversion 3.2`.
+
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Swagger-OpenAPI3.2 -->
+<a id='snippet-Swagger-OpenAPI3.2'></a>
+```cs
+app.UseSwagger(options =>
+{
+    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_2;
+});
+```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L233-L238' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-OpenAPI3.2' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
+
+OpenAPI 3.2 introduces the HTTP `QUERY` method as a first-class operation, and allows any other HTTP method to be described using
+the new `additionalOperations` keyword. Actions that use the `QUERY` method or any other non-standard HTTP method (for example with
+`[AcceptVerbs("QUERY")]` or `[AcceptVerbs("PURGE")]`) are now included in the generated documents instead of causing a
+`SwaggerGeneratorException` to be thrown. `QUERY` is emitted as a `query` operation and other methods are emitted using
+`additionalOperations` in OpenAPI 3.2 documents. In documents using earlier versions of the specification, all such operations are
+emitted using the `x-oai-additionalOperations` extension.
+
+> [!NOTE]
+> Not all tooling supports OpenAPI 3.2 yet. For example, at the time of writing, [Kiota][kiota-openapi-32] cannot generate clients
+> from OpenAPI 3.2 documents that contain `QUERY` operations. Check that the tools consuming your documents support OpenAPI 3.2
+> before changing the version.
+
+### C# union types
+
+When targeting .NET 11 or later, Swashbuckle.AspNetCore supports the [C# `union` types][csharp-unions] introduced with .NET 11.
+System.Text.Json serializes a union value as whichever of its case types it holds, so the schema generator mirrors this by generating
+an `anyOf` schema that references the schema for each case type of the union, matching the behaviour of
+[Microsoft.AspNetCore.OpenApi][microsoft-aspnetcore-openapi-package]. No configuration is required, and union types are not supported
+when targeting .NET 10. See _[C# unions schema support #4103][swashbuckle-aspnetcore-unions]_ for more details.
+
+### Discriminator default mapping
+
+OpenAPI 3.2 adds a `defaultMapping` field to discriminators. It can be populated using the new
+`SelectDiscriminatorDefaultMappingUsing()` option, or with the `Swashbuckle.AspNetCore.Annotations` package using the new
+`DefaultMapping` property of `[SwaggerDiscriminator]`, or `[JsonPolymorphic]` with `IgnoreUnrecognizedTypeDiscriminators = true` on a
+concrete base type. When a default mapping is present, the discriminator property is no longer marked as required by the base type in OpenAPI 3.2 documents. See _[Discriminator Default Mapping][discriminator-default-mapping]_ for more details.
+
+### Swashbuckle.AspNetCore.ApiTesting
+
+`ApiTestRunnerOptions` has a new `OpenApiVersion` property that controls the version of the OpenAPI specification used when
+`GenerateOpenApiFiles` is enabled. The default is `OpenApiSpecVersion.OpenApi3_0`, which matches the behaviour of previous versions.
+
+## Redoc 3
+
+The `Swashbuckle.AspNetCore.ReDoc` package now embeds [Redoc 3][redoc-v3], which adds support for OpenAPI 3.2 but contains
+[a number of breaking changes][redoc-migration] of its own. The ones that affect Swashbuckle.AspNetCore users are described below.
+
+### Custom `index.html` pages
+
+Redoc 3 is distributed as an ES module and no longer provides the global `Redoc` object. The default `index.html` page now loads the
+`index.js` initializer with `<script type="module">`, and `index.js` imports `init` from `redoc.standalone.js`.
+
+If you provide your own `index.html` page using the `IndexStream` option, you must update it to match. A page that loads
+`redoc.standalone.js` with a classic `<script>` element and calls `Redoc.init(...)` will render a blank page with Redoc 3.
+
+```diff
+- <script src="redoc.standalone.js"></script>
+- <script src="index.js"></script>
++ <script type="module" src="index.js"></script>
+```
+
+You can use the [default `index.html` page](../src/Swashbuckle.AspNetCore.ReDoc/index.html) as a reference.
+
+### Removed options
+
+Redoc 3 removed a number of configuration options, so the corresponding members of `ConfigObject` and the extension methods for
+`ReDocOptions` have been removed from Swashbuckle.AspNetCore:
+
+- `DisableSearch` (search is always available in Redoc 3)
+- `ExpandResponses`
+- `HideHostname`
+- `NativeScrollbars`
+- `NoAutoAuth`
+- `PathInMiddlePanel`
+- `SortPropsAlphabetically`
+
+Any values for these options bound from configuration (for example from `appsettings.json`) are now ignored.
+
+### Renamed options
+
+The following options have been renamed by Redoc 3. The names of the `ConfigObject` properties are unchanged, but they are now
+serialized using the new names. If you set the old names using `ConfigObject.AdditionalItems`, you should update them:
+
+| `ConfigObject` property | Redoc 2 option       | Redoc 3 option           |
+|:------------------------|:---------------------|:-------------------------|
+| `HideDownloadButton`    | `hideDownloadButton` | `hideDownloadButtons`    |
+| `RequiredPropsFirst`    | `requiredPropsFirst` | `sortRequiredPropsFirst` |
+| `UntrustedSpec`         | `untrustedSpec`      | `sanitize`               |
+
+### Theming
+
+The `theme` option, which could previously be set using `ConfigObject.AdditionalItems`, has been removed by Redoc 3. The theme is now
+customized using CSS variables, which can be injected into the page using the `HeadContent` property or the `InjectStylesheet()`
+extension method. See _[Inject Custom CSS][redoc-custom-css]_ for an example.
+
+### Telemetry
+
+Redoc 3 [collects anonymous usage telemetry by default][redoc-telemetry]. To turn it off, set the `disableTelemetry` option:
+
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Redoc-AdditionalOptions -->
+<a id='snippet-Redoc-AdditionalOptions'></a>
+```cs
+app.UseReDoc(options =>
+{
+    options.ConfigObject.AdditionalItems = new Dictionary<string, object>
+    {
+        ["layout"] = "stacked",
+        ["disableTelemetry"] = true,
+    };
+});
+```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L176-L185' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-AdditionalOptions' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
+
+### Deep links
+
+Redoc 3 uses a new format for deep links to operations. Links in the Redoc 2 format are redirected when the page loads, except for
+links to schemas and to individual security schemes, which have no equivalent in Redoc 3.
+
+## Migration Overview
+
+Migrating to Swashbuckle.AspNetCore v11+ will likely involve changes in the following areas:
+
+- If your application targets .NET 8 or .NET 9, either upgrade it to .NET 10 or later, or stay on Swashbuckle.AspNetCore v10.x.
+- Update any NuGet package references for Swashbuckle.AspNetCore to v11.0.0+.
+- Update any explicit NuGet package references for Microsoft.OpenApi to v3.x and follow the
+  [v3 upgrade guide for Microsoft.OpenApi][microsoft-openapi-v3-migration-guide], in particular replacing `OpenApiMediaType` with
+  `IOpenApiMediaType` in custom filters and `IContentValidator` implementations.
+- Update any custom schema filters that use the obsolete `Example` property of schemas to use the `Examples` property instead.
+- If your application targets .NET 11, check for endpoints that declare more than one response type for the same status code, as
+  these are now described using `anyOf`.
+- If you use `Swashbuckle.AspNetCore.ReDoc`:
+  - Update any custom `index.html` page to load `index.js` as an ES module.
+  - Remove any use of the removed `ConfigObject` properties and `ReDocOptions` extension methods listed above.
+  - Update any use of the renamed Redoc options in `ConfigObject.AdditionalItems`.
+  - Replace any use of the `theme` option with CSS variables.
+  - Decide whether to disable Redoc's telemetry.
+- Optionally, opt into OpenAPI 3.2.
+
+<!-- TODO Update this link to the "What's new in ASP.NET Core 11.0" release notes once published, before merging #3786 -->
+[aspnetcore-11]: https://learn.microsoft.com/aspnet/core/ "ASP.NET Core documentation"
+[csharp-unions]: https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/union "C# union types"
+[discriminator-default-mapping]: configure-and-customize-swaggergen.md#discriminator-default-mapping "Discriminator Default Mapping"
+[kiota-openapi-32]: https://github.com/microsoft/kiota-dotnet/pull/805 "Kiota support for OpenAPI 3.2"
+[microsoft-aspnetcore-openapi-package]: https://www.nuget.org/packages/Microsoft.AspNetCore.OpenApi/ "Microsoft.AspNetCore.OpenApi NuGet package"
+[microsoft-openapi-package]: https://www.nuget.org/packages/Microsoft.OpenApi/ "Microsoft.OpenApi NuGet package"
+[microsoft-openapi-v3-migration-guide]: https://github.com/microsoft/OpenAPI.NET/blob/main/docs/upgrade-guide-3.md "Microsoft OpenAPI.NET v3 upgrade guide"
+[openapi-specification]: https://spec.openapis.org/oas/v3.2.0.html "OpenAPI Specification v3.2.0"
+[redoc]: https://github.com/Redocly/redoc "The Redoc project in GitHub"
+[redoc-custom-css]: configure-and-customize-redoc.md#inject-custom-css "Inject Custom CSS"
+[redoc-migration]: https://redocly.com/docs/redoc/config-migration "Migration from Redoc CE 2.x to 3.x"
+[redoc-telemetry]: https://redocly.com/docs/redoc/v3.x/telemetry "Redoc telemetry"
+[redoc-v3]: https://github.com/Redocly/redoc/releases/tag/redoc%403.0.0 "Redoc 3.0.0 release notes"
+<!-- TODO Update this link to the latest v10.x release before merging #3786 -->
+[swashbuckle-aspnetcore-10]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v10.3.1 "Swashbuckle.AspNetCore v10.3.1"
+[swashbuckle-aspnetcore-unions]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/pull/4103 "C# unions schema support"
+[v10-migration]: migrating-to-v10.md "Migrating to Swashbuckle.AspNetCore v10"

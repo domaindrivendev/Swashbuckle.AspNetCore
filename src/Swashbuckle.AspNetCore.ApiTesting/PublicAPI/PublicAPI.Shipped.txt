@@ -1,7 +1,4 @@
-﻿
-static Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptionsExtensions.AddOpenApiFile(this Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions options, string documentName, string filePath) -> void
-static Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptionsExtensions.GetOpenApiDocument(this Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions options, string documentName) -> Microsoft.OpenApi.OpenApiDocument
-Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase
+﻿Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.ApiTestRunnerBase() -> void
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.Configure(System.Action<Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions> setupAction) -> void
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.ConfigureOperation(string documentName, string pathTemplate, System.Net.Http.HttpMethod operationType, Microsoft.OpenApi.OpenApiOperation operation) -> void
@@ -80,3 +77,5 @@ Swashbuckle.AspNetCore.ApiTesting.ResponseDoesNotMatchSpecException.ResponseDoes
 Swashbuckle.AspNetCore.ApiTesting.ResponseValidator
 Swashbuckle.AspNetCore.ApiTesting.ResponseValidator.ResponseValidator(System.Collections.Generic.IEnumerable<Swashbuckle.AspNetCore.ApiTesting.IContentValidator> contentValidators) -> void
 Swashbuckle.AspNetCore.ApiTesting.ResponseValidator.Validate(System.Net.Http.HttpResponseMessage response, Microsoft.OpenApi.OpenApiDocument openApiDocument, string pathTemplate, System.Net.Http.HttpMethod operationType, string expectedStatusCode) -> void
+static Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptionsExtensions.AddOpenApiFile(this Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions options, string documentName, string filePath) -> void
+static Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptionsExtensions.GetOpenApiDocument(this Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions options, string documentName) -> Microsoft.OpenApi.OpenApiDocument

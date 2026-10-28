@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Swashbuckle.AspNetCore.ReDoc;
@@ -69,7 +70,6 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         }
     }
 
-
     [Theory]
     [InlineData("/swagger/v1/swagger.json", "application/json")]
     [InlineData("/swagger/v1/swagger.yaml", "text/yaml")]
@@ -94,7 +94,6 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
-
     [Fact]
     public async Task RedocMiddleware_ReturnsInitializerScript()
     {
@@ -109,7 +108,11 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("Redoc.init", content);
+        Assert.Contains("import { init } from './redoc.standalone.js';", content);
+        Assert.Contains("init(", content);
+        Assert.Contains("\"hideDownloadButtons\":true", content);
+        Assert.Contains("\"hideLoading\":true", content);
+        Assert.DoesNotContain("expandResponses", content);
         Assert.DoesNotContain("%(DocumentTitle)", content);
         Assert.DoesNotContain("%(HeadContent)", content);
         Assert.DoesNotContain("%(SpecUrl)", content);
@@ -182,52 +185,66 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         Assert.NotNull(options.ConfigObject.AdditionalItems);
         Assert.Empty(options.ConfigObject.AdditionalItems);
         Assert.Null(options.ConfigObject.ScrollYOffset);
-        Assert.Equal("all", options.ConfigObject.ExpandResponses);
-        Assert.False(options.ConfigObject.DisableSearch);
         Assert.False(options.ConfigObject.HideDownloadButton);
-        Assert.False(options.ConfigObject.HideHostname);
         Assert.False(options.ConfigObject.HideLoading);
-        Assert.False(options.ConfigObject.NativeScrollbars);
-        Assert.False(options.ConfigObject.NoAutoAuth);
         Assert.False(options.ConfigObject.OnlyRequiredInSamples);
-        Assert.False(options.ConfigObject.PathInMiddlePanel);
         Assert.False(options.ConfigObject.RequiredPropsFirst);
-        Assert.False(options.ConfigObject.SortPropsAlphabetically);
         Assert.False(options.ConfigObject.UntrustedSpec);
 
         // Act
-        options.DisableSearch();
         options.EnableUntrustedSpec();
-        options.ExpandResponses("response");
         options.HideDownloadButton();
-        options.HideHostname();
         options.HideLoading();
         options.InjectStylesheet("custom.css", "screen and (max-width: 700px)");
-        options.NativeScrollbars();
-        options.NoAutoAuth();
         options.OnlyRequiredInSamples();
-        options.PathInMiddlePanel();
         options.RequiredPropsFirst();
         options.ScrollYOffset(42);
-        options.SortPropsAlphabetically();
         options.SpecUrl("spec.json");
 
         // Assert
         Assert.Equal("<link href='custom.css' rel='stylesheet' media='screen and (max-width: 700px)' type='text/css' />" + Environment.NewLine, options.HeadContent);
         Assert.Equal("spec.json", options.SpecUrl);
-        Assert.Equal("response", options.ConfigObject.ExpandResponses);
         Assert.Equal(42, options.ConfigObject.ScrollYOffset);
-        Assert.True(options.ConfigObject.DisableSearch);
         Assert.True(options.ConfigObject.HideDownloadButton);
-        Assert.True(options.ConfigObject.HideHostname);
         Assert.True(options.ConfigObject.HideLoading);
-        Assert.True(options.ConfigObject.NativeScrollbars);
-        Assert.True(options.ConfigObject.NoAutoAuth);
         Assert.True(options.ConfigObject.OnlyRequiredInSamples);
-        Assert.True(options.ConfigObject.PathInMiddlePanel);
         Assert.True(options.ConfigObject.RequiredPropsFirst);
-        Assert.True(options.ConfigObject.SortPropsAlphabetically);
         Assert.True(options.ConfigObject.UntrustedSpec);
+    }
+
+    [Fact]
+    public void ConfigObject_Serializes_Using_Redoc3_Option_Names()
+    {
+        // Arrange
+        var options = new ReDocOptions();
+        options.EnableUntrustedSpec();
+        options.HideDownloadButton();
+        options.RequiredPropsFirst();
+        options.HideLoading();
+        options.OnlyRequiredInSamples();
+        options.ScrollYOffset(42);
+
+        // Act
+        var json = JsonSerializer.Serialize(options.ConfigObject, new JsonSerializerOptions(JsonSerializerDefaults.Web)
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        });
+
+        using var document = JsonDocument.Parse(json);
+        var properties = document.RootElement.EnumerateObject().Select((p) => p.Name).Order().ToArray();
+
+        // Assert
+        string[] expected =
+        [
+            "hideDownloadButtons",
+            "hideLoading",
+            "onlyRequiredInSamples",
+            "sanitize",
+            "scrollYOffset",
+            "sortRequiredPropsFirst",
+        ];
+
+        Assert.Equal(expected, properties);
     }
 
     [Theory]
@@ -373,9 +390,9 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         outputHelper.WriteLine(body);
 
         Assert.DoesNotContain(Payload, body);
-        Assert.DoesNotContain("Redoc.init('x',alert(1),'y'", body);
+        Assert.DoesNotContain("init('x',alert(1),'y'", body);
 
-        Assert.Contains("Redoc.init(\"x\\u0027,alert(1),\\u0027y\"", body);
+        Assert.Contains("init(\"x\\u0027,alert(1),\\u0027y\"", body);
     }
 
     [Fact]
@@ -401,7 +418,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         var body = await response.Content.ReadAsStringAsync(cancellationToken);
         outputHelper.WriteLine(body);
 
-        Assert.Contains(@"Redoc.init(""x\"",alert(1),\""y""", body);
+        Assert.Contains(@"init(""x\"",alert(1),\""y""", body);
     }
 
     [Fact]
@@ -429,7 +446,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
 
         Assert.DoesNotContain("JSON.parse('", body);
 
-        using var config = JsonDocument.Parse(body[body.IndexOf('{')..(body.LastIndexOf('}') + 1)]);
+        using var config = JsonDocument.Parse(GetConfigObjectJson(body));
 
         Assert.Equal("x');alert(1);//", config.RootElement.GetProperty("theme").GetString());
     }
@@ -456,8 +473,19 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         var body = await response.Content.ReadAsStringAsync(cancellationToken);
         outputHelper.WriteLine(body);
 
-        using var config = JsonDocument.Parse(body[body.IndexOf('{')..(body.LastIndexOf('}') + 1)]);
+        using var config = JsonDocument.Parse(GetConfigObjectJson(body));
 
         Assert.Equal("#086eaa", config.RootElement.GetProperty("theme").GetProperty("colors").GetProperty("primary").GetString());
+    }
+
+    /// <summary>
+    /// Extracts the JSON for the config object passed to Redoc's <c>init()</c> function from the initializer script.
+    /// </summary>
+    private static string GetConfigObjectJson(string initializerScript)
+    {
+        var start = initializerScript.IndexOf("init(", StringComparison.Ordinal);
+        Assert.True(start >= 0, "The initializer script does not call init().");
+
+        return initializerScript[initializerScript.IndexOf('{', start)..(initializerScript.LastIndexOf('}') + 1)];
     }
 }

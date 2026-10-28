@@ -825,10 +825,8 @@
             "description": "3-letter ISO country code",
             "required": true,
             "schema": {
-              "type": "string",
-              "example": null
-            },
-            "example": null
+              "type": "string"
+            }
           },
           {
             "name": "city",
@@ -1527,7 +1525,8 @@
           "description": {
             "type": "string",
             "description": "Describes the product",
-            "nullable": true
+            "nullable": true,
+            "example": null
           },
           "status": {
             "$ref": "#/components/schemas/ProductStatus"

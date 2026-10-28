@@ -1,5 +1,5 @@
 ﻿{
-  "openapi": "3.1.1",
+  "openapi": "3.1.2",
   "info": {
     "title": "Test API V1",
     "description": "A sample API for testing Swashbuckle",
@@ -21,18 +21,39 @@
             "application/json": {
               "schema": {
                 "description": "Represents a product",
+                "examples": [
+                  {
+                    "id": 123,
+                    "description": "foobar",
+                    "price": 14.37
+                  }
+                ],
                 "$ref": "#/components/schemas/Product"
               }
             },
             "text/json": {
               "schema": {
                 "description": "Represents a product",
+                "examples": [
+                  {
+                    "id": 123,
+                    "description": "foobar",
+                    "price": 14.37
+                  }
+                ],
                 "$ref": "#/components/schemas/Product"
               }
             },
             "application/*+json": {
               "schema": {
                 "description": "Represents a product",
+                "examples": [
+                  {
+                    "id": 123,
+                    "description": "foobar",
+                    "price": 14.37
+                  }
+                ],
                 "$ref": "#/components/schemas/Product"
               }
             }
@@ -650,9 +671,11 @@
                 "type": "object",
                 "properties": {
                   "name": {
+                    "examples": [
+                      "MyName"
+                    ],
                     "type": "string",
-                    "description": "Summary for Name",
-                    "example": "MyName"
+                    "description": "Summary for Name"
                   },
                   "phoneNumbers": {
                     "type": "array",
@@ -749,9 +772,11 @@
                 "type": "object",
                 "properties": {
                   "name": {
+                    "examples": [
+                      "MyName"
+                    ],
                     "type": "string",
-                    "description": "Summary for Name",
-                    "example": "MyName"
+                    "description": "Summary for Name"
                   },
                   "phoneNumbers": {
                     "type": "array",
@@ -839,10 +864,8 @@
             "description": "3-letter ISO country code",
             "required": true,
             "schema": {
-              "type": "string",
-              "example": null
-            },
-            "example": null
+              "type": "string"
+            }
           },
           {
             "name": "city",
@@ -1537,6 +1560,13 @@
         "additionalProperties": false
       },
       "Product": {
+        "examples": [
+          {
+            "id": 123,
+            "description": "foobar",
+            "price": 14.37
+          }
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -1545,6 +1575,9 @@
             "format": "int32"
           },
           "description": {
+            "examples": [
+              null
+            ],
             "type": [
               "null",
               "string"
@@ -1568,12 +1601,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Represents a product",
-        "example": {
-          "id": 123,
-          "description": "foobar",
-          "price": 14.37
-        }
+        "description": "Represents a product"
       },
       "ProductStatus": {
         "enum": [
