@@ -84,6 +84,34 @@ public class FakeController
     public void ActionWithRequiredMember(TypeWithRequiredProperty param)
     { }
 
+    public class TypeWithNestedRequiredProperty
+    {
+        [Required]
+        public string Prop { get; set; }
+
+        public string Free { get; set; }
+    }
+
+    public class TypeWithOptionalAndRequiredNestedTypes
+    {
+        public TypeWithNestedRequiredProperty Optional { get; set; }
+
+        [Required]
+        public TypeWithNestedRequiredProperty Mandatory { get; set; }
+
+        [FromQuery(Name = "renamed")]
+        public TypeWithNestedRequiredProperty OptionalRenamed { get; set; }
+
+        [Required]
+        public string Other { get; set; }
+    }
+
+    public void ActionWithNestedTypesFromQuery([FromQuery] TypeWithOptionalAndRequiredNestedTypes param)
+    { }
+
+    public void ActionWithNestedTypesFromForm([FromForm] TypeWithOptionalAndRequiredNestedTypes param)
+    { }
+
     [Consumes("application/someMediaType")]
     public void ActionWithConsumesAttribute(string param)
     { }
