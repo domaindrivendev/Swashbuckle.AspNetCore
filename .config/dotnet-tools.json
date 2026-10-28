@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "dotnet-reportgenerator-globaltool": {
-      "version": "5.5.11",
+      "version": "5.5.12",
       "commands": [
         "reportgenerator"
       ],
@@ -31,7 +31,7 @@
       "rollForward": false
     },
     "meziantou.framework.nugetpackagevalidation.tool": {
-      "version": "2.0.17",
+      "version": "2.0.18",
       "commands": [
         "meziantou.validate-nuget-package"
       ],
