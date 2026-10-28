@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
+using System.Xml.XPath;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -878,6 +879,76 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         var parameter = Assert.Single(operation.Parameters);
         Assert.True(parameter.Required);
+    }
+
+    [Fact]
+    public void GetSwagger_SetsParameterRequired_IfPropertyInheritedFromParentInterfaceHasRequiredAttribute()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                CreateInheritedInterfaceQueryApiDescription()
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        var parameter = Assert.Single(operation.Parameters);
+        Assert.Equal(nameof(FakeController.IParentQueryModel.ParentValue), parameter.Name);
+        Assert.True(parameter.Required);
+    }
+
+    [Fact]
+    public void GetSwagger_SetsParameterDescription_FromXmlCommentsOfPropertyInheritedFromParentInterface()
+    {
+        using var xml = File.OpenText(typeof(FakeController).Assembly.GetName().Name + ".xml");
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(new XPathDocument(xml));
+
+        var subject = Subject(
+            apiDescriptions:
+            [
+                CreateInheritedInterfaceQueryApiDescription()
+            ],
+            options: new SwaggerGeneratorOptions
+            {
+                SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                {
+                    ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                },
+                ParameterFilters = [new XmlCommentsParameterFilter(members, new())]
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        var parameter = Assert.Single(operation.Parameters);
+        Assert.Equal("The parent value.", parameter.Description);
+    }
+
+    private static ApiDescription CreateInheritedInterfaceQueryApiDescription()
+    {
+        var apiDescription = ApiDescriptionFactory.Create(
+            methodInfo: typeof(FakeController).GetMethod(nameof(FakeController.ActionWithInheritedInterfaceQueryModel)),
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            parameterDescriptions:
+            [
+                new ApiParameterDescription
+                {
+                    Name = nameof(FakeController.IParentQueryModel.ParentValue),
+                    Source = BindingSource.Query,
+                    ModelMetadata = ModelMetadataFactory.CreateForProperty(
+                        typeof(FakeController.IChildQueryModel),
+                        nameof(FakeController.IParentQueryModel.ParentValue))
+                }
+            ]);
+
+        apiDescription.ParameterDescriptions[0].ParameterDescriptor = apiDescription.ActionDescriptor.Parameters.Single();
+
+        return apiDescription;
     }
 
     [Fact]
