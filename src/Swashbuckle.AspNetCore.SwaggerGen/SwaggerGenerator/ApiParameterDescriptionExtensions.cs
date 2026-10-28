@@ -34,16 +34,56 @@ public static class ApiParameterDescriptionExtensions
         }
 
         // This is the default logic for IsRequired
-        bool IsRequired() => apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+        bool IsRequired() => apiParameter.CustomAttributes().Any(IsRequiredAttribute);
 
         // This is to keep compatibility with MVC controller logic that has existed in the past
         if (apiParameter.ParameterDescriptor is ControllerParameterDescriptor)
         {
-            return IsRequired();
+            return IsRequired() && !apiParameter.IsNestedInOptionalProperty();
         }
 
         // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
         return apiParameter.IsRequired;
+    }
+
+    private static bool IsRequiredAttribute(object attribute) => RequiredAttributeTypes.Contains(attribute.GetType());
+
+    // A property of a nested complex type is flattened into a dotted name such as "Inner.Prop".
+    // It is only required if every property on the path to it is required too. See #3534.
+    private static bool IsNestedInOptionalProperty(this ApiParameterDescription apiParameter)
+    {
+        var segments = apiParameter.Name?.Split('.');
+        var type = apiParameter.ParameterDescriptor?.ParameterType;
+
+        if (segments is not { Length: > 1 } || type is null)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < segments.Length - 1; i++)
+        {
+            var property = FindBoundProperty(type, segments[i]);
+            if (property is null)
+            {
+                return false;
+            }
+
+            if (!property.GetCustomAttributes(true).Any(IsRequiredAttribute))
+            {
+                return true;
+            }
+
+            type = property.PropertyType;
+        }
+
+        return false;
+
+        static PropertyInfo FindBoundProperty(Type type, string name) =>
+            type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .FirstOrDefault((property) => string.Equals(
+                    property.GetCustomAttributes(true).OfType<IModelNameProvider>().FirstOrDefault()?.Name ?? property.Name,
+                    name,
+                    StringComparison.OrdinalIgnoreCase));
     }
 
     public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)
