@@ -40,7 +40,7 @@ public class FakeControllerWithXmlComments
 
     /// <response>Response without code should not be shown in the responses</response>
     /// <response></response>
-
+    /// <response code="   ">...</response>
     public void ActionWithResponseTagsAndEmptyCodes()
     {
     }
