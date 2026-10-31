@@ -32,6 +32,19 @@ public class FakeControllerWithXmlComments
     {
     }
 
+    /// <response code=" 200" >Should remove white spaces for 200</response>
+    /// <response code=" 400 " >Should remove white spaces for 400</response>
+    public void ActionWithResponseTagsAndCodeWithWhiteSpaceCharacters()
+    {
+    }
+
+    /// <response>Response without code should not be shown in the responses</response>
+    /// <response></response>
+    /// <response code="   ">...</response>
+    public void ActionWithResponseTagsAndEmptyCodes()
+    {
+    }
+
     /// <summary>
     /// An action with a JSON body
     /// </summary>

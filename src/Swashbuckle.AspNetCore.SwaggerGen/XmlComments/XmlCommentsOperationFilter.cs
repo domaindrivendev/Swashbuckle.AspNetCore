@@ -68,7 +68,12 @@ public class XmlCommentsOperationFilter(IReadOnlyDictionary<string, XPathNavigat
     {
         while (responseNodes.MoveNext())
         {
-            var code = responseNodes.Current.GetAttribute("code");
+            var code = responseNodes.Current.GetAttribute("code").Trim();
+            if (string.IsNullOrEmpty(code))
+            {
+                continue;
+            }
+
             if (!operation.Responses.TryGetValue(code, out var response))
             {
                 response = new OpenApiResponse();
