@@ -68,7 +68,7 @@ public class XmlCommentsOperationFilter(IReadOnlyDictionary<string, XPathNavigat
     {
         while (responseNodes.MoveNext())
         {
-            var code = responseNodes.Current.GetAttribute("code").Trim();
+            var code = responseNodes.Current.GetAttribute("code")?.Trim();
             if (string.IsNullOrEmpty(code))
             {
                 continue;
