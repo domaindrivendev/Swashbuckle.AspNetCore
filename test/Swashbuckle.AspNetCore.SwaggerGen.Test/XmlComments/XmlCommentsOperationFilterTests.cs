@@ -70,6 +70,65 @@ public class XmlCommentsOperationFilterTests
         Assert.Equal("Description for default response", operation.Responses["default"].Description);
     }
 
+    [Fact]
+    public void Apply_TrimsAndSetsResponseDescription_FromResponseTags()
+    {
+        var operation = new OpenApiOperation
+        {
+            Responses = new OpenApiResponses
+            {
+                { "200", new OpenApiResponse { Description = "Success" } },
+                { "400", new OpenApiResponse { Description = "Client Error" } },
+            }
+        };
+        var methodInfo = typeof(FakeControllerWithXmlComments)
+            .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithResponseTagsAndCodeWithWhiteSpaceCharacters));
+        var apiDescription = ApiDescriptionFactory.Create(
+            methodInfo: methodInfo,
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            supportedResponseTypes:
+            [
+                new ApiResponseType { StatusCode = 200 },
+                new ApiResponseType { StatusCode = 400 },
+            ]);
+        var filterContext = new OperationFilterContext(apiDescription, null, null, null, methodInfo: methodInfo);
+
+        Subject().Apply(operation, filterContext);
+
+        Assert.Equal(["200", "400", "default"], [.. operation.Responses.Keys]);
+        Assert.Equal("Description for default response", operation.Responses["default"].Description);
+        Assert.Equal("Should remove white spaces for 200", operation.Responses["200"].Description);
+        Assert.Equal("Should remove white spaces for 400", operation.Responses["400"].Description);
+    }
+
+    [Fact]
+    public void Apply_IgnoresResponseDescription_FromResponseTagsWithEmptyStatusCode()
+    {
+        var operation = new OpenApiOperation
+        {
+            Responses = new OpenApiResponses()
+        };
+        var methodInfo = typeof(FakeControllerWithXmlComments)
+            .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithResponseTagsAndEmptyCodes));
+        var apiDescription = ApiDescriptionFactory.Create(
+            methodInfo: methodInfo,
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            supportedResponseTypes:
+            [
+                new ApiResponseType { },
+            ]);
+        var filterContext = new OperationFilterContext(apiDescription, null, null, null, methodInfo: methodInfo);
+
+        Subject().Apply(operation, filterContext);
+
+        Assert.Equal(["default"], [.. operation.Responses.Keys]);
+        Assert.Equal("Description for default response", operation.Responses["default"].Description);
+    }
+
     private static XmlCommentsOperationFilter Subject()
     {
         using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
