@@ -64,6 +64,24 @@ public class FakeController
     public void ActionWithIntParameterWithSwaggerIgnoreAttribute([SwaggerIgnore] int param)
     { }
 
+    /// <summary>The parent.</summary>
+    public interface IParentQueryModel
+    {
+        /// <summary>The parent value.</summary>
+        [Required]
+        string ParentValue { get; set; }
+    }
+
+    /// <summary>The child.</summary>
+    public interface IChildQueryModel : IParentQueryModel
+    {
+        /// <summary>The child value.</summary>
+        string Value { get; set; }
+    }
+
+    public void ActionWithInheritedInterfaceQueryModel([FromQuery] IChildQueryModel param)
+    { }
+
     public void ActionWithAcceptFromHeaderParameter([FromHeader] string accept, string param)
     { }
 
