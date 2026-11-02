@@ -112,6 +112,30 @@ public class FakeController
     public void ActionWithNestedTypesFromForm([FromForm] TypeWithOptionalAndRequiredNestedTypes param)
     { }
 
+#nullable enable
+    public class TypeWithNullableAnnotatedNestedTypes
+    {
+        public TypeWithNestedRequiredProperty NonNullable { get; set; } = null!;
+
+        public TypeWithNestedRequiredProperty? Nullable { get; set; }
+    }
+#nullable restore
+
+    public class TypeWithDottedBinderName
+    {
+        public TypeWithNestedRequiredProperty Optional { get; set; }
+
+        [Required]
+        [FromQuery(Name = "Optional.Free")]
+        public string Other { get; set; }
+    }
+
+    public void ActionWithNullableAnnotatedNestedTypesFromQuery([FromQuery] TypeWithNullableAnnotatedNestedTypes param)
+    { }
+
+    public void ActionWithDottedBinderNameFromQuery([FromQuery] TypeWithDottedBinderName param)
+    { }
+
     [Consumes("application/someMediaType")]
     public void ActionWithConsumesAttribute(string param)
     { }

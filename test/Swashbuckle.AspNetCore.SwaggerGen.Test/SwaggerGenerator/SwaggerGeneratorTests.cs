@@ -903,6 +903,43 @@ public class SwaggerGeneratorTests
         Assert.Equal(["Mandatory.Prop", "Other"], schema.Required);
     }
 
+    [Theory]
+    [InlineData(nameof(FakeController.ActionWithNullableAnnotatedNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "NonNullable.Prop", true)]
+    [InlineData(nameof(FakeController.ActionWithNullableAnnotatedNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Nullable.Prop", false)]
+    [InlineData(nameof(FakeController.ActionWithDottedBinderNameFromQuery), typeof(FakeController.TypeWithDottedBinderName), "Other", "Optional.Free", true)]
+    public void GetSwagger_SetsParameterRequired_IfNestedPathIsImplicitlyRequiredOrIsNotANestedPath(
+        string actionName,
+        Type containerType,
+        string propertyName,
+        string parameterName,
+        bool expectedRequired)
+    {
+        var apiDescription = ApiDescriptionFactory.Create(
+            methodInfo: typeof(FakeController).GetMethod(actionName),
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            parameterDescriptions:
+            [
+                new ApiParameterDescription
+                {
+                    Name = parameterName,
+                    Source = BindingSource.Query,
+                    ModelMetadata = ModelMetadataFactory.CreateForProperty(containerType, propertyName)
+                }
+            ]);
+
+        apiDescription.ParameterDescriptions[0].ParameterDescriptor = apiDescription.ActionDescriptor.Parameters.Single();
+
+        var subject = Subject(apiDescriptions: [apiDescription]);
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        var parameter = Assert.Single(operation.Parameters);
+        Assert.Equal(expectedRequired, parameter.Required);
+    }
+
     private static ApiDescription CreateNestedParameterApiDescription(
         string actionName,
         BindingSource source,

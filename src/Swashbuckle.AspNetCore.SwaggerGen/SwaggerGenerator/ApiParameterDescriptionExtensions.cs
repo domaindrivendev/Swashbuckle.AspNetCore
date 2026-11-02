@@ -54,29 +54,38 @@ public static class ApiParameterDescriptionExtensions
     {
         var segments = apiParameter.Name?.Split('.');
         var type = apiParameter.ParameterDescriptor?.ParameterType;
+        var leafProperty = apiParameter.PropertyInfo();
 
-        if (segments is not { Length: > 1 } || type is null)
+        if (segments is not { Length: > 1 } || type is null || leafProperty is null)
         {
             return false;
         }
 
-        for (var i = 0; i < segments.Length - 1; i++)
+        var hasOptionalParent = false;
+        PropertyInfo property = null;
+
+        for (var i = 0; i < segments.Length; i++)
         {
-            var property = FindBoundProperty(type, segments[i]);
+            property = FindBoundProperty(type, segments[i]);
             if (property is null)
             {
                 return false;
             }
 
-            if (!property.GetCustomAttributes(true).Any(IsRequiredAttribute))
+            // MVC also treats a non-nullable reference type as required, unless that is suppressed in MvcOptions
+            if (i < segments.Length - 1 &&
+                !property.GetCustomAttributes(true).Any(IsRequiredAttribute) &&
+                !property.IsNonNullableReferenceType())
             {
-                return true;
+                hasOptionalParent = true;
             }
 
             type = property.PropertyType;
         }
 
-        return false;
+        // A dot in a binder name (e.g. [FromQuery(Name = "Inner.Prop")]) does not make a nested path,
+        // so only trust the path if it leads to the property that the parameter describes.
+        return hasOptionalParent && property.HasSameMetadataDefinitionAs(leafProperty);
 
         static PropertyInfo FindBoundProperty(Type type, string name) =>
             type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
