@@ -74,7 +74,7 @@ public static class ApiParameterDescriptionExtensions
 
             // MVC also treats a non-nullable reference type as required, unless that is suppressed in MvcOptions
             if (i < segments.Length - 1 &&
-                !property.GetCustomAttributes(true).Any(IsRequiredAttribute) &&
+                !property.HasRequiredAttribute() &&
                 !property.IsNonNullableReferenceType())
             {
                 hasOptionalParent = true;
@@ -93,6 +93,24 @@ public static class ApiParameterDescriptionExtensions
                     property.GetCustomAttributes(true).OfType<IModelNameProvider>().FirstOrDefault()?.Name ?? property.Name,
                     name,
                     StringComparison.OrdinalIgnoreCase));
+    }
+
+    // MVC also reads [ModelMetadataType] buddy classes and, for positional records, the bound constructor parameter
+    private static bool HasRequiredAttribute(this PropertyInfo property)
+    {
+        if (property.GetInlineAndMetadataAttributes().Any(IsRequiredAttribute))
+        {
+            return true;
+        }
+
+        var type = property.DeclaringType;
+        var constructors = type.GetConstructors();
+
+        return type.GetMethod("<Clone>$") is not null &&
+            constructors.Length == 1 &&
+            constructors[0].GetParameters().Any((parameter) =>
+                string.Equals(parameter.Name, property.Name, StringComparison.Ordinal) &&
+                parameter.GetCustomAttributes(true).Any(IsRequiredAttribute));
     }
 
     public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)

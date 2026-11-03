@@ -136,6 +136,30 @@ public class FakeController
     public void ActionWithDottedBinderNameFromQuery([FromQuery] TypeWithDottedBinderName param)
     { }
 
+    public record RecordWithNestedTypes(
+        [Required] TypeWithNestedRequiredProperty Mandatory,
+        TypeWithNestedRequiredProperty Optional);
+
+    [ModelMetadataType(typeof(TypeWithNestedTypesMetadata))]
+    public class TypeWithNestedTypesInMetadataType
+    {
+        public TypeWithNestedRequiredProperty Mandatory { get; set; }
+
+        public TypeWithNestedRequiredProperty Optional { get; set; }
+    }
+
+    public class TypeWithNestedTypesMetadata
+    {
+        [Required]
+        public TypeWithNestedRequiredProperty Mandatory { get; set; }
+    }
+
+    public void ActionWithRecordNestedTypesFromQuery([FromQuery] RecordWithNestedTypes param)
+    { }
+
+    public void ActionWithMetadataTypeNestedTypesFromQuery([FromQuery] TypeWithNestedTypesInMetadataType param)
+    { }
+
     [Consumes("application/someMediaType")]
     public void ActionWithConsumesAttribute(string param)
     { }
