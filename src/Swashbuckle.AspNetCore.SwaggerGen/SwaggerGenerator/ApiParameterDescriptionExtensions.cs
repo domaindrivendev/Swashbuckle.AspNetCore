@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -34,16 +35,90 @@ public static class ApiParameterDescriptionExtensions
         }
 
         // This is the default logic for IsRequired
-        bool IsRequired() => apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+        bool IsRequired() => apiParameter.CustomAttributes().Any(IsRequiredAttribute);
 
         // This is to keep compatibility with MVC controller logic that has existed in the past
         if (apiParameter.ParameterDescriptor is ControllerParameterDescriptor)
         {
-            return IsRequired();
+            return IsRequired() && !apiParameter.IsNestedInOptionalProperty();
         }
 
         // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
         return apiParameter.IsRequired;
+    }
+
+    private static bool IsRequiredAttribute(object attribute) => RequiredAttributeTypes.Contains(attribute.GetType());
+
+    // A property of a nested complex type is flattened into a dotted name such as "Inner.Prop".
+    // It is only required if every property on the path to it is required too. See #3534.
+    private static bool IsNestedInOptionalProperty(this ApiParameterDescription apiParameter)
+    {
+        var segments = apiParameter.Name?.Split('.');
+        var type = apiParameter.ParameterDescriptor?.ParameterType;
+        var leafProperty = apiParameter.PropertyInfo();
+
+        if (segments is not { Length: > 1 } || type is null || leafProperty is null)
+        {
+            return false;
+        }
+
+        var hasOptionalParent = false;
+        PropertyInfo property = null;
+
+        for (var i = 0; i < segments.Length; i++)
+        {
+            property = FindBoundProperty(type, segments[i]);
+            if (property is null)
+            {
+                return false;
+            }
+
+            // MVC also treats a non-nullable reference type as required, unless that is suppressed in MvcOptions
+            if (i < segments.Length - 1 &&
+                !property.HasRequiredAttribute(type) &&
+                !property.IsNonNullableReferenceType())
+            {
+                hasOptionalParent = true;
+            }
+
+            type = property.PropertyType;
+        }
+
+        // A dot in a binder name (e.g. [FromQuery(Name = "Inner.Prop")]) does not make a nested path,
+        // so only trust the path if it leads to the property that the parameter describes.
+        return hasOptionalParent && property.HasSameMetadataDefinitionAs(leafProperty);
+
+        static PropertyInfo FindBoundProperty(Type type, string name) =>
+            type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .FirstOrDefault((property) => string.Equals(
+                    property.GetCustomAttributes(true).OfType<IModelNameProvider>().FirstOrDefault()?.Name ?? property.Name,
+                    name,
+                    StringComparison.OrdinalIgnoreCase));
+    }
+
+    // MVC also reads [ModelMetadataType] buddy classes and, for positional records, the bound constructor parameter.
+    // Both come from the type being bound, which for an inherited property is not its declaring type.
+    private static bool HasRequiredAttribute(this PropertyInfo property, Type containerType)
+    {
+        var metadataType = containerType.GetCustomAttributes(true)
+            .OfType<ModelMetadataTypeAttribute>()
+            .FirstOrDefault()?.MetadataType;
+
+        var attributes = property.GetCustomAttributes(true)
+            .Concat(metadataType?.GetMember(property.Name).FirstOrDefault()?.GetCustomAttributes(true) ?? []);
+
+        if (attributes.Any(IsRequiredAttribute))
+        {
+            return true;
+        }
+
+        var constructors = containerType.GetConstructors();
+
+        return containerType.GetMethod("<Clone>$") is not null &&
+            constructors.Length == 1 &&
+            constructors[0].GetParameters().Any((parameter) =>
+                string.Equals(parameter.Name, property.Name, StringComparison.Ordinal) &&
+                parameter.GetCustomAttributes(true).Any(IsRequiredAttribute));
     }
 
     public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)
