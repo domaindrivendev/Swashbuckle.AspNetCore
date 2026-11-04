@@ -911,6 +911,10 @@ public class SwaggerGeneratorTests
     [InlineData(nameof(FakeController.ActionWithRecordNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Optional.Prop", false)]
     [InlineData(nameof(FakeController.ActionWithMetadataTypeNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Mandatory.Prop", true)]
     [InlineData(nameof(FakeController.ActionWithMetadataTypeNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Optional.Prop", false)]
+    [InlineData(nameof(FakeController.ActionWithDerivedMetadataTypeNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Mandatory.Prop", true)]
+    [InlineData(nameof(FakeController.ActionWithDerivedMetadataTypeNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Optional.Prop", false)]
+    [InlineData(nameof(FakeController.ActionWithDerivedRecordNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Mandatory.Prop", true)]
+    [InlineData(nameof(FakeController.ActionWithDerivedRecordNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Optional.Prop", false)]
     public void GetSwagger_SetsParameterRequired_IfNestedPathIsImplicitlyRequiredOrIsNotANestedPath(
         string actionName,
         Type containerType,

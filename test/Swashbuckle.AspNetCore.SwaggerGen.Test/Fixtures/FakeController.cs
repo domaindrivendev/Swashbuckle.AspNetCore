@@ -154,10 +154,35 @@ public class FakeController
         public TypeWithNestedRequiredProperty Mandatory { get; set; }
     }
 
+    public class TypeWithInheritedNestedTypes
+    {
+        public TypeWithNestedRequiredProperty Mandatory { get; set; }
+
+        public TypeWithNestedRequiredProperty Optional { get; set; }
+    }
+
+    [ModelMetadataType(typeof(TypeWithNestedTypesMetadata))]
+    public class DerivedTypeWithNestedTypesInMetadataType : TypeWithInheritedNestedTypes
+    { }
+
+    public record BaseRecordWithNestedTypes(
+        TypeWithNestedRequiredProperty Mandatory,
+        TypeWithNestedRequiredProperty Optional);
+
+    public record DerivedRecordWithNestedTypes(
+        [Required] TypeWithNestedRequiredProperty Mandatory,
+        TypeWithNestedRequiredProperty Optional) : BaseRecordWithNestedTypes(Mandatory, Optional);
+
     public void ActionWithRecordNestedTypesFromQuery([FromQuery] RecordWithNestedTypes param)
     { }
 
     public void ActionWithMetadataTypeNestedTypesFromQuery([FromQuery] TypeWithNestedTypesInMetadataType param)
+    { }
+
+    public void ActionWithDerivedMetadataTypeNestedTypesFromQuery([FromQuery] DerivedTypeWithNestedTypesInMetadataType param)
+    { }
+
+    public void ActionWithDerivedRecordNestedTypesFromQuery([FromQuery] DerivedRecordWithNestedTypes param)
     { }
 
     [Consumes("application/someMediaType")]

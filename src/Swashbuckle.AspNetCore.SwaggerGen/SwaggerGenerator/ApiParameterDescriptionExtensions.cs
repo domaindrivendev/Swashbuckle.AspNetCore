@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -74,7 +75,7 @@ public static class ApiParameterDescriptionExtensions
 
             // MVC also treats a non-nullable reference type as required, unless that is suppressed in MvcOptions
             if (i < segments.Length - 1 &&
-                !property.HasRequiredAttribute() &&
+                !property.HasRequiredAttribute(type) &&
                 !property.IsNonNullableReferenceType())
             {
                 hasOptionalParent = true;
@@ -95,18 +96,25 @@ public static class ApiParameterDescriptionExtensions
                     StringComparison.OrdinalIgnoreCase));
     }
 
-    // MVC also reads [ModelMetadataType] buddy classes and, for positional records, the bound constructor parameter
-    private static bool HasRequiredAttribute(this PropertyInfo property)
+    // MVC also reads [ModelMetadataType] buddy classes and, for positional records, the bound constructor parameter.
+    // Both come from the type being bound, which for an inherited property is not its declaring type.
+    private static bool HasRequiredAttribute(this PropertyInfo property, Type containerType)
     {
-        if (property.GetInlineAndMetadataAttributes().Any(IsRequiredAttribute))
+        var metadataType = containerType.GetCustomAttributes(true)
+            .OfType<ModelMetadataTypeAttribute>()
+            .FirstOrDefault()?.MetadataType;
+
+        var attributes = property.GetCustomAttributes(true)
+            .Concat(metadataType?.GetMember(property.Name).FirstOrDefault()?.GetCustomAttributes(true) ?? []);
+
+        if (attributes.Any(IsRequiredAttribute))
         {
             return true;
         }
 
-        var type = property.DeclaringType;
-        var constructors = type.GetConstructors();
+        var constructors = containerType.GetConstructors();
 
-        return type.GetMethod("<Clone>$") is not null &&
+        return containerType.GetMethod("<Clone>$") is not null &&
             constructors.Length == 1 &&
             constructors[0].GetParameters().Any((parameter) =>
                 string.Equals(parameter.Name, property.Name, StringComparison.Ordinal) &&
