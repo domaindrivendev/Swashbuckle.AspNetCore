@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Xml.XPath;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -680,6 +681,59 @@ public partial class VerifyTests
         await Verifier.Verify(ToJson(document))
             .UseDirectory(SnapshotsDirectory)
             .UseParameters(action);
+    }
+
+    [Fact]
+    public async Task ActionWithFromQueryInheritedInterfaceModel()
+    {
+        using var xml = File.OpenText(typeof(FakeController).Assembly.GetName().Name + ".xml");
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(new XPathDocument(xml));
+
+        var apiDescription = ApiDescriptionFactory.Create(
+            methodInfo: typeof(FakeController).GetMethod(nameof(FakeController.ActionWithInheritedInterfaceQueryModel)),
+            groupName: "v1",
+            httpMethod: "GET",
+            relativePath: "resource",
+            parameterDescriptions:
+            [
+                new ApiParameterDescription
+                {
+                    Name = nameof(FakeController.IChildQueryModel.Value),
+                    Source = BindingSource.Query,
+                    ModelMetadata = ModelMetadataFactory.CreateForProperty(
+                        typeof(FakeController.IChildQueryModel),
+                        nameof(FakeController.IChildQueryModel.Value))
+                },
+                new ApiParameterDescription
+                {
+                    Name = nameof(FakeController.IParentQueryModel.ParentValue),
+                    Source = BindingSource.Query,
+                    ModelMetadata = ModelMetadataFactory.CreateForProperty(
+                        typeof(FakeController.IChildQueryModel),
+                        nameof(FakeController.IParentQueryModel.ParentValue))
+                }
+            ]);
+
+        foreach (var parameter in apiDescription.ParameterDescriptions)
+        {
+            parameter.ParameterDescriptor = apiDescription.ActionDescriptor.Parameters.Single();
+        }
+
+        var subject = Subject(
+            apiDescriptions: [apiDescription],
+            options: new SwaggerGeneratorOptions
+            {
+                SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                {
+                    ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                },
+                ParameterFilters = [new XmlCommentsParameterFilter(members, new())]
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        await Verify(document);
     }
 
     [Theory]

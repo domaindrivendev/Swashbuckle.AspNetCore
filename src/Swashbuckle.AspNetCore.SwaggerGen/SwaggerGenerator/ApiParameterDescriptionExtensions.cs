@@ -55,8 +55,24 @@ public static class ApiParameterDescriptionExtensions
     public static PropertyInfo PropertyInfo(this ApiParameterDescription apiParameter)
     {
         var modelMetadata = apiParameter.ModelMetadata;
+        var containerType = modelMetadata?.ContainerType;
 
-        return modelMetadata?.ContainerType?.GetProperty(modelMetadata.PropertyName, modelMetadata.ModelType);
+        if (containerType is null)
+        {
+            return null;
+        }
+
+        var propertyInfo = containerType.GetProperty(modelMetadata.PropertyName, modelMetadata.ModelType);
+
+        // Type.GetProperty() does not search the interfaces that an interface inherits from. See #2596.
+        if (propertyInfo is null && containerType.IsInterface)
+        {
+            propertyInfo = containerType.GetInterfaces()
+                .Select((type) => type.GetProperty(modelMetadata.PropertyName, modelMetadata.ModelType))
+                .FirstOrDefault((property) => property is not null);
+        }
+
+        return propertyInfo;
     }
 
     public static IEnumerable<object> CustomAttributes(this ApiParameterDescription apiParameter)
