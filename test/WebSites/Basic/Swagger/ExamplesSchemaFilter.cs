@@ -13,14 +13,17 @@ public class ExamplesSchemaFilter : ISchemaFilter
             return;
         }
 
-        concrete.Example = context.Type.Name switch
+        concrete.Examples = context.Type.Name switch
         {
-            "Product" => new JsonObject
-            {
-                ["id"] = 123,
-                ["description"] = "foobar",
-                ["price"] = 14.37d
-            },
+            "Product" =>
+            [
+                new JsonObject
+                {
+                    ["id"] = 123,
+                    ["description"] = "foobar",
+                    ["price"] = 14.37d
+                },
+            ],
             _ => null,
         };
     }

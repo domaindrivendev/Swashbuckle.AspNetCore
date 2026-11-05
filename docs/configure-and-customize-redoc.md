@@ -37,7 +37,7 @@ app.UseReDoc(options =>
 ## Apply Redoc Parameters
 
 Redoc ships with its own set of configuration parameters, all described [in the Redoc documentation][redoc-options].
-In Swashbuckle.AspNetCore, most of these are surfaced through the Redoc middleware options:
+In Swashbuckle.AspNetCore, the most common of these are surfaced through the Redoc middleware options:
 
 <!-- markdownlint-disable MD031 MD033 -->
 <!-- snippet: Redoc-CustomOptions -->
@@ -48,25 +48,43 @@ app.UseReDoc(options =>
     options.SpecUrl("/v1/swagger.json");
     options.EnableUntrustedSpec();
     options.ScrollYOffset(10);
-    options.HideHostname();
     options.HideDownloadButton();
-    options.ExpandResponses("200,201");
     options.RequiredPropsFirst();
-    options.NoAutoAuth();
-    options.PathInMiddlePanel();
     options.HideLoading();
-    options.NativeScrollbars();
-    options.DisableSearch();
     options.OnlyRequiredInSamples();
-    options.SortPropsAlphabetically();
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L156-L174' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomOptions' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L156-L167' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomOptions' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > Using `options.SpecUrl("/v1/swagger.json")` multiple times within the same `UseReDoc(...)` will not add multiple URLs.
+
+Any other Redoc option, such as `layout`, `router` or `disableTelemetry`, can be set using the `AdditionalItems` property:
+
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Redoc-AdditionalOptions -->
+<a id='snippet-Redoc-AdditionalOptions'></a>
+```cs
+app.UseReDoc(options =>
+{
+    options.ConfigObject.AdditionalItems = new Dictionary<string, object>
+    {
+        ["layout"] = "stacked",
+        ["disableTelemetry"] = true,
+    };
+});
+```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L176-L185' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-AdditionalOptions' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
+
+> [!IMPORTANT]
+> Swashbuckle.AspNetCore embeds [Redoc 3][redoc-migration], which removed a number of options that were available in Redoc 2.
+> The corresponding members of `ConfigObject` and `ReDocOptions` (`DisableSearch`, `ExpandResponses`, `HideHostname`, `NativeScrollbars`,
+> `NoAutoAuth`, `PathInMiddlePanel` and `SortPropsAlphabetically`) have been removed.
+> Redoc 3 also collects anonymous usage telemetry by default, which can be turned off with the `disableTelemetry` option shown above.
 
 ## Inject Custom CSS
 
@@ -82,12 +100,13 @@ app.UseReDoc(options =>
     options.InjectStylesheet("/redoc/custom.css");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L176-L181' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomCSS' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L169-L174' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomCSS' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
-It is also possible to modify the theme by using the `AdditionalItems` property. More information can be found
-[in the Redoc documentation][redoc-options].
+Redoc 3 no longer supports the `theme` option. Instead, the theme is customized with CSS variables, which can be
+injected into the page using the `HeadContent` property. The available variables are described
+[in the Redoc documentation][redoc-theme].
 
 <!-- markdownlint-disable MD031 MD033 -->
 <!-- snippet: Redoc-ModifyTheme -->
@@ -95,13 +114,17 @@ It is also possible to modify the theme by using the `AdditionalItems` property.
 ```cs
 app.UseReDoc(options =>
 {
-    options.ConfigObject.AdditionalItems = new Dictionary<string, object>
-    {
-        // Configured additional options
-    };
+    options.HeadContent =
+        """
+        <style>
+            :root.light, :root.dark {
+                --font-family-base: 'Segoe UI', sans-serif;
+            }
+        </style>
+        """;
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L183-L191' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-ModifyTheme' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L187-L199' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-ModifyTheme' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -119,7 +142,7 @@ app.UseReDoc(options =>
         .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // Requires file to be added as an embedded resource
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L193-L199' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomIndexHtml' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L201-L207' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomIndexHtml' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -133,6 +156,10 @@ app.UseReDoc(options =>
 
 > [!TIP]
 > To get started, you should base your custom `index.html` on the [default version](../src/Swashbuckle.AspNetCore.ReDoc/index.html).
+
+Redoc 3 is distributed as an ES module and no longer provides the global `Redoc` object. A custom `index.html` based on an
+earlier version of the default page must load `index.js` with `<script type="module">`, as shown in the default version, rather
+than loading `redoc.standalone.js` with a classic `<script>` element and calling `Redoc.init(...)`.
 
 ## Use `MapReDoc` with endpoint routing
 
@@ -166,4 +193,6 @@ app.MapReDoc("redoc-auth")
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
-[redoc-options]: https://github.com/Redocly/redoc/blob/main/docs/deployment/html.md#the-redoc-object
+[redoc-migration]: https://redocly.com/docs/redoc/config-migration
+[redoc-options]: https://redocly.com/docs/redoc/config
+[redoc-theme]: https://redocly.com/docs/redoc/deployment/html#customize-the-theme-with-css-variables

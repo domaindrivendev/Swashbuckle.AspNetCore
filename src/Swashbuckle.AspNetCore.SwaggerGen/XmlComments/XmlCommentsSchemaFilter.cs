@@ -86,7 +86,7 @@ public class XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator>
     {
         if (example != null)
         {
-            schema.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, schema, example);
+            schema.Examples = [XmlCommentsExampleHelper.Create(context.SchemaRepository, schema, example)];
         }
     }
 }

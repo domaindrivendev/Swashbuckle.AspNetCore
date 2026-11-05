@@ -1089,6 +1089,172 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_SupportsOption_DiscriminatorDefaultMappingSelector()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.DiscriminatorNameSelector = (baseType) => "TypeName";
+            c.DiscriminatorValueSelector = (subType) => subType.Name;
+            c.DiscriminatorDefaultMappingSelector = (baseType) => typeof(SubType2);
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        var polymorphicSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+        var schema = schemaRepository.Schemas["BaseType"];
+        Assert.NotNull(schema.Discriminator);
+        Assert.NotNull(schema.Discriminator.DefaultMapping);
+        Assert.Equal("SubType2", schema.Discriminator.DefaultMapping.Reference.Id);
+        Assert.Contains("TypeName", schema.Properties.Keys);
+        Assert.DoesNotContain("TypeName", schema.Required);
+
+        // Only the default mapping is valid for payloads without the discriminator property
+        Assert.Contains("TypeName", schemaRepository.Schemas["SubType1"].Required);
+        Assert.DoesNotContain("TypeName", schemaRepository.Schemas["SubType2"].Required ?? new HashSet<string>());
+
+        // The alternative for the concrete base type requires the discriminator property, as the default mapping is a subtype
+        Assert.NotNull(polymorphicSchema.OneOf);
+
+        var baseAlternative = Assert.IsType<OpenApiSchema>(polymorphicSchema.OneOf[0]);
+        Assert.NotNull(baseAlternative.AllOf);
+        Assert.Equal(2, baseAlternative.AllOf.Count);
+
+        var baseReference = Assert.IsType<OpenApiSchemaReference>(baseAlternative.AllOf[0]);
+        Assert.Equal("BaseType", baseReference.Reference.Id);
+
+        var baseRequirement = Assert.IsType<OpenApiSchema>(baseAlternative.AllOf[1]);
+        Assert.Equal(["TypeName"], baseRequirement.Required);
+
+        Assert.All(polymorphicSchema.OneOf.Skip(1), (alternative) => Assert.IsType<OpenApiSchemaReference>(alternative));
+    }
+
+    [Fact]
+    public void GenerateSchema_DiscriminatorDefaultMappingSelector_ReturningBaseType_DoesNotWrapBaseTypeAlternative()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.DiscriminatorNameSelector = (baseType) => "TypeName";
+            c.DiscriminatorValueSelector = (subType) => subType.Name;
+            c.DiscriminatorDefaultMappingSelector = (baseType) => baseType;
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        var polymorphicSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+        Assert.NotNull(polymorphicSchema.OneOf);
+        Assert.All(polymorphicSchema.OneOf, (alternative) => Assert.IsType<OpenApiSchemaReference>(alternative));
+
+        Assert.DoesNotContain("TypeName", schemaRepository.Schemas["BaseType"].Required);
+        Assert.Contains("TypeName", schemaRepository.Schemas["SubType1"].Required);
+        Assert.Contains("TypeName", schemaRepository.Schemas["SubType2"].Required);
+    }
+
+    [Theory]
+    [InlineData(OpenApiSpecVersion.OpenApi2_0, false)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_0, false)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_1, false)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_2, true)]
+    public void GenerateSchema_DiscriminatorDefaultMappingSelector_DiscriminatorIsOnlyOptionalForOpenApi32(
+        OpenApiSpecVersion version,
+        bool expectedOptional)
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.DiscriminatorNameSelector = (baseType) => "TypeName";
+            c.DiscriminatorValueSelector = (subType) => subType.Name;
+            c.DiscriminatorDefaultMappingSelector = (baseType) => baseType;
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+        var document = new OpenApiDocument
+        {
+            Info = new() { Title = "Test", Version = "1.0" },
+            Paths = [],
+            Components = new() { Schemas = schemaRepository.Schemas },
+        };
+
+        using var writer = new StringWriter();
+        document.SerializeAs(version, new OpenApiJsonWriter(writer));
+
+        using var json = JsonDocument.Parse(writer.ToString());
+
+        var schemas = version == OpenApiSpecVersion.OpenApi2_0
+            ? json.RootElement.GetProperty("definitions")
+            : json.RootElement.GetProperty("components").GetProperty("schemas");
+
+        var schema = schemas.GetProperty("BaseType");
+
+        var required = schema.TryGetProperty("required", out var value)
+            ? value.EnumerateArray().Select((p) => p.GetString()).ToArray()
+            : [];
+
+        var hasDefaultMapping =
+            schema.TryGetProperty("discriminator", out var discriminator) &&
+            discriminator.ValueKind == JsonValueKind.Object &&
+            discriminator.TryGetProperty("defaultMapping", out _);
+
+        Assert.Equal(expectedOptional, !required.Contains("TypeName"));
+        Assert.Equal(expectedOptional, hasDefaultMapping);
+
+        // The schema in the document itself is not modified by serialization
+        Assert.DoesNotContain("TypeName", schemaRepository.Schemas["BaseType"].Required);
+    }
+
+    [Fact]
+    public void GenerateSchema_DiscriminatorDefaultMappingSelector_ReturningNull_DoesNotSetDefaultMapping()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.DiscriminatorNameSelector = (baseType) => "TypeName";
+            c.DiscriminatorValueSelector = (subType) => subType.Name;
+            c.DiscriminatorDefaultMappingSelector = (baseType) => null;
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+        var schema = schemaRepository.Schemas["BaseType"];
+        Assert.NotNull(schema.Discriminator);
+        Assert.Null(schema.Discriminator.DefaultMapping);
+        Assert.Contains("TypeName", schema.Required);
+    }
+
+    [Fact]
+    public void GenerateSchema_DiscriminatorDefaultMappingSelector_Null_DoesNotSetDefaultMapping()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.DiscriminatorNameSelector = (baseType) => "TypeName";
+            c.DiscriminatorValueSelector = (subType) => subType.Name;
+            c.DiscriminatorDefaultMappingSelector = null;
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        var polymorphicSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+        var schema = schemaRepository.Schemas["BaseType"];
+        Assert.IsNotType<DefaultMappingDiscriminatorSchema>(schema);
+        Assert.NotNull(schema.Discriminator);
+        Assert.Null(schema.Discriminator.DefaultMapping);
+        Assert.Contains("TypeName", schema.Required);
+
+        Assert.NotNull(polymorphicSchema.OneOf);
+        Assert.All(polymorphicSchema.OneOf, (alternative) => Assert.IsType<OpenApiSchemaReference>(alternative));
+    }
+
+    [Fact]
     public void GenerateSchema_SupportsOption_UseAllOfForPolymorphism()
     {
         var subject = Subject(configureGenerator: c =>

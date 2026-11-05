@@ -31,7 +31,6 @@ public class Address
     /// <summary>
     /// 3-letter ISO country code
     /// </summary>
-    /// <example>null</example>
     [Required]
     public string Country { get; set; }
 

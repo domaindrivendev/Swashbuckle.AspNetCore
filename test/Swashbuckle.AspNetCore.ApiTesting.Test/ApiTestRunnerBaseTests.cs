@@ -1,10 +1,76 @@
-﻿using Microsoft.OpenApi;
+﻿using System.Text.Json;
+using Microsoft.OpenApi;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test;
 
 public class ApiTestRunnerBaseTests
 {
+    [Fact]
+    public void Dispose_WritesOpenApiFiles_AsOpenApi3_0_ByDefault()
+    {
+        var outputRoot = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+
+        try
+        {
+            var subject = new FakeApiTestRunner();
+            subject.Configure(c =>
+            {
+                c.GenerateOpenApiFiles = true;
+                c.FileOutputRoot = outputRoot;
+                c.OpenApiDocs.Add("v1", CreateDocument());
+            });
+
+            subject.Dispose();
+
+            using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(outputRoot, "v1", "openapi.json")));
+            Assert.StartsWith("3.0.", document.RootElement.GetProperty("openapi").GetString());
+        }
+        finally
+        {
+            if (Directory.Exists(outputRoot))
+            {
+                Directory.Delete(outputRoot, recursive: true);
+            }
+        }
+    }
+
+    [Theory]
+    [InlineData(OpenApiSpecVersion.OpenApi2_0, "swagger", "2.0")]
+    [InlineData(OpenApiSpecVersion.OpenApi3_0, "openapi", "3.0.")]
+    [InlineData(OpenApiSpecVersion.OpenApi3_1, "openapi", "3.1.")]
+    [InlineData(OpenApiSpecVersion.OpenApi3_2, "openapi", "3.2.")]
+    public void Dispose_WritesOpenApiFiles_UsingConfiguredVersion(
+        OpenApiSpecVersion version,
+        string expectedPropertyName,
+        string expectedVersionPrefix)
+    {
+        var outputRoot = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+
+        try
+        {
+            var subject = new FakeApiTestRunner();
+            subject.Configure(c =>
+            {
+                c.GenerateOpenApiFiles = true;
+                c.FileOutputRoot = outputRoot;
+                c.OpenApiVersion = version;
+                c.OpenApiDocs.Add("v1", CreateDocument());
+            });
+
+            subject.Dispose();
+
+            using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(outputRoot, "v1", "openapi.json")));
+            Assert.StartsWith(expectedVersionPrefix, document.RootElement.GetProperty(expectedPropertyName).GetString());
+        }
+        finally
+        {
+            if (Directory.Exists(outputRoot))
+            {
+                Directory.Delete(outputRoot, recursive: true);
+            }
+        }
+    }
     [Fact]
     public async Task TestAsync_ThrowsException_IfDocumentNotFound()
     {
@@ -144,6 +210,31 @@ public class ApiTestRunnerBaseTests
     private static FakeApiTestRunner Subject()
     {
         return new();
+    }
+
+    private static OpenApiDocument CreateDocument()
+    {
+        return new OpenApiDocument
+        {
+            Info = new OpenApiInfo { Title = "Test API", Version = "v1" },
+            Paths = new OpenApiPaths
+            {
+                ["/api/products"] = new OpenApiPathItem
+                {
+                    Operations = new Dictionary<HttpMethod, OpenApiOperation>
+                    {
+                        [HttpMethod.Get] = new OpenApiOperation
+                        {
+                            OperationId = "GetProducts",
+                            Responses = new OpenApiResponses
+                            {
+                                ["200"] = new OpenApiResponse { Description = "OK" }
+                            }
+                        }
+                    }
+                }
+            }
+        };
     }
 
     private static HttpClient CreateHttpClient()

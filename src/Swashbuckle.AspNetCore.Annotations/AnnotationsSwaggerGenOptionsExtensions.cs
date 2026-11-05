@@ -28,6 +28,7 @@ public static class AnnotationsSwaggerGenOptionsExtensions
             options.SelectSubTypesUsing(AnnotationsSubTypesSelector);
             options.SelectDiscriminatorNameUsing(AnnotationsDiscriminatorNameSelector);
             options.SelectDiscriminatorValueUsing(AnnotationsDiscriminatorValueSelector);
+            options.SelectDiscriminatorDefaultMappingUsing(AnnotationsDiscriminatorDefaultMappingSelector);
 
             if (enableAnnotationsForInheritance)
             {
@@ -92,6 +93,35 @@ public static class AnnotationsSwaggerGenOptionsExtensions
         if (jsonPolymorphicAttributes != null)
         {
             return jsonPolymorphicAttributes.TypeDiscriminatorPropertyName ?? "$type";
+        }
+
+        return null;
+    }
+
+    private static Type AnnotationsDiscriminatorDefaultMappingSelector(Type baseType)
+    {
+        var discriminatorAttribute = baseType.GetCustomAttributes(false)
+            .OfType<SwaggerDiscriminatorAttribute>()
+            .FirstOrDefault();
+
+        if (discriminatorAttribute?.DefaultMapping != null)
+        {
+            return discriminatorAttribute.DefaultMapping;
+        }
+
+        // System.Text.Json deserializes payloads without a discriminator as the base type, but it only
+        // deserializes payloads with a discriminator value that is not recognized as the base type if
+        // configured to ignore unrecognized type discriminators, so only then are all payloads that are
+        // not in the mapping described by the base type's schema (if it can be deserialized).
+        var jsonPolymorphicAttribute = baseType.GetCustomAttributes(false)
+            .OfType<JsonPolymorphicAttribute>()
+            .FirstOrDefault();
+
+        if (jsonPolymorphicAttribute is { IgnoreUnrecognizedTypeDiscriminators: true } &&
+            !baseType.IsAbstract &&
+            !baseType.IsInterface)
+        {
+            return baseType;
         }
 
         return null;

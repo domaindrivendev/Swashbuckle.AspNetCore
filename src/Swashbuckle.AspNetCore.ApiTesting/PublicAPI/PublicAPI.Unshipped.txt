@@ -1,1 +1,6 @@
-﻿
+﻿Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions.OpenApiVersion.get -> Microsoft.OpenApi.OpenApiSpecVersion
+Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions.OpenApiVersion.set -> void
+*REMOVED*Swashbuckle.AspNetCore.ApiTesting.IContentValidator.Validate(Microsoft.OpenApi.OpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
+*REMOVED*Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator.Validate(Microsoft.OpenApi.OpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
+Swashbuckle.AspNetCore.ApiTesting.IContentValidator.Validate(Microsoft.OpenApi.IOpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
+Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator.Validate(Microsoft.OpenApi.IOpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void

@@ -11,6 +11,7 @@ public class SchemaGeneratorOptions
         SubTypesSelector = DefaultSubTypesSelector;
         DiscriminatorNameSelector = DefaultDiscriminatorNameSelector;
         DiscriminatorValueSelector = DefaultDiscriminatorValueSelector;
+        DiscriminatorDefaultMappingSelector = DefaultDiscriminatorDefaultMappingSelector;
         SchemaFilters = [];
     }
 
@@ -31,6 +32,16 @@ public class SchemaGeneratorOptions
     public Func<Type, string> DiscriminatorNameSelector { get; set; }
 
     public Func<Type, string> DiscriminatorValueSelector { get; set; }
+
+    /// <summary>
+    /// Gets or sets a function that returns the type whose schema should be used to validate a polymorphic payload
+    /// when the discriminator property is not present, or has a value that is not in the discriminator mapping.
+    /// </summary>
+    /// <remarks>
+    /// The selected type is emitted as the <c>defaultMapping</c> of the discriminator, which is only supported by
+    /// OpenAPI 3.2. Return <see langword="null"/> to not emit a default mapping.
+    /// </remarks>
+    public Func<Type, Type> DiscriminatorDefaultMappingSelector { get; set; }
 
     public bool UseAllOfToExtendReferenceSchemas { get; set; }
 
@@ -60,4 +71,6 @@ public class SchemaGeneratorOptions
     private string DefaultDiscriminatorNameSelector(Type baseType) => null;
 
     private string DefaultDiscriminatorValueSelector(Type subType) => null;
+
+    private Type DefaultDiscriminatorDefaultMappingSelector(Type baseType) => null;
 }

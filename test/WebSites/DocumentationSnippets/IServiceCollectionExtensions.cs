@@ -258,5 +258,18 @@ public static class IServiceCollectionExtensions
             options.SelectDiscriminatorValueUsing((subType) => subType.Name);
         });
         // end-snippet
+
+        // begin-snippet: SwaggerGen-DiscriminatorDefaultMapping
+        services.AddSwaggerGen(options =>
+        {
+            options.UseOneOfForPolymorphism();
+
+            options.SelectDiscriminatorNameUsing((baseType) => "TypeName");
+            options.SelectDiscriminatorValueUsing((subType) => subType.Name);
+
+            // Payloads without a recognized discriminator value are validated against the base type
+            options.SelectDiscriminatorDefaultMappingUsing((baseType) => baseType.IsAbstract ? null : baseType);
+        });
+        // end-snippet
     }
 }

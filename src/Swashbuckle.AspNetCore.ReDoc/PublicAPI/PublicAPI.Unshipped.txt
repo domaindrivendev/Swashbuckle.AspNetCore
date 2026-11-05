@@ -1,1 +1,21 @@
-﻿
+﻿*REMOVED*static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.DisableSearch(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+*REMOVED*static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.ExpandResponses(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options, string responses) -> void
+*REMOVED*static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.HideHostname(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+*REMOVED*static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.NativeScrollbars(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+*REMOVED*static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.NoAutoAuth(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+*REMOVED*static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.PathInMiddlePanel(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+*REMOVED*static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.SortPropsAlphabetically(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.DisableSearch.get -> bool
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.DisableSearch.set -> void
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.ExpandResponses.get -> string
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.ExpandResponses.set -> void
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.HideHostname.get -> bool
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.HideHostname.set -> void
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.NativeScrollbars.get -> bool
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.NativeScrollbars.set -> void
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.NoAutoAuth.get -> bool
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.NoAutoAuth.set -> void
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.PathInMiddlePanel.get -> bool
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.PathInMiddlePanel.set -> void
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.SortPropsAlphabetically.get -> bool
+*REMOVED*Swashbuckle.AspNetCore.ReDoc.ConfigObject.SortPropsAlphabetically.set -> void

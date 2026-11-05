@@ -60,7 +60,7 @@ public class XmlCommentsRequestBodyFilter(IReadOnlyDictionary<string, XPathNavig
 
                         if (value is OpenApiSchema concrete && !string.IsNullOrEmpty(example))
                         {
-                            concrete.Example ??= XmlCommentsExampleHelper.Create(context.SchemaRepository, value, example);
+                            concrete.Examples ??= [XmlCommentsExampleHelper.Create(context.SchemaRepository, value, example)];
                         }
                     }
                 }
