@@ -542,6 +542,37 @@ public class NewtonsoftSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_SupportsOption_UseAllOfForInheritance_WithNonPublicJsonProperties()
+    {
+        var subject = Subject(
+            configureGenerator: c => c.UseAllOfForInheritance = true
+        );
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(NonPublicJsonPropertyType), schemaRepository));
+
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        Assert.Equal(["internalField", "privateProperty"], schema.AllOf[1].Properties.Keys);
+        var baseSchema = Assert.IsType<OpenApiSchemaReference>(schema.AllOf[0]);
+        Assert.Equal(["basePrivateProperty"], schemaRepository.Schemas[baseSchema.Reference.Id].Properties.Keys);
+    }
+
+    [Fact]
+    public void GenerateSchema_SupportsOption_UseAllOfForInheritance_WithPropertyWithoutMember()
+    {
+        var subject = Subject(
+            configureGenerator: c => c.UseAllOfForInheritance = true,
+            configureSerializer: c => c.ContractResolver = new AdditionalPropertyJsonContractResolver()
+        );
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(SubType1), schemaRepository));
+
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        Assert.Contains(AdditionalPropertyJsonContractResolver.AdditionalPropertyName, schema.AllOf[1].Properties.Keys);
+    }
+
+    [Fact]
     public void GenerateSchema_SupportsOption_SubTypesSelector()
     {
         var subject = Subject(configureGenerator: c =>

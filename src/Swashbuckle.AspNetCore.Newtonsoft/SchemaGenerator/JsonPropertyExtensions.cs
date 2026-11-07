@@ -20,7 +20,9 @@ public static class JsonPropertyExtensions
     public static bool TryGetMemberInfo(this JsonProperty jsonProperty, out MemberInfo memberInfo)
     {
         memberInfo = jsonProperty.DeclaringType?
-            .GetMember(jsonProperty.UnderlyingName)
+            .GetMember(
+                jsonProperty.UnderlyingName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
             .FirstOrDefault();
 
         return memberInfo != null;
