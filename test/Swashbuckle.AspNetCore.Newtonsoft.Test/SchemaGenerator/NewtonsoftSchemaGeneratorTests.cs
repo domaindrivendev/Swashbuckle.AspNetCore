@@ -542,6 +542,32 @@ public class NewtonsoftSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_SupportsOption_UseAllOfForInheritance_SkipsOpenGenericSubTypes()
+    {
+        var subject = Subject(
+            configureGenerator: c => c.UseAllOfForInheritance = true
+        );
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(GenericSubTypesBaseType), schemaRepository);
+
+        Assert.Equal(["ClosedGenericSubType", "GenericSubTypesBaseType", "Int32OpenGenericSubType"], schemaRepository.Schemas.Keys.Order());
+    }
+
+    [Fact]
+    public void GenerateSchema_SupportsOption_UseOneOfForPolymorphism_SkipsOpenGenericSubTypes()
+    {
+        var subject = Subject(
+            configureGenerator: c => c.UseOneOfForPolymorphism = true
+        );
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(GenericSubTypesBaseType), schemaRepository);
+
+        Assert.Equal(["ClosedGenericSubType", "GenericSubTypesBaseType", "Int32OpenGenericSubType"], schemaRepository.Schemas.Keys.Order());
+    }
+
+    [Fact]
     public void GenerateSchema_SupportsOption_SubTypesSelector()
     {
         var subject = Subject(configureGenerator: c =>
