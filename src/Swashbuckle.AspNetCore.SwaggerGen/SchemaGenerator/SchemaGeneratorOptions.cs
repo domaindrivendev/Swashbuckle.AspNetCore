@@ -55,7 +55,7 @@ public class SchemaGeneratorOptions
     }
 
     private IEnumerable<Type> DefaultSubTypesSelector(Type baseType)
-        => baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
+        => baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType) && !type.ContainsGenericParameters);
 
     private string DefaultDiscriminatorNameSelector(Type baseType) => null;
 
