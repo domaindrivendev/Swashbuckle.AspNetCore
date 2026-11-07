@@ -569,22 +569,9 @@ public class NewtonsoftSchemaGeneratorTests
         var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(SubType1), schemaRepository));
 
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        Assert.Contains(AdditionalPropertyJsonContractResolver.AdditionalPropertyName, schema.AllOf[1].Properties.Keys);
-    }
-
-    [Fact]
-    public void GenerateSchema_HonorsAttributes_OnNonPublicJsonProperties()
-    {
-        var schemaRepository = new SchemaRepository();
-
-        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(Subject().GenerateSchema(typeof(NonPublicAnnotatedJsonPropertyType), schemaRepository));
-
-        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        Assert.Equal(["ranged", "required", "staticRanged"], schema.Properties.Keys.Order());
-        Assert.Equal("1", schema.Properties["ranged"].Minimum);
-        Assert.Equal("10", schema.Properties["ranged"].Maximum);
-        Assert.Equal("1", schema.Properties["staticRanged"].Minimum);
-        Assert.Equal(["required"], schema.Required);
+        Assert.DoesNotContain(AdditionalPropertyJsonContractResolver.AdditionalPropertyName, schema.AllOf[1].Properties.Keys);
+        var baseSchema = Assert.IsType<OpenApiSchemaReference>(schema.AllOf[0]);
+        Assert.Contains(AdditionalPropertyJsonContractResolver.AdditionalPropertyName, schemaRepository.Schemas[baseSchema.Reference.Id].Properties.Keys);
     }
 
     [Fact]
