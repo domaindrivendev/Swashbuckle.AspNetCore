@@ -552,9 +552,9 @@ public class NewtonsoftSchemaGeneratorTests
         var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(NonPublicJsonPropertyType), schemaRepository));
 
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        Assert.Equal(["internalField", "privateProperty"], schema.AllOf[1].Properties.Keys);
+        Assert.Equal(["internalField", "PublicProperty", "privateProperty"], schema.AllOf[1].Properties.Keys);
         var baseSchema = Assert.IsType<OpenApiSchemaReference>(schema.AllOf[0]);
-        Assert.Equal(["basePrivateProperty"], schemaRepository.Schemas[baseSchema.Reference.Id].Properties.Keys);
+        Assert.Equal(["BasePublicProperty", "basePrivateProperty"], schemaRepository.Schemas[baseSchema.Reference.Id].Properties.Keys);
     }
 
     [Fact]

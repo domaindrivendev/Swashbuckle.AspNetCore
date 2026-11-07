@@ -1,0 +1,45 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": { },
+  "paths": { },
+  "components": {
+    "schemas": {
+      "NonPublicJsonPropertyBaseType": {
+        "type": "object",
+        "properties": {
+          "BasePublicProperty": {
+            "type": "string",
+            "nullable": true
+          },
+          "basePrivateProperty": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NonPublicJsonPropertyType": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NonPublicJsonPropertyBaseType"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "internalField": {
+                "type": "string"
+              },
+              "PublicProperty": {
+                "type": "string",
+                "nullable": true
+              },
+              "privateProperty": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  }
+}
