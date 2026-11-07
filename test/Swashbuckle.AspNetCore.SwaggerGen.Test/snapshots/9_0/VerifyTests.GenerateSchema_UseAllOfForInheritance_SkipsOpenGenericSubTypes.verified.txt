@@ -1,0 +1,44 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": { },
+  "paths": { },
+  "components": {
+    "schemas": {
+      "Int32OpenGenericSubType": {
+        "type": "object",
+        "properties": {
+          "BaseProperty": {
+            "type": "string",
+            "nullable": true
+          },
+          "Details": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClosedGenericSubType": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Int32OpenGenericSubType"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
+          }
+        ]
+      },
+      "GenericSubTypesBaseType": {
+        "type": "object",
+        "properties": {
+          "BaseProperty": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
