@@ -1802,6 +1802,28 @@ public partial class VerifyTests
                       .UseParameters(version);
     }
 
+    [Fact]
+    public async Task GenerateSchema_UseAllOfForInheritance_SkipsOpenGenericSubTypes()
+    {
+        var generatorOptions = new SchemaGeneratorOptions { UseAllOfForInheritance = true };
+        var subject = new SchemaGenerator(
+            generatorOptions,
+            new JsonSerializerDataContractResolver(new JsonSerializerOptions(), generatorOptions));
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(GenericSubTypesBaseType), schemaRepository);
+
+        var document = new OpenApiDocument
+        {
+            Components = new OpenApiComponents
+            {
+                Schemas = schemaRepository.Schemas
+            }
+        };
+
+        await Verify(document);
+    }
+
     private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,
