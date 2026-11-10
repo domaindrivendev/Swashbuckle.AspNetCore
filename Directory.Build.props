@@ -21,8 +21,6 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <NeutralLanguage>en-US</NeutralLanguage>
     <NoWarn>$(NoWarn);SC031</NoWarn>
-    <!-- TODO Remove before merge -->
-    <NoWarn>$(NoWarn);NU5104</NoWarn>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <!--
     TODO Go through the code and add nullable annotations
