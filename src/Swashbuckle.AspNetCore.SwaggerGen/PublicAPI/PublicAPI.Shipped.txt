@@ -36,6 +36,7 @@ static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.Requ
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.RequestBodyFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.ResolveConflictingActions(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription>, Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription> resolver) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SchemaFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SelectDiscriminatorDefaultMappingUsing(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<System.Type, System.Type> customSelector) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SelectDiscriminatorNameUsing(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<System.Type, string> customSelector) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SelectDiscriminatorValueUsing(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<System.Type, string> customSelector) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SelectSubTypesUsing(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<System.Type, System.Collections.Generic.IEnumerable<System.Type>> customSelector) -> void
@@ -202,6 +203,8 @@ Swashbuckle.AspNetCore.SwaggerGen.SchemaGenerator.SchemaGenerator(Swashbuckle.As
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.CustomTypeMappings.get -> System.Collections.Generic.IDictionary<System.Type, System.Func<Microsoft.OpenApi.IOpenApiSchema>>
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.CustomTypeMappings.set -> void
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.DiscriminatorDefaultMappingSelector.get -> System.Func<System.Type, System.Type>
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.DiscriminatorDefaultMappingSelector.set -> void
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.DiscriminatorNameSelector.get -> System.Func<System.Type, string>
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.DiscriminatorNameSelector.set -> void
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.DiscriminatorValueSelector.get -> System.Func<System.Type, string>
