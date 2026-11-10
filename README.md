@@ -64,7 +64,7 @@ for more details.
 [swaggerui-version-latest-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv11.0.0%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
 [swaggerui-version-latest-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.34.1
 [swaggerui-version-v10-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv10.3.1%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
-[swaggerui-version-v10-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.33.1
+[swaggerui-version-v10-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.33.3
 [swaggerui-version-v9-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv9.0.6%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
 [swaggerui-version-v9-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.29.2
 

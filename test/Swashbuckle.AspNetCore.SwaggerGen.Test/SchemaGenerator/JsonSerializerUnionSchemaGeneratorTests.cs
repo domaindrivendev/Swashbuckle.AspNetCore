@@ -34,6 +34,26 @@ public class JsonSerializerUnionSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_GeneratesAnyOfSchema_ForUnionType_WithDefaultSerializerOptions()
+    {
+        var serializerOptions = new JsonSerializerOptions();
+        Assert.Null(serializerOptions.TypeInfoResolver);
+
+        var generatorOptions = new SchemaGeneratorOptions();
+        var subject = new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions, generatorOptions));
+
+        var schema = subject.GenerateSchema(typeof(Pet), new SchemaRepository());
+
+        var concrete = Assert.IsType<OpenApiSchema>(schema);
+        Assert.NotNull(concrete.AnyOf);
+        Assert.Equal(2, concrete.AnyOf.Count);
+
+        // The caller-owned options are not mutated
+        Assert.Null(serializerOptions.TypeInfoResolver);
+        Assert.False(serializerOptions.IsReadOnly);
+    }
+
+    [Fact]
     public void GenerateSchema_GeneratesAnyOfSchema_ForUnionTypeProperty()
     {
         var schemaRepository = new SchemaRepository();
