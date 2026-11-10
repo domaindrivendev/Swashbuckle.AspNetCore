@@ -11,6 +11,9 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
 {
     private readonly JsonSerializerOptions _serializerOptions;
     private readonly IOptions<SchemaGeneratorOptions> _generatorOptions;
+#if NET11_0_OR_GREATER
+    private JsonSerializerOptions _reflectionOptions;
+#endif
 
     public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions)
         : this(serializerOptions, new SchemaGeneratorOptions())
@@ -149,7 +152,7 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
         System.Text.Json.Serialization.Metadata.JsonTypeInfo typeInfo;
         try
         {
-            typeInfo = _serializerOptions.GetTypeInfo(type);
+            typeInfo = GetMetadataOptions().GetTypeInfo(type);
         }
         catch
         {
@@ -163,6 +166,23 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
 
         cases = [.. typeInfo.UnionCases.Select(static c => c.CaseType)];
         return true;
+    }
+
+    private JsonSerializerOptions GetMetadataOptions()
+    {
+        // JsonSerializerOptions.GetTypeInfo() throws when no TypeInfoResolver is configured, whereas
+        // serialization itself falls back to reflection. To mirror that behavior without mutating the
+        // caller-owned options, probe a private copy that uses the reflection resolver instead.
+        if (_serializerOptions.TypeInfoResolver is not null ||
+            !JsonSerializer.IsReflectionEnabledByDefault)
+        {
+            return _serializerOptions;
+        }
+
+        return _reflectionOptions ??= new JsonSerializerOptions(_serializerOptions)
+        {
+            TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver(),
+        };
     }
 #endif
 
