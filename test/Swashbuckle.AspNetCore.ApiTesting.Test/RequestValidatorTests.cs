@@ -275,7 +275,7 @@ public class RequestValidatorTests
             RequestBody = new OpenApiRequestBody
             {
                 Required = true,
-                Content = new Dictionary<string, OpenApiMediaType>
+                Content = new Dictionary<string, IOpenApiMediaType>
                 {
                     [ "text/plain" ] = new OpenApiMediaType()
                 }
@@ -307,7 +307,7 @@ public class RequestValidatorTests
         {
             RequestBody = new OpenApiRequestBody
             {
-                Content = new Dictionary<string, OpenApiMediaType>
+                Content = new Dictionary<string, IOpenApiMediaType>
                 {
                     [ "application/json" ] = new OpenApiMediaType()
                 }
@@ -339,7 +339,7 @@ public class RequestValidatorTests
         {
             RequestBody = new OpenApiRequestBody
             {
-                Content = new Dictionary<string, OpenApiMediaType>
+                Content = new Dictionary<string, IOpenApiMediaType>
                 {
                     [ "application/json" ] = new OpenApiMediaType
                     {

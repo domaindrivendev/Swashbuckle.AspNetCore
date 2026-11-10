@@ -1330,4 +1330,34 @@ services.AddSwaggerGen(options =>
 > class definitions. This way, you can use simple attributes to explicitly provide discriminator metadata. To enable this behavior, check
 > out the [Annotations documentation](configure-and-customize-annotations.md#enrich-polymorphic-base-classes-with-discriminator-metadata).
 
+#### Discriminator Default Mapping
+
+OpenAPI 3.2 adds a `defaultMapping` field to the discriminator description, which identifies the schema that a payload should be
+validated against when the discriminator property is not present, or has a value that is not in the `mapping`. When producing OpenAPI 3.2
+documents, you can provide a selector function to determine the type to use as the default mapping for a given base type. The
+`defaultMapping` is omitted when producing documents using earlier versions of the OpenAPI specification. When a default mapping is
+selected, OpenAPI 3.2 documents do not mark the discriminator property as required in the base type's schema, but do in the schemas of
+the other subtypes (and in the `oneOf` alternative for a concrete base type if the default mapping is one of its subtypes), so that only
+the default mapping is valid for payloads without the discriminator property. Documents produced using
+earlier versions of the OpenAPI specification always mark the discriminator property as required.
+
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-DiscriminatorDefaultMapping -->
+<a id='snippet-SwaggerGen-DiscriminatorDefaultMapping'></a>
+```cs
+services.AddSwaggerGen(options =>
+{
+    options.UseOneOfForPolymorphism();
+
+    options.SelectDiscriminatorNameUsing((baseType) => "TypeName");
+    options.SelectDiscriminatorValueUsing((subType) => subType.Name);
+
+    // Payloads without a recognized discriminator value are validated against the base type
+    options.SelectDiscriminatorDefaultMappingUsing((baseType) => baseType.IsAbstract ? null : baseType);
+});
+```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L262-L273' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-DiscriminatorDefaultMapping' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
+
 [swagger-specification]: https://swagger.io/specification/ "OpenAPI Specification"

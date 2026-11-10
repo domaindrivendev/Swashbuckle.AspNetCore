@@ -105,7 +105,9 @@ public class XmlCommentsSchemaFilterTests
         Subject().Apply(schema, filterContext);
 
         // Assert
-        Assert.Equal(expectedExampleAsJson, schema.Example?.ToJson());
+        Assert.NotNull(schema.Examples);
+        var example = Assert.Single(schema.Examples);
+        Assert.Equal(expectedExampleAsJson, example?.ToJson());
     }
 
     public static TheoryData<Type, string, JsonSchemaType> Apply_DoesNotSetExample_WhenPropertyExampleTagIsNotProvided_Data => new()
@@ -154,7 +156,7 @@ public class XmlCommentsSchemaFilterTests
         Subject().Apply(schema, filterContext);
 
         // Assert
-        Assert.Null(schema.Example);
+        Assert.Null(schema.Examples);
     }
 
     [Theory]
@@ -175,8 +177,9 @@ public class XmlCommentsSchemaFilterTests
 
         CultureInfo.CurrentCulture = defaultCulture;
 
-        Assert.NotNull(schema.Example);
-        Assert.Equal(expectedValue, schema.Example.GetValue<float>());
+        Assert.NotNull(schema.Examples);
+        var example = Assert.Single(schema.Examples);
+        Assert.Equal(expectedValue, example.GetValue<float>());
     }
 
     [Fact]

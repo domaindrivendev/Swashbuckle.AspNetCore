@@ -117,7 +117,7 @@ public class AnnotationsOperationFilter : IOperationFilter
                 swaggerResponseAttribute.ContentTypes is { } contentTypes)
             {
                 concrete.Content?.Clear();
-                concrete.Content ??= new Dictionary<string, OpenApiMediaType>();
+                concrete.Content ??= new Dictionary<string, IOpenApiMediaType>();
 
                 foreach (var contentType in contentTypes)
                 {

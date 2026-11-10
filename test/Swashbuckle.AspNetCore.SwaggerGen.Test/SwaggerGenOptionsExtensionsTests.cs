@@ -60,6 +60,8 @@ public static class SwaggerGenOptionsExtensionsTests
         options.SelectSubTypesUsing(subTypes);
         options.SelectDiscriminatorNameUsing(name);
         options.SelectDiscriminatorValueUsing(name);
+        var defaultMapping = new Func<Type, Type>((baseType) => baseType);
+        options.SelectDiscriminatorDefaultMappingUsing(defaultMapping);
         options.UseAllOfToExtendReferenceSchemas();
         options.SupportNonNullableReferenceTypes();
         options.NonNullableReferenceTypesAsRequired();
@@ -74,6 +76,7 @@ public static class SwaggerGenOptionsExtensionsTests
         Assert.True(generator.UseOneOfForPolymorphism);
         Assert.Same(subTypes, generator.SubTypesSelector);
         Assert.Same(name, generator.DiscriminatorNameSelector);
+        Assert.Same(defaultMapping, generator.DiscriminatorDefaultMappingSelector);
         Assert.Same(name, generator.DiscriminatorValueSelector);
         Assert.True(generator.UseAllOfToExtendReferenceSchemas);
         Assert.True(generator.SupportNonNullableReferenceTypes);

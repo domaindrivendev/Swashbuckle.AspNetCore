@@ -1,6 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -25,6 +23,8 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
                 OpenApiSpecVersion.OpenApi2_0 => true,
                 OpenApiSpecVersion.OpenApi3_0 => true,
                 OpenApiSpecVersion.OpenApi3_1 => true,
+                // TODO Kiota does not yet support OpenAPI 3.2 documents containing QUERY operations.
+                // See https://github.com/microsoft/kiota-dotnet/pull/805.
                 _ => false,
             },
             _ => false,
@@ -368,5 +368,3 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
         }
     }
 }
-
-#endif

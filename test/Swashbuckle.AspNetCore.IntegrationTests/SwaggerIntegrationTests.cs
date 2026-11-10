@@ -19,6 +19,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv2.json")]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv3_1.json")]
+    [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv3_2.json")]
     [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net10.0.json")]
     [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
@@ -28,8 +29,15 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [InlineData(typeof(MultipleVersions.Startup), "/swagger/2.0/swagger.json")]
     [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(OAuth2Integration.Startup), "/resource-server/swagger/v1/swagger.json")]
+    [InlineData(typeof(QueryOperations.Startup), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(QueryOperations.Startup), "/swagger/v1/swaggerv3_2.json")]
     [InlineData(typeof(ReDocApp.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(TestFirst.Startup), "/swagger/v1-generated/openapi.json")]
+#if NET11_0_OR_GREATER
+    [InlineData(typeof(Unions.Startup), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(Unions.Startup), "/swagger/v1/swaggerv3_1.json")]
+    [InlineData(typeof(Unions.Startup), "/swagger/v1/swaggerv3_2.json")]
+#endif
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson(
         Type startupType,
         string swaggerRequestUri)
@@ -119,7 +127,8 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [Theory]
     [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.4")]
     [InlineData("/swagger/v1/swaggerv2.json", "swagger", "2.0")]
-    [InlineData("/swagger/v1/swaggerv3_1.json", "openapi", "3.1.1")]
+    [InlineData("/swagger/v1/swaggerv3_1.json", "openapi", "3.1.2")]
+    [InlineData("/swagger/v1/swaggerv3_2.json", "openapi", "3.2.0")]
     public async Task SwaggerMiddleware_CanBeConfiguredMultipleTimes(
         string swaggerUrl,
         string expectedVersionProperty,
@@ -151,6 +160,51 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         string swaggerRequestUri)
     {
         await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
+    }
+
+    [Theory]
+    [InlineData("/animals/{id}", new[] { "Cat", "Dog" }, new[] { "Cat", "Dog" })]
+    [InlineData("/pets/{id}", new[] { "Cat", "Dog" }, new[] { "Cat" })]
+    [InlineData("/Shelter/animal", new[] { "Cat", "Dog" }, new[] { "Dog" })]
+    public async Task MultipleResponseTypesForTheSameStatusCodeAreRenderedCorrectly(
+        string path,
+        string[] expectedNet11,
+        string[] expectedNet10)
+    {
+        // Arrange
+        // From .NET 11, ASP.NET Core's API explorer reports every response type for a status code
+        var expected = Environment.Version.Major >= 11 ? expectedNet11 : expectedNet10;
+
+        using var application = new TestApplication<MultipleResponseTypes.Program>();
+        using var client = application.CreateDefaultClient();
+
+        // Act
+        using var response = await client.GetAsync("/swagger/runtime/swagger.json", TestContext.Current.CancellationToken);
+
+        // Assert
+        var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        Assert.True(response.IsSuccessStatusCode, content);
+
+        using var document = JsonDocument.Parse(content);
+
+        var schema = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(path)
+            .GetProperty("get")
+            .GetProperty("responses")
+            .GetProperty("200")
+            .GetProperty("content")
+            .GetProperty("application/json")
+            .GetProperty("schema");
+
+        string[] actual = schema.TryGetProperty("anyOf", out var anyOf)
+            ? [.. anyOf.EnumerateArray().Select(GetReferenceId)]
+            : [GetReferenceId(schema)];
+
+        Assert.Equal(expected, actual);
+
+        static string GetReferenceId(JsonElement schema)
+            => schema.GetProperty("$ref").GetString().Replace("#/components/schemas/", string.Empty, StringComparison.Ordinal);
     }
 
     [Fact]

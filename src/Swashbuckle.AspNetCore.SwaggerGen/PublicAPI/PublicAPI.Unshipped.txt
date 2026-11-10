@@ -1,1 +1,3 @@
-﻿
+﻿static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SelectDiscriminatorDefaultMappingUsing(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<System.Type, System.Type> customSelector) -> void
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.DiscriminatorDefaultMappingSelector.get -> System.Func<System.Type, System.Type>
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.DiscriminatorDefaultMappingSelector.set -> void
