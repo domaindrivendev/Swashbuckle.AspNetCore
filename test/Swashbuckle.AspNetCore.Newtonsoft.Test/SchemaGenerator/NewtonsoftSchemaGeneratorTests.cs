@@ -213,6 +213,19 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Contains("ComplexType", schemaRepository.Schemas.Keys);
     }
 
+    [Fact]
+    public void GenerateSchema_GeneratesArraySchema_IfTypeImplementsAsyncEnumerable()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var schema = Subject().GenerateSchema(typeof(AsyncEnumerableOfComplexType), schemaRepository);
+
+        Assert.Equal(JsonSchemaTypes.Array, schema.Type);
+        var itemsSchema = Assert.IsType<OpenApiSchemaReference>(schema.Items);
+        Assert.Equal("ComplexType", itemsSchema.Reference.Id);
+        Assert.DoesNotContain("AsyncEnumerableOfComplexType", schemaRepository.Schemas.Keys);
+    }
+
     [Theory]
     [InlineData(typeof(ISet<string>))]
     [InlineData(typeof(IReadOnlySet<string>))]
