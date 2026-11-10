@@ -18,6 +18,8 @@ Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.AnnotationsSchemaFilter(System.IServiceProvider serviceProvider) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.Apply(Microsoft.OpenApi.IOpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.DefaultMapping.get -> System.Type
+Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.DefaultMapping.set -> void
 Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.PropertyName.get -> string
 Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.PropertyName.set -> void
 Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.SwaggerDiscriminatorAttribute(string propertyName) -> void
