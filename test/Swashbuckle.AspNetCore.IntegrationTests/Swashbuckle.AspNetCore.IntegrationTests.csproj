@@ -50,13 +50,13 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.14" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="10.0.14" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.15" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="10.0.15" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="11.0.0-rc.3.26522.148" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="11.0.0-rc.3.26522.148" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="11.0.0" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="11.0.0" />
   </ItemGroup>
 
 </Project>
