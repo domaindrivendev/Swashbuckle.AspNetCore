@@ -366,6 +366,7 @@ public class SchemaGenerator(
     {
         var hasUniqueItems =
             dataContract.UnderlyingType.IsConstructedFrom(typeof(ISet<>), out _) ||
+            dataContract.UnderlyingType.IsConstructedFrom(typeof(IReadOnlySet<>), out _) ||
             dataContract.UnderlyingType.IsConstructedFrom(typeof(KeyedCollection<,>), out _);
 
         return new OpenApiSchema
