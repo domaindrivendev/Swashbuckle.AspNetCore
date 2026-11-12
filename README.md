@@ -52,7 +52,7 @@ for more details.
 
 [openapi-version-vnext-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2FHEAD%2Fsrc%2FSwashbuckle.AspNetCore.Swagger%2FSwashbuckle.AspNetCore.Swagger.csproj&query=%2F%2FPackageReference%5B%40Include%3D'Microsoft.OpenApi'%5D%2F%40VersionOverride&logo=openapiinitiative&label=Microsoft.OpenApi
 [openapi-version-vnext-release]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/HEAD/src/Swashbuckle.AspNetCore.Swagger/Swashbuckle.AspNetCore.Swagger.csproj#L20
-[openapi-version-latest-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv11.0.0%2Fsrc%2FSwashbuckle.AspNetCore.Swagger%2FSwashbuckle.AspNetCore.Swagger.csproj&query=%2F%2FPackageReference%5B%40Include%3D'Microsoft.OpenApi'%5D%2F%40VersionOverride&logo=openapiinitiative&label=Microsoft.OpenApi
+[openapi-version-latest-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv11.0.1%2Fsrc%2FSwashbuckle.AspNetCore.Swagger%2FSwashbuckle.AspNetCore.Swagger.csproj&query=%2F%2FPackageReference%5B%40Include%3D'Microsoft.OpenApi'%5D%2F%40VersionOverride&logo=openapiinitiative&label=Microsoft.OpenApi
 [openapi-version-latest-release]: https://github.com/microsoft/OpenAPI.NET/releases/tag/v3.11.0
 [openapi-version-v10-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv10.3.1%2Fsrc%2FSwashbuckle.AspNetCore.Swagger%2FSwashbuckle.AspNetCore.Swagger.csproj&query=%2F%2FPackageReference%5B%40Include%3D'Microsoft.OpenApi'%5D%2F%40VersionOverride&logo=openapiinitiative&label=Microsoft.OpenApi
 [openapi-version-v10-release]: https://github.com/microsoft/OpenAPI.NET/releases/tag/v2.7.5
@@ -61,7 +61,7 @@ for more details.
 
 [swaggerui-version-vnext-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2FHEAD%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
 [swaggerui-version-vnext-release]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/HEAD/src/Swashbuckle.AspNetCore.SwaggerUI/package.json#L6
-[swaggerui-version-latest-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv11.0.0%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
+[swaggerui-version-latest-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv11.0.1%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
 [swaggerui-version-latest-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.34.1
 [swaggerui-version-v10-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv10.3.1%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
 [swaggerui-version-v10-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.33.3
@@ -70,7 +70,7 @@ for more details.
 
 [redoc-version-vnext-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2FHEAD%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
 [redoc-version-vnext-release]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/HEAD/src/Swashbuckle.AspNetCore.ReDoc/package.json#L6
-[redoc-version-latest-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv11.0.0%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
+[redoc-version-latest-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv11.0.1%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
 [redoc-version-latest-release]: https://github.com/Redocly/redoc/releases/tag/redoc%403.1.0
 [redoc-version-v10-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv10.3.1%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
 [redoc-version-v10-release]: https://github.com/Redocly/redoc/releases/tag/v2.5.4
