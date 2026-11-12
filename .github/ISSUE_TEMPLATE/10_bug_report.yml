@@ -30,7 +30,7 @@ body:
     label: Steps to reproduce
     description: |
       We ❤ code! Point us to a [minimalistic project which reproduces this issue (repro)](https://stackoverflow.com/help/minimal-reproducible-example) hosted in a public GitHub repository.
-      Code snippets, such as a failing unit test, which demonstrate the issue wrapped in a codefence are also acceptable.
+      Code snippets, such as a failing unit test, which demonstrate the issue wrapped in a codefence are also acceptable. ZIP files containing a repro are **not** accepted.
 
       We will close this issue if:
       - We are not able to repro the behavior you're reporting.
