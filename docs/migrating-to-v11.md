@@ -255,8 +255,7 @@ Migrating to Swashbuckle.AspNetCore v11+ will likely involve changes in the foll
   - Decide whether to disable Redoc's telemetry.
 - Optionally, opt into OpenAPI 3.2.
 
-<!-- TODO Update this link to the "What's new in ASP.NET Core 11.0" release notes once published, before merging #3786 -->
-[aspnetcore-11]: https://learn.microsoft.com/aspnet/core/ "ASP.NET Core documentation"
+[aspnetcore-11]:https://learn.microsoft.com/aspnet/core/release-notes/aspnetcore-11 "What's New in ASP.NET Core in .NET 11"
 [csharp-unions]: https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/union "C# union types"
 [discriminator-default-mapping]: configure-and-customize-swaggergen.md#discriminator-default-mapping "Discriminator Default Mapping"
 [kiota-openapi-32]: https://github.com/microsoft/kiota-dotnet/pull/805 "Kiota support for OpenAPI 3.2"
@@ -269,7 +268,6 @@ Migrating to Swashbuckle.AspNetCore v11+ will likely involve changes in the foll
 [redoc-migration]: https://redocly.com/docs/redoc/config-migration "Migration from Redoc CE 2.x to 3.x"
 [redoc-telemetry]: https://redocly.com/docs/redoc/v3.x/telemetry "Redoc telemetry"
 [redoc-v3]: https://github.com/Redocly/redoc/releases/tag/redoc%403.0.0 "Redoc 3.0.0 release notes"
-<!-- TODO Update this link to the latest v10.x release before merging #3786 -->
 [swashbuckle-aspnetcore-10]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v10.3.1 "Swashbuckle.AspNetCore v10.3.1"
 [swashbuckle-aspnetcore-unions]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/pull/4103 "C# unions schema support"
 [v10-migration]: migrating-to-v10.md "Migrating to Swashbuckle.AspNetCore v10"
