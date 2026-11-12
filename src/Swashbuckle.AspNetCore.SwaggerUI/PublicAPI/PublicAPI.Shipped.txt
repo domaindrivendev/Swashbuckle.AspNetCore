@@ -118,6 +118,7 @@ Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Options = 4 -> Swashbuckle.AspNetC
 Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Patch = 6 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
 Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Post = 2 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
 Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Put = 1 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Query = 8 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
 Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Trace = 7 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.CacheLifetime.get -> System.TimeSpan?
