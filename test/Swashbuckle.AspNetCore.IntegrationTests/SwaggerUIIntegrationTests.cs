@@ -1,9 +1,13 @@
 ﻿using System.IO.Compression;
 using System.Net;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
@@ -806,6 +810,107 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         using var config = JsonDocument.Parse(json);
 
         Assert.Equal("x');alert(1);//", config.RootElement.GetProperty("urls")[0].GetProperty("name").GetString());
+    }
+
+    [Theory]
+    [InlineData("get")]
+    [InlineData("put")]
+    [InlineData("post")]
+    [InlineData("delete")]
+    [InlineData("options")]
+    [InlineData("head")]
+    [InlineData("patch")]
+    [InlineData("trace")]
+    [InlineData("query")]
+    public async Task SwaggerUIMiddleware_Supports_Submitting_Requests_For_Http_Method_By_Default(string method)
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI());
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/swagger/index.js", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        const string Prefix = "var configObject =";
+
+        var line = body.Split('\n').First((p) => p.Contains(Prefix));
+        outputHelper.WriteLine(line);
+
+        var json = line[(line.IndexOf(Prefix, StringComparison.Ordinal) + Prefix.Length)..].Trim().TrimEnd(';');
+
+        using var config = JsonDocument.Parse(json);
+
+        var methods = config.RootElement
+            .GetProperty("supportedSubmitMethods")
+            .EnumerateArray()
+            .Select((p) => p.GetString())
+            .ToArray();
+
+        Assert.Contains(method, methods);
+    }
+
+    [Fact]
+    public void SubmitMethod_Includes_All_Methods_Supported_By_The_Bundled_SwaggerUI_By_Default()
+    {
+        // Arrange
+        const string ResourceName = "Swashbuckle.AspNetCore.IntegrationTests.Embedded.SwaggerUI.swagger-ui-bundle.js";
+
+        using var stream = typeof(SwaggerUIIntegrationTests).Assembly.GetManifestResourceStream(ResourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream);
+        var bundle = reader.ReadToEnd();
+
+        var match = Regex.Match(bundle, @"supportedSubmitMethods:\s*\[(?<methods>(?:""[a-z]+""\s*,?\s*)+)\]");
+        Assert.True(match.Success, "Failed to find the default supportedSubmitMethods in the Swagger UI bundle.");
+
+        var expected = match.Groups["methods"].Value
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select((p) => p.Trim('"'))
+            .ToArray();
+
+        Assert.NotEmpty(expected);
+
+        // Act
+        var actual = Enum.GetNames<SubmitMethod>()
+            .Select((p) => p.ToLowerInvariant())
+            .ToArray();
+
+        // Assert
+        Assert.Equivalent(expected.OrderBy((p) => p), actual.OrderBy((p) => p), strict: true);
+    }
+
+    [Fact]
+    public void SubmitMethod_Includes_All_Http_Methods_Known_To_AspNetCore()
+    {
+        // Arrange
+        // CONNECT is not a valid OpenAPI operation method (nor one Swagger UI can submit).
+        string[] unsupported = [HttpMethods.Connect];
+
+        var expected = typeof(HttpMethods)
+            .GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Where((p) => p.FieldType == typeof(string))
+            .Select((p) => (string)p.GetValue(null))
+            .Except(unsupported, StringComparer.OrdinalIgnoreCase)
+            .Select((p) => p.ToLowerInvariant())
+            .ToArray();
+
+        Assert.NotEmpty(expected);
+
+        // Act
+        var actual = Enum.GetNames<SubmitMethod>()
+            .Select((p) => p.ToLowerInvariant())
+            .ToArray();
+
+        // Assert
+        Assert.All(expected, (method) => Assert.Contains(method, actual));
     }
 
     [Fact]
