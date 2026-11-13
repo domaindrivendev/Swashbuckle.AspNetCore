@@ -2158,6 +2158,54 @@ public class SwaggerGeneratorTests
     }
 
     [Fact]
+    public void GetSwagger_DocumentFiltersChangingInfo_DoNotChangeTheConfiguredInfo()
+    {
+        var info = InfoWithContactAndExtension();
+        var subject = Subject(
+            apiDescriptions: [],
+            options: new SwaggerGeneratorOptions
+            {
+                SwaggerDocs = new Dictionary<string, OpenApiInfo> { ["v1"] = info },
+                DocumentFilters = [new InfoChangingDocumentFilter()]
+            }
+        );
+
+        var first = subject.GetSwagger("v1");
+        var second = subject.GetSwagger("v1");
+
+        Assert.NotSame(first.Info, second.Info);
+        Assert.Equal(("1", "c1"), (first.Info.Description, first.Info.Contact.Name));
+        Assert.Equal(("1", "c1"), (second.Info.Description, second.Info.Contact.Name));
+        Assert.False(second.Info.Extensions.ContainsKey("x-gen"));
+        Assert.Null(info.Description);
+        Assert.Equal("c", info.Contact.Name);
+        Assert.True(info.Extensions.ContainsKey("x-gen"));
+    }
+
+    [Fact]
+    public async Task GetSwaggerAsync_DocumentFiltersChangingInfo_DoNotChangeTheConfiguredInfo()
+    {
+        var info = InfoWithContactAndExtension();
+        var subject = Subject(
+            apiDescriptions: [],
+            options: new SwaggerGeneratorOptions
+            {
+                SwaggerDocs = new Dictionary<string, OpenApiInfo> { ["v1"] = info },
+                DocumentFilters = [new InfoChangingDocumentFilter()]
+            }
+        );
+
+        var first = await subject.GetSwaggerAsync("v1");
+        var second = await subject.GetSwaggerAsync("v1");
+
+        Assert.NotSame(first.Info, second.Info);
+        Assert.Equal(("1", "c1"), (second.Info.Description, second.Info.Contact.Name));
+        Assert.Null(info.Description);
+        Assert.Equal("c", info.Contact.Name);
+        Assert.True(info.Extensions.ContainsKey("x-gen"));
+    }
+
+    [Fact]
     public async Task GetSwaggerAsync_SupportsOption_OperationFilters()
     {
         var subject = Subject(
@@ -3129,6 +3177,25 @@ public class SwaggerGeneratorTests
         var document = subject.GetSwagger("v1");
 
         Assert.NotNull(document);
+    }
+
+    private static OpenApiInfo InfoWithContactAndExtension() => new()
+    {
+        Version = "V1",
+        Title = "Test API",
+        Contact = new OpenApiContact { Name = "c" },
+        Extensions = new Dictionary<string, IOpenApiExtension> { ["x-gen"] = new JsonNodeExtension("internal") },
+    };
+
+    /// <summary>Changes the document's Info the way a filter might: appends to it and removes an extension.</summary>
+    private sealed class InfoChangingDocumentFilter : IDocumentFilter
+    {
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+        {
+            swaggerDoc.Info.Description += "1";
+            swaggerDoc.Info.Contact.Name += "1";
+            swaggerDoc.Info.Extensions?.Remove("x-gen");
+        }
     }
 
     private static SwaggerGenerator Subject(

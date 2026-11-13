@@ -151,7 +151,7 @@ public class SwaggerGenerator(
 
         var swaggerDoc = new OpenApiDocument
         {
-            Info = info,
+            Info = new OpenApiInfo(info),
             Servers = GenerateServers(host, basePath),
             Components = new OpenApiComponents
             {
