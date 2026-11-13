@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Immutable;
 using System.Dynamic;
 using System.Globalization;
 using System.Net;
@@ -202,6 +203,7 @@ public class NewtonsoftSchemaGeneratorTests
     [Theory]
     [InlineData(typeof(ISet<string>))]
     [InlineData(typeof(IReadOnlySet<string>))]
+    [InlineData(typeof(IImmutableSet<string>))]
     [InlineData(typeof(SortedSet<string>))]
     [InlineData(typeof(KeyedCollectionOfComplexType))]
     public void GenerateSchema_SetsUniqueItems_IfEnumerableTypeIsSetOrKeyedCollection(Type type)
