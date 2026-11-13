@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -464,6 +465,7 @@ public class SchemaGenerator(
         var hasUniqueItems =
             dataContract.UnderlyingType.IsConstructedFrom(typeof(ISet<>), out _) ||
             dataContract.UnderlyingType.IsConstructedFrom(typeof(IReadOnlySet<>), out _) ||
+            dataContract.UnderlyingType.IsConstructedFrom(typeof(IImmutableSet<>), out _) ||
             dataContract.UnderlyingType.IsConstructedFrom(typeof(KeyedCollection<,>), out _);
 
         return new OpenApiSchema
