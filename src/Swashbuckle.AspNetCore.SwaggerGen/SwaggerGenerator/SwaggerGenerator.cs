@@ -151,8 +151,6 @@ public class SwaggerGenerator(
 
         var swaggerDoc = new OpenApiDocument
         {
-            // A copy, so a document filter that changes the document's Info doesn't change the configured
-            // one, which would carry the change into every later request.
             Info = new OpenApiInfo(info),
             Servers = GenerateServers(host, basePath),
             Components = new OpenApiComponents

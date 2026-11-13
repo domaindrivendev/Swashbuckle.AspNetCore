@@ -2173,6 +2173,7 @@ public class SwaggerGeneratorTests
         var first = subject.GetSwagger("v1");
         var second = subject.GetSwagger("v1");
 
+        Assert.NotSame(first.Info, second.Info);
         Assert.Equal(("1", "c1"), (first.Info.Description, first.Info.Contact.Name));
         Assert.Equal(("1", "c1"), (second.Info.Description, second.Info.Contact.Name));
         Assert.False(second.Info.Extensions.ContainsKey("x-gen"));
@@ -2194,9 +2195,10 @@ public class SwaggerGeneratorTests
             }
         );
 
-        await subject.GetSwaggerAsync("v1");
+        var first = await subject.GetSwaggerAsync("v1");
         var second = await subject.GetSwaggerAsync("v1");
 
+        Assert.NotSame(first.Info, second.Info);
         Assert.Equal(("1", "c1"), (second.Info.Description, second.Info.Contact.Name));
         Assert.Null(info.Description);
         Assert.Equal("c", info.Contact.Name);
