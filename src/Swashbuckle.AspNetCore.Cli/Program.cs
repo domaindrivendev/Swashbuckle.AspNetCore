@@ -29,97 +29,40 @@ internal class Program
         // > dotnet swagger tofile ...
         runner.SubCommand("tofile", "retrieves Swagger from a startup assembly, and writes to file", c =>
         {
-            c.Argument("startupassembly", "relative path to the application's startup assembly");
-            c.Argument("swaggerdoc", "name of the swagger doc you want to retrieve, as configured in your startup class");
-
+            ConfigureSwaggerOptions(c);
             c.Option("--output", "relative path where the Swagger will be output, defaults to stdout");
-            c.Option("--host", "a specific host to include in the Swagger output");
-            c.Option("--basepath", "a specific basePath to include in the Swagger output");
-            c.Option(OpenApiVersionOption, "output Swagger in the specified version, defaults to 3.0");
-            c.Option("--yaml", "exports swagger in a yaml format", true);
 
-            c.OnRun((namedArgs) =>
-            {
-                string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
-
-                using var child = Process.Start("dotnet", subProcessCommandLine);
-
-                child.WaitForExit();
-                return Task.FromResult(child.ExitCode);
-            });
+            c.OnRun((namedArgs) => RunSubProcess(args, namedArgs));
         });
 
         // > dotnet swagger _tofile ... (* should only be invoked via "dotnet exec")
         runner.SubCommand("_tofile", "", c =>
         {
-            c.Argument("startupassembly", "");
-            c.Argument("swaggerdoc", "");
+            ConfigureSwaggerOptions(c, isInternal: true);
             c.Option("--output", "");
-            c.Option("--host", "");
-            c.Option("--basepath", "");
-            c.Option(OpenApiVersionOption, "");
-            c.Option("--yaml", "", true);
 
             c.OnRun(async (namedArgs) =>
             {
-                SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var asyncSwaggerProvider, out var swaggerProvider, out var swaggerOptions);
-                var swaggerDocumentSerializer = swaggerOptions?.Value?.CustomDocumentSerializer;
-
-                var host = namedArgs.TryGetValue("--host", out var arg) ? arg : null;
-                var basePath = namedArgs.TryGetValue("--basepath", out var namedArg) ? namedArg : null;
-                var swagger = asyncSwaggerProvider != null
-                    ? await asyncSwaggerProvider.GetSwaggerAsync(namedArgs["swaggerdoc"], host, basePath)
-                    : swaggerProvider.GetSwagger(namedArgs["swaggerdoc"], host, basePath);
-
                 // 4) Serialize to specified output location or stdout
                 var outputPath = namedArgs.TryGetValue("--output", out var arg1)
                     ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
                     : null;
 
-                if (!string.IsNullOrEmpty(outputPath))
+                await SerializeSwaggerToStreamAsync(namedArgs, () =>
                 {
-                    string directoryPath = Path.GetDirectoryName(outputPath);
-                    if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+                    if (!string.IsNullOrEmpty(outputPath))
                     {
-                        Directory.CreateDirectory(directoryPath);
+                        string directoryPath = Path.GetDirectoryName(outputPath);
+                        if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+                        {
+                            Directory.CreateDirectory(directoryPath);
+                        }
+
+                        return File.Create(outputPath);
                     }
-                }
 
-                using Stream stream = outputPath != null ? File.Create(outputPath) : Console.OpenStandardOutput();
-                using var streamWriter = new FormattingStreamWriter(stream, CultureInfo.InvariantCulture);
-
-                IOpenApiWriter writer;
-                if (namedArgs.ContainsKey("--yaml"))
-                {
-                    writer = new OpenApiYamlWriter(streamWriter);
-                }
-                else
-                {
-                    writer = new OpenApiJsonWriter(streamWriter);
-                }
-
-                OpenApiSpecVersion specVersion = OpenApiSpecVersion.OpenApi3_0;
-
-                if (namedArgs.TryGetValue(OpenApiVersionOption, out var versionArg))
-                {
-                    specVersion = versionArg switch
-                    {
-                        "2.0" => OpenApiSpecVersion.OpenApi2_0,
-                        "3.0" => OpenApiSpecVersion.OpenApi3_0,
-                        "3.1" => OpenApiSpecVersion.OpenApi3_1,
-                        "3.2" => OpenApiSpecVersion.OpenApi3_2,
-                        _ => throw new NotSupportedException($"The specified OpenAPI version \"{versionArg}\" is not supported."),
-                    };
-                }
-
-                if (swaggerDocumentSerializer != null)
-                {
-                    swaggerDocumentSerializer.SerializeDocument(swagger, writer, specVersion);
-                }
-                else
-                {
-                    swagger.SerializeAs(specVersion, writer);
-                }
+                    return Console.OpenStandardOutput();
+                });
 
                 if (outputPath != null)
                 {
@@ -130,20 +73,57 @@ internal class Program
             });
         });
 
+        // > dotnet swagger verify ...
+        runner.SubCommand("verify", "verifies that the Swagger output from a startup assembly matches an existing file", c =>
+        {
+            ConfigureSwaggerOptions(c);
+            c.Option("--input", "relative path to the Swagger file to verify", isRequired: true);
+
+            c.OnRun((namedArgs) => RunSubProcess(args, namedArgs));
+        });
+
+        // > dotnet swagger _verify ... (* should only be invoked via "dotnet exec")
+        runner.SubCommand("_verify", "", c =>
+        {
+            ConfigureSwaggerOptions(c, isInternal: true);
+            c.Option("--input", "", isRequired: true);
+
+            c.OnRun(async (namedArgs) =>
+            {
+                var inputPath = Path.Combine(Directory.GetCurrentDirectory(), namedArgs["--input"]);
+
+                if (!File.Exists(inputPath))
+                {
+                    Console.Error.WriteLine($"Swagger file {inputPath} does not exist");
+                    return 1;
+                }
+
+                using var baseline = new MemoryStream();
+                using (var fileStream = File.OpenRead(inputPath))
+                {
+                    await fileStream.CopyToAsync(baseline);
+                }
+
+                using var generated = new MemoryStream();
+                await SerializeSwaggerToStreamAsync(namedArgs, () => generated);
+
+                if (!baseline.ToArray().SequenceEqual(generated.ToArray()))
+                {
+                    Console.Error.WriteLine($"Swagger JSON/YAML does not match {inputPath}");
+                    return 1;
+                }
+
+                Console.WriteLine($"Swagger JSON/YAML verified against {inputPath}");
+                return 0;
+            });
+        });
+
         // > dotnet swagger list
         runner.SubCommand("list", "retrieves the list of Swagger document names from a startup assembly", c =>
         {
             c.Argument("startupassembly", "relative path to the application's startup assembly");
             c.Option("--output", "relative path where the document names will be output, defaults to stdout");
-            c.OnRun((namedArgs) =>
-            {
-                string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
-
-                using var child = Process.Start("dotnet", subProcessCommandLine);
-
-                child.WaitForExit();
-                return Task.FromResult(child.ExitCode);
-            });
+            c.OnRun((namedArgs) => RunSubProcess(args, namedArgs));
         });
 
         // > dotnet swagger _list ... (* should only be invoked via "dotnet exec")
@@ -190,6 +170,75 @@ internal class Program
         });
 
         return await runner.RunAsync(args);
+    }
+
+    private static void ConfigureSwaggerOptions(CommandRunner c, bool isInternal = false)
+    {
+        c.Argument("startupassembly", isInternal ? "" : "relative path to the application's startup assembly");
+        c.Argument("swaggerdoc", isInternal ? "" : "name of the swagger doc you want to retrieve, as configured in your startup class");
+
+        c.Option("--host", isInternal ? "" : "a specific host to include in the Swagger output");
+        c.Option("--basepath", isInternal ? "" : "a specific basePath to include in the Swagger output");
+        c.Option(OpenApiVersionOption, isInternal ? "" : "output Swagger in the specified version, defaults to 3.0");
+        c.Option("--yaml", isInternal ? "" : "exports swagger in a yaml format", true);
+    }
+
+    private static Task<int> RunSubProcess(string[] args, IDictionary<string, string> namedArgs)
+    {
+        string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
+
+        using var child = Process.Start("dotnet", subProcessCommandLine);
+
+        child.WaitForExit();
+        return Task.FromResult(child.ExitCode);
+    }
+
+    private static async Task SerializeSwaggerToStreamAsync(IDictionary<string, string> namedArgs, Func<Stream> createStream)
+    {
+        SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var asyncSwaggerProvider, out var swaggerProvider, out var swaggerOptions);
+        var swaggerDocumentSerializer = swaggerOptions?.Value?.CustomDocumentSerializer;
+
+        var host = namedArgs.TryGetValue("--host", out var arg) ? arg : null;
+        var basePath = namedArgs.TryGetValue("--basepath", out var namedArg) ? namedArg : null;
+        var swagger = asyncSwaggerProvider != null
+            ? await asyncSwaggerProvider.GetSwaggerAsync(namedArgs["swaggerdoc"], host, basePath)
+            : swaggerProvider.GetSwagger(namedArgs["swaggerdoc"], host, basePath);
+
+        OpenApiSpecVersion specVersion = OpenApiSpecVersion.OpenApi3_0;
+
+        if (namedArgs.TryGetValue(OpenApiVersionOption, out var versionArg))
+        {
+            specVersion = versionArg switch
+            {
+                "2.0" => OpenApiSpecVersion.OpenApi2_0,
+                "3.0" => OpenApiSpecVersion.OpenApi3_0,
+                "3.1" => OpenApiSpecVersion.OpenApi3_1,
+                "3.2" => OpenApiSpecVersion.OpenApi3_2,
+                _ => throw new NotSupportedException($"The specified OpenAPI version \"{versionArg}\" is not supported."),
+            };
+        }
+
+        using Stream stream = createStream();
+        using var streamWriter = new FormattingStreamWriter(stream, CultureInfo.InvariantCulture);
+
+        IOpenApiWriter writer;
+        if (namedArgs.ContainsKey("--yaml"))
+        {
+            writer = new OpenApiYamlWriter(streamWriter);
+        }
+        else
+        {
+            writer = new OpenApiJsonWriter(streamWriter);
+        }
+
+        if (swaggerDocumentSerializer != null)
+        {
+            swaggerDocumentSerializer.SerializeDocument(swagger, writer, specVersion);
+        }
+        else
+        {
+            swagger.SerializeAs(specVersion, writer);
+        }
     }
 
     private static void SetupAndRetrieveSwaggerProviderAndOptions(IDictionary<string, string> namedArgs, out IAsyncSwaggerProvider asyncSwaggerProvider, out ISwaggerProvider swaggerProvider, out IOptions<SwaggerOptions> swaggerOptions)

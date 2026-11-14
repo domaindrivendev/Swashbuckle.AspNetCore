@@ -72,6 +72,22 @@ dotnet tool install -g Swashbuckle.AspNetCore.Cli
     swagger tofile --output openapi.yaml --openapiversion 3.1 --yaml [startupassembly] [swaggerdoc]
     ```
 
+3. Verify that an existing OpenAPI document matches the output from your application's startup assembly
+
+    ```terminal
+    swagger verify --input [input] [startupassembly] [swaggerdoc]
+    ```
+
+    Placeholders and their meaning:
+    * `[input]`: the relative path to the OpenAPI document to verify against;
+    * `[startupassembly]`: the relative path to your application's startup assembly;
+    * `[swaggerdoc]`: the name of the OpenAPI document you want to verify, as configured in your application.
+
+    The `verify` command also supports the same `--openapiversion`, `--yaml`, `--host`, and `--basepath` options as `tofile`.
+
+    > [!NOTE]
+    > OpenAPI documents are always generated using LF (`\n`) line endings. If the baseline file is committed to Git, configure `.gitattributes` (for example `openapi.json text eol=lf`) so that `core.autocrlf` does not convert it to CRLF (`\r\n`) on checkout.
+
 ## Use the CLI Tool with a Custom Host Configuration
 
 By default, the tool will execute in the context of a "default" web host. However, in some cases you may want to
