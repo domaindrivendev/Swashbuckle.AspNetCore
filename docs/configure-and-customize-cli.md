@@ -85,6 +85,9 @@ dotnet tool install -g Swashbuckle.AspNetCore.Cli
 
     The `verify` command also supports the same `--openapiversion`, `--yaml`, `--host`, and `--basepath` options as `tofile`.
 
+    > [!NOTE]
+    > OpenAPI documents are always generated using LF (`\n`) line endings. If the baseline file is committed to Git, configure `.gitattributes` (for example `openapi.json text eol=lf`) so that `core.autocrlf` does not convert it to CRLF (`\r\n`) on checkout.
+
 ## Use the CLI Tool with a Custom Host Configuration
 
 By default, the tool will execute in the context of a "default" web host. However, in some cases you may want to
