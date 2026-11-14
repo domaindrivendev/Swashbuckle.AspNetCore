@@ -851,6 +851,141 @@ public class SwaggerGeneratorTests
         Assert.Equal(expectedRequired, parameter.Required);
     }
 
+    [Theory]
+    [InlineData("Optional.Prop", false)]
+    [InlineData("Optional.Free", false)]
+    [InlineData("Mandatory.Prop", true)]
+    [InlineData("Mandatory.Free", false)]
+    [InlineData("renamed.Prop", false)]
+    [InlineData("Other", true)]
+    public void GetSwagger_SetsParameterRequired_OnlyIfEveryPropertyOnTheNestedPathIsRequired(
+        string parameterName,
+        bool expectedRequired)
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                CreateNestedParameterApiDescription(
+                    nameof(FakeController.ActionWithNestedTypesFromQuery),
+                    BindingSource.Query,
+                    parameterName)
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        var parameter = Assert.Single(operation.Parameters);
+        Assert.Equal(expectedRequired, parameter.Required);
+    }
+
+    [Fact]
+    public void GetSwagger_SetsFormPropertyRequired_OnlyIfEveryPropertyOnTheNestedPathIsRequired()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                CreateNestedParameterApiDescription(
+                    nameof(FakeController.ActionWithNestedTypesFromForm),
+                    BindingSource.Form,
+                    "Optional.Prop",
+                    "Optional.Free",
+                    "Mandatory.Prop",
+                    "Mandatory.Free",
+                    "renamed.Prop",
+                    "Other")
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        var schema = operation.RequestBody.Content["multipart/form-data"].Schema;
+        Assert.Equal(["Mandatory.Prop", "Other"], schema.Required);
+    }
+
+    [Theory]
+    [InlineData(nameof(FakeController.ActionWithNullableAnnotatedNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "NonNullable.Prop", true)]
+    [InlineData(nameof(FakeController.ActionWithNullableAnnotatedNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Nullable.Prop", false)]
+    [InlineData(nameof(FakeController.ActionWithDottedBinderNameFromQuery), typeof(FakeController.TypeWithDottedBinderName), "Other", "Optional.Free", true)]
+    [InlineData(nameof(FakeController.ActionWithRecordNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Mandatory.Prop", true)]
+    [InlineData(nameof(FakeController.ActionWithRecordNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Optional.Prop", false)]
+    [InlineData(nameof(FakeController.ActionWithMetadataTypeNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Mandatory.Prop", true)]
+    [InlineData(nameof(FakeController.ActionWithMetadataTypeNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Optional.Prop", false)]
+    [InlineData(nameof(FakeController.ActionWithDerivedMetadataTypeNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Mandatory.Prop", true)]
+    [InlineData(nameof(FakeController.ActionWithDerivedMetadataTypeNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Optional.Prop", false)]
+    [InlineData(nameof(FakeController.ActionWithDerivedRecordNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Mandatory.Prop", true)]
+    [InlineData(nameof(FakeController.ActionWithDerivedRecordNestedTypesFromQuery), typeof(FakeController.TypeWithNestedRequiredProperty), "Prop", "Optional.Prop", false)]
+    public void GetSwagger_SetsParameterRequired_IfNestedPathIsImplicitlyRequiredOrIsNotANestedPath(
+        string actionName,
+        Type containerType,
+        string propertyName,
+        string parameterName,
+        bool expectedRequired)
+    {
+        var apiDescription = ApiDescriptionFactory.Create(
+            methodInfo: typeof(FakeController).GetMethod(actionName),
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            parameterDescriptions:
+            [
+                new ApiParameterDescription
+                {
+                    Name = parameterName,
+                    Source = BindingSource.Query,
+                    ModelMetadata = ModelMetadataFactory.CreateForProperty(containerType, propertyName)
+                }
+            ]);
+
+        apiDescription.ParameterDescriptions[0].ParameterDescriptor = apiDescription.ActionDescriptor.Parameters.Single();
+
+        var subject = Subject(apiDescriptions: [apiDescription]);
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        var parameter = Assert.Single(operation.Parameters);
+        Assert.Equal(expectedRequired, parameter.Required);
+    }
+
+    private static ApiDescription CreateNestedParameterApiDescription(
+        string actionName,
+        BindingSource source,
+        params string[] parameterNames)
+    {
+        var apiDescription = ApiDescriptionFactory.Create(
+            methodInfo: typeof(FakeController).GetMethod(actionName),
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            parameterDescriptions: parameterNames.Select((name) => new ApiParameterDescription
+            {
+                Name = name,
+                Source = source,
+                ModelMetadata = CreateNestedPropertyMetadata(name)
+            }));
+
+        // ApiExplorer describes every flattened property with the descriptor of the action parameter it was bound from
+        var actionParameter = apiDescription.ActionDescriptor.Parameters.Single();
+        foreach (var parameter in apiDescription.ParameterDescriptions)
+        {
+            parameter.ParameterDescriptor = actionParameter;
+        }
+
+        return apiDescription;
+
+        static ModelMetadata CreateNestedPropertyMetadata(string name)
+        {
+            var segments = name.Split('.');
+            var containerType = segments.Length == 1
+                ? typeof(FakeController.TypeWithOptionalAndRequiredNestedTypes)
+                : typeof(FakeController.TypeWithNestedRequiredProperty);
+
+            return ModelMetadataFactory.CreateForProperty(containerType, segments[^1]);
+        }
+    }
+
     [Fact]
     public void GetSwagger_SetsParameterRequired_IfActionParameterHasRequiredMember()
     {
