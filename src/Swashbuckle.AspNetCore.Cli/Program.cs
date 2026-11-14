@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Runtime.Loader;
 using System.Text;
 using Microsoft.AspNetCore.Hosting;
@@ -38,15 +39,7 @@ internal class Program
             c.Option(OpenApiVersionOption, "output Swagger in the specified version, defaults to 3.0");
             c.Option("--yaml", "exports swagger in a yaml format", true);
 
-            c.OnRun((namedArgs) =>
-            {
-                string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
-
-                using var child = Process.Start("dotnet", subProcessCommandLine);
-
-                child.WaitForExit();
-                return Task.FromResult(child.ExitCode);
-            });
+            c.OnRun((namedArgs) => RunSubProcess(args, namedArgs));
         });
 
         // > dotnet swagger _tofile ... (* should only be invoked via "dotnet exec")
@@ -60,7 +53,7 @@ internal class Program
             c.Option(OpenApiVersionOption, "");
             c.Option("--yaml", "", true);
 
-            c.OnRun(async (namedArgs) =>
+            c.OnRun((namedArgs) => ExecuteWithErrorHandlingAsync(async () =>
             {
                 SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var asyncSwaggerProvider, out var swaggerProvider, out var swaggerOptions);
                 var swaggerDocumentSerializer = swaggerOptions?.Value?.CustomDocumentSerializer;
@@ -127,7 +120,7 @@ internal class Program
                 }
 
                 return 0;
-            });
+            }));
         });
 
         // > dotnet swagger list
@@ -135,15 +128,7 @@ internal class Program
         {
             c.Argument("startupassembly", "relative path to the application's startup assembly");
             c.Option("--output", "relative path where the document names will be output, defaults to stdout");
-            c.OnRun((namedArgs) =>
-            {
-                string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
-
-                using var child = Process.Start("dotnet", subProcessCommandLine);
-
-                child.WaitForExit();
-                return Task.FromResult(child.ExitCode);
-            });
+            c.OnRun((namedArgs) => RunSubProcess(args, namedArgs));
         });
 
         // > dotnet swagger _list ... (* should only be invoked via "dotnet exec")
@@ -151,7 +136,7 @@ internal class Program
         {
             c.Argument("startupassembly", "");
             c.Option("--output", "");
-            c.OnRun((namedArgs) =>
+            c.OnRun((namedArgs) => ExecuteWithErrorHandlingAsync(() =>
             {
                 SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out _, out var swaggerProvider, out var swaggerOptions);
                 IList<string> docNames = [];
@@ -186,10 +171,33 @@ internal class Program
                 }
 
                 return Task.FromResult(0);
-            });
+            }));
         });
 
         return await runner.RunAsync(args);
+    }
+
+    private static Task<int> RunSubProcess(string[] args, IDictionary<string, string> namedArgs)
+    {
+        string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
+
+        using var child = Process.Start("dotnet", subProcessCommandLine);
+
+        child.WaitForExit();
+        return Task.FromResult(child.ExitCode);
+    }
+
+    private static async Task<int> ExecuteWithErrorHandlingAsync(Func<Task<int>> action)
+    {
+        try
+        {
+            return await action();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            return 1;
+        }
     }
 
     private static void SetupAndRetrieveSwaggerProviderAndOptions(IDictionary<string, string> namedArgs, out IAsyncSwaggerProvider asyncSwaggerProvider, out ISwaggerProvider swaggerProvider, out IOptions<SwaggerOptions> swaggerOptions)
@@ -242,7 +250,7 @@ internal class Program
             : path;
     }
 
-    private static IServiceProvider GetServiceProvider(Assembly startupAssembly)
+    internal static IServiceProvider GetServiceProvider(Assembly startupAssembly, TimeSpan? waitTimeout = null)
     {
         if (TryGetCustomHost(startupAssembly, "SwaggerHostFactory", "CreateHost", out IHost host))
         {
@@ -265,7 +273,7 @@ internal class Program
         }
         catch
         {
-            var serviceProvider = HostingApplication.GetServiceProvider(startupAssembly);
+            var serviceProvider = HostingApplication.GetServiceProvider(startupAssembly, waitTimeout);
 
             if (serviceProvider != null)
             {
@@ -308,7 +316,15 @@ internal class Program
                 $"called {factoryMethodName} with return type {typeof(THost).Name}");
         }
 
-        host = (THost)factoryMethod.Invoke(null, null);
-        return true;
+        try
+        {
+            host = (THost)factoryMethod.Invoke(null, null);
+            return true;
+        }
+        catch (TargetInvocationException ex) when (ex.InnerException != null)
+        {
+            ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+            throw;
+        }
     }
 }

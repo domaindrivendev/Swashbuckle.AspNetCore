@@ -12,8 +12,9 @@ namespace Swashbuckle.AspNetCore.Cli;
 // This is what allows top level statements to work, but getting the IServiceProvider is slightly more complex.
 internal class HostingApplication
 {
-    internal static IServiceProvider GetServiceProvider(Assembly assembly)
+    internal static IServiceProvider GetServiceProvider(Assembly assembly, TimeSpan? waitTimeout = null)
     {
+        var effectiveTimeout = waitTimeout ?? HostFactoryResolver.DefaultWaitTimeout;
         // We're disabling the default server and the console host lifetime. This will disable:
         // 1. Listening on ports
         // 2. Logging to the console from the default host.
@@ -41,7 +42,7 @@ internal class HostingApplication
             });
         }
 
-        var waitForStartTcs = new TaskCompletionSource<object>();
+        var waitForStartTcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         void OnEntryPointExit(Exception exception)
         {
@@ -58,6 +59,7 @@ internal class HostingApplication
 
         // If all of the existing techniques fail, then try to resolve the ResolveHostFactory
         var factory = HostFactoryResolver.ResolveHostFactory(assembly,
+                                                             waitTimeout: effectiveTimeout,
                                                              stopApplication: false,
                                                              configureHostBuilder: ConfigureHostBuilder,
                                                              entrypointCompleted: OnEntryPointExit);
@@ -69,32 +71,38 @@ internal class HostingApplication
             return null;
         }
 
+        // Get the IServiceProvider from the host
+        var assemblyName = assembly.GetName()?.FullName ?? string.Empty;
+        // We set the application name in the hosting environment to the startup assembly
+        // to avoid falling back to the entry assembly (dotnet-swagger) when configuring our
+        // application.
+        var services = ((IHost)factory([$"--{HostDefaults.ApplicationKey}={assemblyName}"])).Services;
+
+        // Wait for the application to start so that we know it's fully configured. This is important because
+        // we need the middleware pipeline to be configured before we access the ISwaggerProvider in
+        // the IServiceProvider
+        var applicationLifetime = services.GetRequiredService<IHostApplicationLifetime>();
+
+        using var registration = applicationLifetime.ApplicationStarted.Register(() => waitForStartTcs.TrySetResult(null));
+
         try
         {
-            // Get the IServiceProvider from the host
-            var assemblyName = assembly.GetName()?.FullName ?? string.Empty;
-            // We set the application name in the hosting environment to the startup assembly
-            // to avoid falling back to the entry assembly (dotnet-swagger) when configuring our
-            // application.
-            var services = ((IHost)factory([$"--{HostDefaults.ApplicationKey}={assemblyName}"])).Services;
-
-            // Wait for the application to start so that we know it's fully configured. This is important because
-            // we need the middleware pipeline to be configured before we access the ISwaggerProvider in
-            // in the IServiceProvider
-            var applicationLifetime = services.GetRequiredService<IHostApplicationLifetime>();
-
-            using var registration = applicationLifetime.ApplicationStarted.Register(() => waitForStartTcs.TrySetResult(null));
-            waitForStartTcs.Task.Wait();
-
-            return services;
+            if (!waitForStartTcs.Task.Wait(effectiveTimeout))
+            {
+                throw new TimeoutException(
+                    $"Timed out after {HostFactoryResolver.FormatTimeout(effectiveTimeout)} waiting for the entry point of assembly " +
+                    $"'{assembly.GetName().Name}' to start the application. Ensure startup code does not block before running the host " +
+                    "when invoked by the Swashbuckle CLI, or define a SwaggerHostFactory.");
+            }
         }
-        catch (InvalidOperationException ex)
+        catch (AggregateException) when (waitForStartTcs.Task.IsCompleted)
         {
-            // We're unable to resolve the host, log the exception and return null
-            Console.Error.WriteLine(ex.ToString());
+            // Propagate the unwrapped startup exception below instead of AggregateException
         }
 
-        return null;
+        waitForStartTcs.Task.GetAwaiter().GetResult();
+
+        return services;
     }
 
     private class NoopHostLifetime : IHostLifetime
