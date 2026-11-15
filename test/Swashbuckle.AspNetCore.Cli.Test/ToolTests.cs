@@ -425,6 +425,41 @@ public static class ToolTests
     }
 
     [Fact]
+    public static async Task Can_Fail_Verification_When_Input_File_Has_Same_Length_But_Different_Content()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+        var assemblyPath = Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll");
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        var bytes = File.ReadAllBytes(outputPath);
+        var originalLength = bytes.Length;
+        var targetIndex = Array.IndexOf(bytes, (byte)'p');
+        Assert.True(targetIndex >= 0);
+        bytes[targetIndex] = (byte)'q';
+        File.WriteAllBytes(outputPath, bytes);
+
+        Assert.Equal(originalLength, new FileInfo(outputPath).Length);
+
+        Assert.NotEqual(0, await Program.Main(
+        [
+            "verify",
+            "--input",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+    }
+
+    [Fact]
     public static async Task Can_Fail_Verification_When_Input_File_Does_Not_Exist()
     {
         string[] args =
