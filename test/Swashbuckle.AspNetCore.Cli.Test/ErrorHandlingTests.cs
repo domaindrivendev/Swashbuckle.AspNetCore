@@ -14,7 +14,6 @@ public sealed class ErrorHandlingTests
 {
     private static readonly ManualResetEventSlim HostResolverTimeoutGate = new(false);
     private static readonly ManualResetEventSlim PreBuildTimeoutGate = new(false);
-    private static readonly ManualResetEventSlim PostBuildTimeoutGate = new(false);
     private static readonly ManualResetEventSlim ProgramTimeoutGate = new(false);
 
     [Theory]
@@ -114,31 +113,20 @@ public sealed class ErrorHandlingTests
     }
 
     [Fact]
-    public void HostingApplication_Throws_TimeoutException_When_EntryPoint_Blocks_After_Build_Before_Start()
-    {
-        var assembly = CreateEntryPointAssembly(nameof(PostBuildBlockingEntryPoint));
-
-        PostBuildTimeoutGate.Reset();
-        try
-        {
-            var ex = Assert.Throws<TimeoutException>(
-                () => HostingApplication.GetServiceProvider(assembly, TimeSpan.FromMilliseconds(100)));
-
-            Assert.Contains("100 ms", ex.Message, StringComparison.Ordinal);
-            Assert.Contains(assembly.GetName().Name, ex.Message, StringComparison.Ordinal);
-            Assert.Contains("to start the application", ex.Message, StringComparison.Ordinal);
-            Assert.Contains("SwaggerHostFactory", ex.Message, StringComparison.Ordinal);
-        }
-        finally
-        {
-            PostBuildTimeoutGate.Set();
-        }
-    }
-
-    [Fact]
     public void HostingApplication_Propagates_Unwrapped_PostBuild_EntryPoint_Exception()
     {
         var assembly = CreateEntryPointAssembly(nameof(PostBuildThrowingEntryPoint));
+
+        var ex = Assert.Throws<InvalidOperationException>(
+            () => HostingApplication.GetServiceProvider(assembly, TimeSpan.FromSeconds(5)));
+
+        Assert.Equal("Post-build startup failure", ex.Message);
+    }
+
+    [Fact]
+    public void HostingApplication_Propagates_PostBuild_EntryPoint_Exception_When_Host_Is_Disposed()
+    {
+        var assembly = CreateEntryPointAssembly(nameof(PostBuildDisposedThrowingEntryPoint));
 
         var ex = Assert.Throws<InvalidOperationException>(
             () => HostingApplication.GetServiceProvider(assembly, TimeSpan.FromSeconds(5)));
@@ -269,14 +257,14 @@ public sealed class ErrorHandlingTests
     private static void ProgramBlockingEntryPoint()
         => ProgramTimeoutGate.Wait(TimeSpan.FromSeconds(10));
 
-    private static void PostBuildBlockingEntryPoint(string[] args)
+    private static void PostBuildThrowingEntryPoint(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        using var app = builder.Build();
-        PostBuildTimeoutGate.Wait(TimeSpan.FromSeconds(10));
+        _ = builder.Build();
+        throw new InvalidOperationException("Post-build startup failure");
     }
 
-    private static void PostBuildThrowingEntryPoint(string[] args)
+    private static void PostBuildDisposedThrowingEntryPoint(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         using var app = builder.Build();

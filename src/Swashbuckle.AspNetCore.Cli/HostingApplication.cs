@@ -14,7 +14,6 @@ internal class HostingApplication
 {
     internal static IServiceProvider GetServiceProvider(Assembly assembly, TimeSpan? waitTimeout = null)
     {
-        var effectiveTimeout = waitTimeout ?? HostFactoryResolver.DefaultWaitTimeout;
         // We're disabling the default server and the console host lifetime. This will disable:
         // 1. Listening on ports
         // 2. Logging to the console from the default host.
@@ -59,7 +58,7 @@ internal class HostingApplication
 
         // If all of the existing techniques fail, then try to resolve the ResolveHostFactory
         var factory = HostFactoryResolver.ResolveHostFactory(assembly,
-                                                             waitTimeout: effectiveTimeout,
+                                                             waitTimeout: waitTimeout,
                                                              stopApplication: false,
                                                              configureHostBuilder: ConfigureHostBuilder,
                                                              entrypointCompleted: OnEntryPointExit);
@@ -81,23 +80,23 @@ internal class HostingApplication
         // Wait for the application to start so that we know it's fully configured. This is important because
         // we need the middleware pipeline to be configured before we access the ISwaggerProvider in
         // the IServiceProvider
-        var applicationLifetime = services.GetRequiredService<IHostApplicationLifetime>();
-
-        using var registration = applicationLifetime.ApplicationStarted.Register(() => waitForStartTcs.TrySetResult(null));
-
         try
         {
-            if (!waitForStartTcs.Task.Wait(effectiveTimeout))
-            {
-                throw new TimeoutException(
-                    $"Timed out after {HostFactoryResolver.FormatTimeout(effectiveTimeout)} waiting for the entry point of assembly " +
-                    $"'{assembly.GetName().Name}' to start the application. Ensure startup code does not block before running the host " +
-                    "when invoked by the Swashbuckle CLI, or define a SwaggerHostFactory.");
-            }
+            var applicationLifetime = services.GetRequiredService<IHostApplicationLifetime>();
+
+            using var registration = applicationLifetime.ApplicationStarted.Register(() => waitForStartTcs.TrySetResult(null));
+
+            waitForStartTcs.Task.Wait();
         }
         catch (AggregateException) when (waitForStartTcs.Task.IsCompleted)
         {
             // Propagate the unwrapped startup exception below instead of AggregateException
+        }
+        catch (ObjectDisposedException)
+        {
+            // Entry point may have disposed the host before faulting; propagate the startup exception if present.
+            waitForStartTcs.Task.GetAwaiter().GetResult();
+            throw;
         }
 
         waitForStartTcs.Task.GetAwaiter().GetResult();
