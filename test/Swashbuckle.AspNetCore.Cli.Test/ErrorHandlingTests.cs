@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Xunit;
 
@@ -15,6 +16,10 @@ public sealed class ErrorHandlingTests
     private static readonly ManualResetEventSlim HostResolverTimeoutGate = new(false);
     private static readonly ManualResetEventSlim PreBuildTimeoutGate = new(false);
     private static readonly ManualResetEventSlim ProgramTimeoutGate = new(false);
+    private static readonly ManualResetEventSlim PostBuildDisposedLifetimeLookupGate = new(false);
+    private static readonly ManualResetEventSlim PostBuildDisposedHostGate = new(false);
+    private static int s_postBuildDisposedEntryPointThreadId;
+    private static bool s_postBuildDisposedLifetimeLookupObserved;
 
     [Theory]
     [InlineData(30d, "30 seconds")]
@@ -128,10 +133,23 @@ public sealed class ErrorHandlingTests
     {
         var assembly = CreateEntryPointAssembly(nameof(PostBuildDisposedThrowingEntryPoint));
 
-        var ex = Assert.Throws<InvalidOperationException>(
-            () => HostingApplication.GetServiceProvider(assembly, TimeSpan.FromSeconds(5)));
+        PostBuildDisposedLifetimeLookupGate.Reset();
+        PostBuildDisposedHostGate.Reset();
+        s_postBuildDisposedEntryPointThreadId = 0;
+        s_postBuildDisposedLifetimeLookupObserved = false;
+        try
+        {
+            var ex = Assert.Throws<InvalidOperationException>(
+                () => HostingApplication.GetServiceProvider(assembly, TimeSpan.FromSeconds(5)));
 
-        Assert.Equal("Post-build startup failure", ex.Message);
+            Assert.Equal("Post-build startup failure", ex.Message);
+            Assert.True(s_postBuildDisposedLifetimeLookupObserved);
+        }
+        finally
+        {
+            PostBuildDisposedLifetimeLookupGate.Set();
+            PostBuildDisposedHostGate.Set();
+        }
     }
 
     [Fact]
@@ -266,9 +284,47 @@ public sealed class ErrorHandlingTests
 
     private static void PostBuildDisposedThrowingEntryPoint(string[] args)
     {
+        Volatile.Write(ref s_postBuildDisposedEntryPointThreadId, Environment.CurrentManagedThreadId);
         var builder = WebApplication.CreateBuilder(args);
-        using var app = builder.Build();
+        builder.Host.UseServiceProviderFactory(new CoordinatedDisposeServiceProviderFactory());
+        using (var _ = builder.Build())
+        {
+            Assert.True(PostBuildDisposedLifetimeLookupGate.Wait(TimeSpan.FromSeconds(5)));
+        }
+
+        PostBuildDisposedHostGate.Set();
         throw new InvalidOperationException("Post-build startup failure");
+    }
+
+    private sealed class CoordinatedDisposeServiceProviderFactory : IServiceProviderFactory<IServiceCollection>
+    {
+        private readonly DefaultServiceProviderFactory _inner = new();
+
+        public IServiceCollection CreateBuilder(IServiceCollection services) => _inner.CreateBuilder(services);
+
+        public IServiceProvider CreateServiceProvider(IServiceCollection containerBuilder)
+            => new CoordinatedDisposeServiceProvider(_inner.CreateServiceProvider(containerBuilder));
+    }
+
+    private sealed class CoordinatedDisposeServiceProvider(IServiceProvider inner) : IServiceProvider, IDisposable, IAsyncDisposable
+    {
+        public object GetService(Type serviceType)
+        {
+            if (serviceType == typeof(IHostApplicationLifetime)
+                && Environment.CurrentManagedThreadId != Volatile.Read(ref s_postBuildDisposedEntryPointThreadId))
+            {
+                s_postBuildDisposedLifetimeLookupObserved = true;
+                PostBuildDisposedLifetimeLookupGate.Set();
+                Assert.True(PostBuildDisposedHostGate.Wait(TimeSpan.FromSeconds(5)));
+            }
+
+            return inner.GetService(serviceType);
+        }
+
+        public void Dispose() => (inner as IDisposable)?.Dispose();
+
+        public ValueTask DisposeAsync()
+            => inner is IAsyncDisposable asyncDisposable ? asyncDisposable.DisposeAsync() : default;
     }
 
     private static void PostBuildExitingEntryPoint(string[] args)
