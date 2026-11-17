@@ -320,6 +320,138 @@ public static class ToolTests
         Assert.True(productsPath.TryGetProperty("post", out _));
     }
 
+    [Fact]
+    public static async Task Can_Verify_Swagger_Json_v3()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+        var assemblyPath = Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll");
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        var expectedLastModified = File.GetLastWriteTimeUtc(outputPath);
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "verify",
+            "--input",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        Assert.Equal(expectedLastModified, File.GetLastWriteTimeUtc(outputPath));
+    }
+
+    [Fact]
+    public static async Task Can_Verify_Swagger_Yaml()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.yaml");
+        var assemblyPath = Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll");
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "tofile",
+            "--yaml",
+            "--output",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "verify",
+            "--yaml",
+            "--input",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+    }
+
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Input_File_Is_Different()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+
+        File.WriteAllText(outputPath, "different-content");
+
+        Assert.NotEqual(0, await Program.Main(
+        [
+            "verify",
+            "--input",
+            outputPath,
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ]));
+    }
+
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Input_File_Contains_Extra_Content()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+        var assemblyPath = Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll");
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        File.AppendAllText(outputPath, "extra-content");
+
+        Assert.NotEqual(0, await Program.Main(
+        [
+            "verify",
+            "--input",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+    }
+
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Input_File_Does_Not_Exist()
+    {
+        string[] args =
+        [
+            "verify",
+            "--input",
+            "does_not_exist.json",
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ];
+
+        Assert.NotEqual(0, await Program.Main(args));
+    }
+
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Input_Option_Is_Not_Set()
+    {
+        string[] args =
+        [
+            "verify",
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ];
+
+        Assert.Equal(1, await Program.Main(args));
+    }
+
     private static async Task<string> RunToStringCommandAsync(Func<string, string[]> setup, string subOutputPath = default)
     {
         using var temporaryDirectory = new TemporaryDirectory();

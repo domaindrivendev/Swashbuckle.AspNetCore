@@ -17,14 +17,14 @@ internal class CommandRunner(string commandName, string commandDescription, Text
         _argumentDescriptors.Add(name, description);
     }
 
-    public void Option(string name, string description, bool isFlag = false)
+    public void Option(string name, string description, bool isFlag = false, bool isRequired = false)
     {
         if (!name.StartsWith("--"))
         {
             throw new ArgumentException("name of option must begin with --");
         }
 
-        _optionDescriptors.Add(name, new OptionDescriptor { Description = description, IsFlag = isFlag });
+        _optionDescriptors.Add(name, new OptionDescriptor { Description = description, IsFlag = isFlag, IsRequired = isRequired });
     }
 
     public void OnRun(Func<IDictionary<string, string>, Task<int>> runFunc)
@@ -78,6 +78,14 @@ internal class CommandRunner(string commandName, string commandDescription, Text
             }
 
             namedArgs.Add(name, (!optionDescriptor.IsFlag ? argsQueue.Dequeue() : null));
+        }
+
+        foreach (var (name, optionDescriptor) in _optionDescriptors)
+        {
+            if (optionDescriptor.IsRequired && !namedArgs.ContainsKey(name))
+            {
+                return false;
+            }
         }
 
         // Process required args - ensure corresponding values are provided
@@ -145,5 +153,6 @@ internal class CommandRunner(string commandName, string commandDescription, Text
     {
         public string Description;
         public bool IsFlag;
+        public bool IsRequired;
     }
 }
