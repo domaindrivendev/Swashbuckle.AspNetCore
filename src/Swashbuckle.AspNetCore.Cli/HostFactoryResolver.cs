@@ -15,7 +15,15 @@ internal sealed class HostFactoryResolver
     public const string CreateHostBuilder = nameof(CreateHostBuilder);
 
     // The amount of time we wait for the diagnostic source events to fire
-    private static readonly TimeSpan s_defaultWaitTimeout = Debugger.IsAttached ? Timeout.InfiniteTimeSpan : TimeSpan.FromSeconds(30);
+    internal static readonly TimeSpan DefaultWaitTimeout = Debugger.IsAttached ? Timeout.InfiniteTimeSpan : TimeSpan.FromSeconds(30);
+
+    internal static string FormatTimeout(TimeSpan timeout)
+        => timeout.TotalSeconds >= 1
+            ? FormattableString.Invariant($"{timeout.TotalSeconds:0.##} seconds")
+            : FormattableString.Invariant($"{timeout.TotalMilliseconds:0} ms");
+
+    private static string GetAssemblyName(MethodInfo entryPoint)
+        => (entryPoint.DeclaringType?.Assembly ?? entryPoint.Module.Assembly).GetName().Name;
 
     public static Func<string[], TWebHost> ResolveWebHostFactory<TWebHost>(Assembly assembly)
     {
@@ -69,7 +77,7 @@ internal sealed class HostFactoryResolver
             return null;
         }
 
-        return args => new HostingListener(args, assembly.EntryPoint, waitTimeout ?? s_defaultWaitTimeout, stopApplication, configureHostBuilder, entrypointCompleted).CreateHost();
+        return args => new HostingListener(args, assembly.EntryPoint, waitTimeout ?? DefaultWaitTimeout, stopApplication, configureHostBuilder, entrypointCompleted).CreateHost();
     }
 
     private static Func<string[], T> ResolveFactory<T>(Assembly assembly, string name)
@@ -211,7 +219,8 @@ internal sealed class HostFactoryResolver
 
                     // Try to set an exception if the entry point returns gracefully, this will force
                     // build to throw
-                    _hostTcs.TrySetException(new InvalidOperationException("Unable to build IHost"));
+                    _hostTcs.TrySetException(new InvalidOperationException(
+                        $"The entry point of assembly '{GetAssemblyName(_entryPoint)}' exited without building an IHost."));
                 }
                 catch (TargetInvocationException tie) when (tie.InnerException is StopTheHostException)
                 {
@@ -250,7 +259,10 @@ internal sealed class HostFactoryResolver
                 // Wait before throwing an exception
                 if (!_hostTcs.Task.Wait(_waitTimeout))
                 {
-                    throw new InvalidOperationException("Unable to build IHost");
+                    throw new TimeoutException(
+                        $"Timed out after {FormatTimeout(_waitTimeout)} waiting for the entry point of assembly " +
+                        $"'{GetAssemblyName(_entryPoint)}' to build an IHost. Ensure startup code does not block " +
+                        "before building the host when invoked by the Swashbuckle CLI, or define a SwaggerHostFactory.");
                 }
             }
             catch (AggregateException) when (_hostTcs.Task.IsCompleted)
