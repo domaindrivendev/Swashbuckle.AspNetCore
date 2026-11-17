@@ -538,6 +538,54 @@ public static class ToolTests
         Assert.Contains("does not match", mismatchResult.StandardError, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Startup_Assembly_Does_Not_Exist()
+    {
+        var result = await RunCliProcessAsync(
+            "verify",
+            "--input",
+            "swagger.json",
+            "./does_not_exist.dll",
+            "v1");
+
+        Assert.Equal(1, result.ExitCode);
+        Assert.Contains("does_not_exist.dll", result.StandardError, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("swagger.json", false, "swagger.json")]
+    [InlineData("openapi(v1).json", false, "'openapi(v1).json'")]
+    [InlineData("api's.json", false, "'api'\\''s.json'")]
+    [InlineData("my specs/openapi(v1).json", false, "'my specs/openapi(v1).json'")]
+    [InlineData("C:\\specs\\swagger.json", true, "C:\\specs\\swagger.json")]
+    [InlineData("openapi(v1).json", true, "\"openapi(v1).json\"")]
+    [InlineData("api's.json", true, "\"api's.json\"")]
+    public static void FormatShellArgument_QuotesMetacharacters_Appropriately(string input, bool isWindows, string expected)
+    {
+        Assert.Equal(expected, Program.FormatShellArgument(input, isWindows));
+    }
+
+    [Theory]
+    [InlineData("openapi(v1).json")]
+    [InlineData("api's.json")]
+    public static async Task Can_Fail_Verification_When_Input_File_Has_Shell_Metacharacters(string fileName)
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, fileName);
+
+        File.WriteAllText(outputPath, "different-content");
+
+        var result = await RunCliProcessAsync(
+            "verify",
+            "--input",
+            outputPath,
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1");
+
+        Assert.Equal(2, result.ExitCode);
+        Assert.Contains($"--output {Program.FormatShellArgument(outputPath)}", result.StandardError, StringComparison.Ordinal);
+    }
+
     private static async Task<(int ExitCode, string StandardOutput, string StandardError)> RunCliProcessAsync(params string[] args)
     {
         using var process = new Process

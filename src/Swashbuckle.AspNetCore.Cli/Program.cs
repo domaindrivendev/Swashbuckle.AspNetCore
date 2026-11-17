@@ -80,7 +80,7 @@ internal class Program
             ConfigureSwaggerOptions(c);
             c.Option("--input", "relative path to the Swagger file to verify", isRequired: true);
 
-            c.OnRun((namedArgs) => RunSubProcess(args, namedArgs));
+            c.OnRun((namedArgs) => ExecuteWithErrorHandlingAsync(() => RunSubProcess(args, namedArgs)));
         });
 
         // > dotnet swagger _verify ... (* should only be invoked via "dotnet exec")
@@ -201,7 +201,7 @@ internal class Program
             "swagger",
             "tofile",
             "--output",
-            EscapePath(namedArgs["--input"]),
+            FormatShellArgument(namedArgs["--input"]),
         };
 
         string[] optionalValueFlags = ["--host", "--basepath", OpenApiVersionOption];
@@ -210,7 +210,7 @@ internal class Program
             if (namedArgs.TryGetValue(flag, out var value))
             {
                 commandParts.Add(flag);
-                commandParts.Add(EscapePath(value));
+                commandParts.Add(FormatShellArgument(value));
             }
         }
 
@@ -219,11 +219,36 @@ internal class Program
             commandParts.Add("--yaml");
         }
 
-        commandParts.Add(EscapePath(namedArgs["startupassembly"]));
-        commandParts.Add(EscapePath(namedArgs["swaggerdoc"]));
+        commandParts.Add(FormatShellArgument(namedArgs["startupassembly"]));
+        commandParts.Add(FormatShellArgument(namedArgs["swaggerdoc"]));
 
         return string.Join(" ", commandParts);
     }
+
+    internal static string FormatShellArgument(string value)
+        => FormatShellArgument(value, OperatingSystem.IsWindows());
+
+    internal static string FormatShellArgument(string value, bool isWindows)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return isWindows ? "\"\"" : "''";
+        }
+
+        if (value.All(c => IsSafeUnquotedShellChar(c, isWindows)))
+        {
+            return value;
+        }
+
+        return isWindows
+            ? "\"" + value.Replace("\"", "\\\"") + "\""
+            : "'" + value.Replace("'", "'\\''") + "'";
+    }
+
+    private static bool IsSafeUnquotedShellChar(char c, bool isWindows)
+        => char.IsAsciiLetterOrDigit(c)
+            || c is '.' or '_' or '-' or '/' or ':' or '='
+            || (isWindows && c == '\\');
 
     private static Task<int> RunSubProcess(string[] args, IDictionary<string, string> namedArgs)
     {
