@@ -104,4 +104,26 @@ public static class CommandRunnerTests
         else
             Assert.Empty(output.ToString());
     }
+
+    [Fact]
+    public static async Task Run_MarksRequiredOptions_InUsageOutput()
+    {
+        var output = new StringWriter();
+        var subject = new CommandRunner("test", "a test", output);
+        subject.SubCommand("verify", "verify command", c =>
+        {
+            c.Argument("target", "target argument");
+            c.Option("--input", "input file path", isRequired: true);
+            c.Option("--yaml", "yaml output", isFlag: true);
+        });
+
+        var exitCode = await subject.RunAsync(["verify", "app.dll"]);
+
+        var usage = output.ToString();
+        Assert.Equal(1, exitCode);
+        Assert.Contains("Usage: test verify --input <value> [options] [target]", usage, StringComparison.Ordinal);
+        Assert.Contains("  --input:  input file path (required)", usage, StringComparison.Ordinal);
+        Assert.Contains("  --yaml:  yaml output", usage, StringComparison.Ordinal);
+        Assert.DoesNotContain("--yaml:  yaml output (required)", usage, StringComparison.Ordinal);
+    }
 }

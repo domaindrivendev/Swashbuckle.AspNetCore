@@ -123,9 +123,14 @@ internal class CommandRunner(string commandName, string commandDescription, Text
         else
         {
             // Usage for this command
-            var optionsPart = _optionDescriptors.Count != 0 ? "[options] " : "";
+            var requiredOptions = _optionDescriptors
+                .Where(entry => entry.Value.IsRequired)
+                .Select(entry => entry.Value.IsFlag ? entry.Key : $"{entry.Key} <value>");
+            var hasOptionalOptions = _optionDescriptors.Any(entry => !entry.Value.IsRequired);
+            var optionsParts = requiredOptions.Concat(hasOptionalOptions ? ["[options]"] : []);
             var argParts = _argumentDescriptors.Keys.Select(name => $"[{name}]");
-            _output.WriteLine($"Usage: {CommandName} {optionsPart}{string.Join(" ", argParts)}");
+            var signatureParts = optionsParts.Concat(argParts);
+            _output.WriteLine($"Usage: {CommandName} {string.Join(" ", signatureParts)}");
             _output.WriteLine();
 
             // Arguments
@@ -142,7 +147,8 @@ internal class CommandRunner(string commandName, string commandDescription, Text
                 _output.WriteLine("options:");
                 foreach (var entry in _optionDescriptors)
                 {
-                    _output.WriteLine($"  {entry.Key}:  {entry.Value.Description}");
+                    var requiredSuffix = entry.Value.IsRequired ? " (required)" : "";
+                    _output.WriteLine($"  {entry.Key}:  {entry.Value.Description}{requiredSuffix}");
                 }
                 _output.WriteLine();
             }

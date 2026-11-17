@@ -108,10 +108,10 @@ internal class Program
                 using var generated = new MemoryStream();
                 await SerializeSwaggerToStreamAsync(namedArgs, () => generated);
 
-                if (!baseline.ToArray().SequenceEqual(generated.ToArray()))
+                if (!StreamsEqual(baseline, generated))
                 {
-                    Console.Error.WriteLine($"Swagger JSON/YAML does not match {inputPath}");
-                    return 1;
+                    Console.Error.WriteLine($"Swagger JSON/YAML does not match {inputPath}. Update it with: {BuildToFileUpdateCommand(namedArgs)}");
+                    return 2;
                 }
 
                 Console.WriteLine($"Swagger JSON/YAML verified against {inputPath}");
@@ -175,13 +175,54 @@ internal class Program
 
     private static void ConfigureSwaggerOptions(CommandRunner c, bool isInternal = false)
     {
-        c.Argument("startupassembly", isInternal ? "" : "relative path to the application's startup assembly");
-        c.Argument("swaggerdoc", isInternal ? "" : "name of the swagger doc you want to retrieve, as configured in your startup class");
+        string Description(string text) => isInternal ? "" : text;
 
-        c.Option("--host", isInternal ? "" : "a specific host to include in the Swagger output");
-        c.Option("--basepath", isInternal ? "" : "a specific basePath to include in the Swagger output");
-        c.Option(OpenApiVersionOption, isInternal ? "" : "output Swagger in the specified version, defaults to 3.0");
-        c.Option("--yaml", isInternal ? "" : "exports swagger in a yaml format", true);
+        c.Argument("startupassembly", Description("relative path to the application's startup assembly"));
+        c.Argument("swaggerdoc", Description("name of the swagger doc you want to retrieve, as configured in your startup class"));
+
+        c.Option("--host", Description("a specific host to include in the Swagger output"));
+        c.Option("--basepath", Description("a specific basePath to include in the Swagger output"));
+        c.Option(OpenApiVersionOption, Description("output Swagger in the specified version, defaults to 3.0"));
+        c.Option("--yaml", Description("exports swagger in a yaml format"), true);
+    }
+
+    private static bool StreamsEqual(MemoryStream first, MemoryStream second)
+    {
+        return first.TryGetBuffer(out var firstSegment) && second.TryGetBuffer(out var secondSegment)
+            ? firstSegment.AsSpan().SequenceEqual(secondSegment.AsSpan())
+            : first.ToArray().SequenceEqual(second.ToArray());
+    }
+
+    private static string BuildToFileUpdateCommand(IDictionary<string, string> namedArgs)
+    {
+        var commandParts = new List<string>
+        {
+            "dotnet",
+            "swagger",
+            "tofile",
+            "--output",
+            EscapePath(namedArgs["--input"]),
+        };
+
+        string[] optionalValueFlags = ["--host", "--basepath", OpenApiVersionOption];
+        foreach (var flag in optionalValueFlags)
+        {
+            if (namedArgs.TryGetValue(flag, out var value))
+            {
+                commandParts.Add(flag);
+                commandParts.Add(EscapePath(value));
+            }
+        }
+
+        if (namedArgs.ContainsKey("--yaml"))
+        {
+            commandParts.Add("--yaml");
+        }
+
+        commandParts.Add(EscapePath(namedArgs["startupassembly"]));
+        commandParts.Add(EscapePath(namedArgs["swaggerdoc"]));
+
+        return string.Join(" ", commandParts);
     }
 
     private static Task<int> RunSubProcess(string[] args, IDictionary<string, string> namedArgs)
