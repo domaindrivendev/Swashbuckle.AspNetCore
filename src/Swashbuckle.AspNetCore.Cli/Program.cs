@@ -110,7 +110,8 @@ internal class Program
 
                 if (!StreamsEqual(baseline, generated))
                 {
-                    Console.Error.WriteLine($"Swagger JSON/YAML does not match {inputPath}. Update it with: {BuildToFileUpdateCommand(namedArgs)}");
+                    var updateHint = OperatingSystem.IsWindows() ? "Update it in PowerShell with:" : "Update it with:";
+                    Console.Error.WriteLine($"Swagger JSON/YAML does not match {inputPath}. {updateHint} {BuildToFileUpdateCommand(namedArgs)}");
                     return 2;
                 }
 
@@ -232,7 +233,7 @@ internal class Program
     {
         if (string.IsNullOrEmpty(value))
         {
-            return isWindows ? "\"\"" : "''";
+            return "''";
         }
 
         if (value.All(c => IsSafeUnquotedShellChar(c, isWindows)))
@@ -241,7 +242,7 @@ internal class Program
         }
 
         return isWindows
-            ? "\"" + value.Replace("\"", "\\\"") + "\""
+            ? "'" + value.Replace("'", "''") + "'"
             : "'" + value.Replace("'", "'\\''") + "'";
     }
 

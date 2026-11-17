@@ -556,10 +556,14 @@ public static class ToolTests
     [InlineData("swagger.json", false, "swagger.json")]
     [InlineData("openapi(v1).json", false, "'openapi(v1).json'")]
     [InlineData("api's.json", false, "'api'\\''s.json'")]
+    [InlineData("$schema.json", false, "'$schema.json'")]
+    [InlineData("%VAR%.json", false, "'%VAR%.json'")]
     [InlineData("my specs/openapi(v1).json", false, "'my specs/openapi(v1).json'")]
     [InlineData("C:\\specs\\swagger.json", true, "C:\\specs\\swagger.json")]
-    [InlineData("openapi(v1).json", true, "\"openapi(v1).json\"")]
-    [InlineData("api's.json", true, "\"api's.json\"")]
+    [InlineData("C:\\specs\\$schema.json", true, "'C:\\specs\\$schema.json'")]
+    [InlineData("C:\\specs\\%VAR%.json", true, "'C:\\specs\\%VAR%.json'")]
+    [InlineData("openapi(v1).json", true, "'openapi(v1).json'")]
+    [InlineData("api's.json", true, "'api''s.json'")]
     public static void FormatShellArgument_QuotesMetacharacters_Appropriately(string input, bool isWindows, string expected)
     {
         Assert.Equal(expected, Program.FormatShellArgument(input, isWindows));
@@ -568,6 +572,8 @@ public static class ToolTests
     [Theory]
     [InlineData("openapi(v1).json")]
     [InlineData("api's.json")]
+    [InlineData("$schema.json")]
+    [InlineData("%VAR%.json")]
     public static async Task Can_Fail_Verification_When_Input_File_Has_Shell_Metacharacters(string fileName)
     {
         using var temporaryDirectory = new TemporaryDirectory();
