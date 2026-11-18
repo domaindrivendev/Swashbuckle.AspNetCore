@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using Microsoft.OpenApi;
 using Xunit;
 
@@ -208,6 +209,51 @@ public class RequestValidatorTests
         {
             Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Get);
         });
+
+        Assert.Equal(expectedErrorMessage, exception?.Message);
+    }
+
+    [Theory]
+    [InlineData("1.5", null, null)]
+    [InlineData("1.5", "double", null)]
+    [InlineData("1,5", null, "Parameter 'param' is not of type 'number'")]
+    [InlineData("1,5", "double", "Parameter 'param' is not of type 'number'")]
+    public void Validate_ParsesNumberQueryParameter_UsingInvariantCulture(string value, string? format, string? expectedErrorMessage)
+    {
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Get, new OpenApiOperation
+        {
+            Parameters =
+            [
+                new OpenApiParameter
+                {
+                    Name = "param",
+                    In = ParameterLocation.Query,
+                    Schema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Format = format }
+                }
+            ]
+        });
+        var request = new HttpRequestMessage
+        {
+            RequestUri = new Uri($"/api/products?param={value}", UriKind.Relative),
+            Method = HttpMethod.Get
+        };
+        var originalCulture = CultureInfo.CurrentCulture;
+        Exception? exception;
+
+        try
+        {
+            // Turkish uses ',' as the decimal separator and '.' as the group separator
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("tr-TR");
+
+            exception = Record.Exception(() =>
+            {
+                Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Get);
+            });
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
     }

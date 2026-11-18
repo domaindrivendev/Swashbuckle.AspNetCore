@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
@@ -9,23 +10,23 @@ internal static class OpenApiSchemaExtensions
     {
         typedValue = null;
 
-        if (IsType(schema.Type, JsonSchemaTypes.Integer) && schema.Format == "int64" && long.TryParse(stringValue, out long longValue))
+        if (IsType(schema.Type, JsonSchemaTypes.Integer) && schema.Format == "int64" && long.TryParse(stringValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out long longValue))
         {
             typedValue = longValue;
         }
-        else if (IsType(schema.Type, JsonSchemaTypes.Integer) && int.TryParse(stringValue, out int intValue))
+        else if (IsType(schema.Type, JsonSchemaTypes.Integer) && int.TryParse(stringValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out int intValue))
         {
             typedValue = intValue;
         }
-        else if (IsType(schema.Type, JsonSchemaTypes.Number) && schema.Format == "double" && double.TryParse(stringValue, out double doubleValue))
+        else if (IsType(schema.Type, JsonSchemaTypes.Number) && schema.Format == "double" && double.TryParse(stringValue, NumberStyles.Float, CultureInfo.InvariantCulture, out double doubleValue))
         {
             typedValue = doubleValue;
         }
-        else if (IsType(schema.Type, JsonSchemaTypes.Number) && float.TryParse(stringValue, out float floatValue))
+        else if (IsType(schema.Type, JsonSchemaTypes.Number) && float.TryParse(stringValue, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatValue))
         {
             typedValue = floatValue;
         }
-        else if (IsType(schema.Type, JsonSchemaTypes.String) && schema.Format == "byte" && byte.TryParse(stringValue, out byte byteValue))
+        else if (IsType(schema.Type, JsonSchemaTypes.String) && schema.Format == "byte" && byte.TryParse(stringValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out byte byteValue))
         {
             typedValue = byteValue;
         }
@@ -33,11 +34,11 @@ internal static class OpenApiSchemaExtensions
         {
             typedValue = boolValue;
         }
-        else if (IsType(schema.Type, JsonSchemaTypes.String) && schema.Format == "date" && DateTime.TryParse(stringValue, out DateTime dateValue))
+        else if (IsType(schema.Type, JsonSchemaTypes.String) && schema.Format == "date" && DateTime.TryParse(stringValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateValue))
         {
             typedValue = dateValue;
         }
-        else if (IsType(schema.Type, JsonSchemaTypes.String) && schema.Format == "date-time" && DateTime.TryParse(stringValue, out DateTime dateTimeValue))
+        else if (IsType(schema.Type, JsonSchemaTypes.String) && schema.Format == "date-time" && DateTime.TryParse(stringValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateTimeValue))
         {
             typedValue = dateTimeValue;
         }
