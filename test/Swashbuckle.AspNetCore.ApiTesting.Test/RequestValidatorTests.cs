@@ -214,11 +214,14 @@ public class RequestValidatorTests
     }
 
     [Theory]
-    [InlineData("1.5", null, null)]
-    [InlineData("1.5", "double", null)]
-    [InlineData("1,5", null, "Parameter 'param' is not of type 'number'")]
-    [InlineData("1,5", "double", "Parameter 'param' is not of type 'number'")]
-    public void Validate_ParsesNumberQueryParameter_UsingInvariantCulture(string value, string? format, string? expectedErrorMessage)
+    [InlineData("tr-TR", "1.5", null, null)]
+    [InlineData("tr-TR", "1.5", "double", null)]
+    [InlineData("tr-TR", "1,5", null, "Parameter 'param' is not of type 'number'")]
+    [InlineData("tr-TR", "1,5", "double", "Parameter 'param' is not of type 'number'")]
+    [InlineData("en-US", "1,000", null, "Parameter 'param' is not of type 'number'")]
+    [InlineData("en-US", "1,000", "double", "Parameter 'param' is not of type 'number'")]
+    [InlineData("en-US", "1e3", null, null)]
+    public void Validate_ParsesNumberQueryParameter_UsingInvariantCulture(string culture, string value, string? format, string? expectedErrorMessage)
     {
         var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Get, new OpenApiOperation
         {
@@ -242,8 +245,9 @@ public class RequestValidatorTests
 
         try
         {
-            // Turkish uses ',' as the decimal separator and '.' as the group separator
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("tr-TR");
+            // Turkish uses ',' as the decimal separator and '.' as the group separator;
+            // group separators like "1,000" are not valid numbers on the wire in any culture
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(culture);
 
             exception = Record.Exception(() =>
             {
