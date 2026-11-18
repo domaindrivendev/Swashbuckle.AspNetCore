@@ -166,6 +166,57 @@ public class JsonValidatorTests
     }
 
     [Theory]
+    [InlineData("1.5", null, null, null, "10", false, "Path: . Number is greater than maximum")]
+    [InlineData(null, "1.5", null, null, "10", false, "Path: . Number is greater than, or equal to, maximum")]
+    [InlineData(null, null, "1.5", null, "10", true, null)]
+    [InlineData(null, null, null, "1.5", "10", true, null)]
+    [InlineData("1.5", null, null, null, "1.5", true, null)]
+    [InlineData("1E+2", null, null, null, "150", false, "Path: . Number is greater than maximum")]
+    [InlineData("1E+2", null, null, null, "50", true, null)]
+    public void Validate_ParsesNumberLimitsUsingTheInvariantCulture(
+        string schemaMaximum,
+        string schemaExclusiveMaximum,
+        string schemaMinimum,
+        string schemaExclusiveMinimum,
+        string instanceText,
+        bool expectedReturnValue,
+        string expectedErrorMessage)
+    {
+        var openApiSchema = new OpenApiSchema
+        {
+            Type = JsonSchemaTypes.Number,
+            Maximum = schemaMaximum,
+            ExclusiveMaximum = schemaExclusiveMaximum,
+            Minimum = schemaMinimum,
+            ExclusiveMinimum = schemaExclusiveMinimum,
+        };
+        var instance = JToken.Parse(instanceText);
+
+        var originalCulture = CultureInfo.CurrentCulture;
+        bool returnValue;
+        IEnumerable<string> errorMessages;
+
+        try
+        {
+            // Turkish uses '.' as the group separator, so "1.5" would be read as 15
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("tr-TR");
+
+            returnValue = Subject().Validate(
+                openApiSchema,
+                new OpenApiDocument(),
+                instance,
+                out errorMessages);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
+
+        Assert.Equal(expectedReturnValue, returnValue);
+        Assert.Equal(expectedErrorMessage, errorMessages.FirstOrDefault());
+    }
+
+    [Theory]
     [InlineData(5, "'123456'", false, "Path: . String length is greater than maxLength")]
     [InlineData(5, "'12345'", true, null)]
     public void Validate_ReturnsError_IfStringLengthGreaterThanMaxLength(
