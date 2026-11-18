@@ -171,6 +171,8 @@ public class JsonValidatorTests
     [InlineData(null, null, "1.5", null, "10", true, null)]
     [InlineData(null, null, null, "1.5", "10", true, null)]
     [InlineData("1.5", null, null, null, "1.5", true, null)]
+    [InlineData("1E+2", null, null, null, "150", false, "Path: . Number is greater than maximum")]
+    [InlineData("1E+2", null, null, null, "50", true, null)]
     public void Validate_ParsesNumberLimitsUsingTheInvariantCulture(
         string schemaMaximum,
         string schemaExclusiveMaximum,
