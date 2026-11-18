@@ -180,6 +180,7 @@ public class NewtonsoftSchemaGeneratorTests
         { typeof(DateTime[]), JsonSchemaTypes.String, "date-time" },
         { typeof(DateTime?[]), JsonSchemaTypes.String | JsonSchemaType.Null, "date-time" },
         { typeof(IEnumerable<string>), JsonSchemaTypes.String, null },
+        { typeof(IAsyncEnumerable<string>), JsonSchemaTypes.String, null },
         { typeof(int[][]), JsonSchemaTypes.Array, null },
         { typeof(IList), null, null },
     };
@@ -199,6 +200,32 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Equal(expectedItemsFormat, schema.Items.Format);
     }
 #nullable restore
+
+    [Fact]
+    public void GenerateSchema_GeneratesArraySchema_IfAsyncEnumerableOfComplexType()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var schema = Subject().GenerateSchema(typeof(IAsyncEnumerable<ComplexType>), schemaRepository);
+
+        Assert.Equal(JsonSchemaTypes.Array, schema.Type);
+        var itemsSchema = Assert.IsType<OpenApiSchemaReference>(schema.Items);
+        Assert.Equal("ComplexType", itemsSchema.Reference.Id);
+        Assert.Contains("ComplexType", schemaRepository.Schemas.Keys);
+    }
+
+    [Fact]
+    public void GenerateSchema_GeneratesArraySchema_IfTypeImplementsAsyncEnumerable()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var schema = Subject().GenerateSchema(typeof(AsyncEnumerableOfComplexType), schemaRepository);
+
+        Assert.Equal(JsonSchemaTypes.Array, schema.Type);
+        var itemsSchema = Assert.IsType<OpenApiSchemaReference>(schema.Items);
+        Assert.Equal("ComplexType", itemsSchema.Reference.Id);
+        Assert.DoesNotContain("AsyncEnumerableOfComplexType", schemaRepository.Schemas.Keys);
+    }
 
     [Theory]
     [InlineData(typeof(ISet<string>))]

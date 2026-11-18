@@ -96,6 +96,16 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
                 jsonConverter: JsonConverterFunc);
         }
 
+        // Newtonsoft.Json has no contract for IAsyncEnumerable<T>, so it resolves an object contract,
+        // but MVC buffers the sequence into a list before writing it, so it is sent as an array.
+        if (jsonContract is JsonObjectContract && effectiveType.IsConstructedFrom(typeof(IAsyncEnumerable<>), out var asyncEnumerableType))
+        {
+            return DataContract.ForArray(
+                underlyingType: effectiveType,
+                itemType: asyncEnumerableType.GenericTypeArguments[0],
+                jsonConverter: JsonConverterFunc);
+        }
+
         if (jsonContract is JsonDictionaryContract jsonDictionaryContract)
         {
             var keyType = jsonDictionaryContract.DictionaryKeyType ?? typeof(object);
