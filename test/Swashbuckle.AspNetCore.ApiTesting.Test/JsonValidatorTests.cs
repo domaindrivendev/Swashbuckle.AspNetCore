@@ -199,7 +199,7 @@ public class JsonValidatorTests
         try
         {
             // Turkish uses '.' as the group separator, so "1.5" would be read as 15
-            CultureInfo.CurrentCulture = new CultureInfo("tr-TR");
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("tr-TR");
 
             returnValue = Subject().Validate(
                 openApiSchema,
