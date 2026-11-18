@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.OpenApi;
 using Newtonsoft.Json.Linq;
 
@@ -29,28 +30,28 @@ public sealed class JsonNumberValidator : IJsonValidator
         }
 
         if (schema.ExclusiveMaximum is { } exclusiveMaximum &&
-            decimal.TryParse(exclusiveMaximum, out var exclusiveMaximumValue) &&
+            decimal.TryParse(exclusiveMaximum, NumberStyles.Float, CultureInfo.InvariantCulture, out var exclusiveMaximumValue) &&
             numberValue >= exclusiveMaximumValue)
         {
             errors.Add($"Path: {instance.Path}. Number is greater than, or equal to, maximum");
         }
 
         if (schema.Maximum is { } maximum &&
-            decimal.TryParse(maximum, out var maximumValue) &&
+            decimal.TryParse(maximum, NumberStyles.Float, CultureInfo.InvariantCulture, out var maximumValue) &&
             numberValue > maximumValue)
         {
             errors.Add($"Path: {instance.Path}. Number is greater than maximum");
         }
 
         if (schema.ExclusiveMinimum is { } exclusiveMinimum &&
-            decimal.TryParse(exclusiveMinimum, out var exclusiveMinimumValue) &&
+            decimal.TryParse(exclusiveMinimum, NumberStyles.Float, CultureInfo.InvariantCulture, out var exclusiveMinimumValue) &&
             numberValue <= exclusiveMinimumValue)
         {
             errors.Add($"Path: {instance.Path}. Number is less than, or equal to, minimum");
         }
 
         if (schema.Minimum is { } minimum &&
-            decimal.TryParse(minimum, out var minimumValue) &&
+            decimal.TryParse(minimum, NumberStyles.Float, CultureInfo.InvariantCulture, out var minimumValue) &&
             numberValue < minimumValue)
         {
             errors.Add($"Path: {instance.Path}. Number is less than minimum");
