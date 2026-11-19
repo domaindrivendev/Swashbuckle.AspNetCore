@@ -80,7 +80,7 @@ internal class Program
             ConfigureSwaggerOptions(c);
             c.Option("--input", "relative path to the Swagger file to verify", isRequired: true);
 
-            c.OnRun((namedArgs) => ExecuteWithErrorHandlingAsync(() => RunSubProcess(args, namedArgs)));
+            c.OnRun((namedArgs) => ExecuteWithErrorHandlingAsync(() => RunSubProcess(args, namedArgs), errorExitCode: 2));
         });
 
         // > dotnet swagger _verify ... (* should only be invoked via "dotnet exec")
@@ -96,7 +96,7 @@ internal class Program
                 if (!File.Exists(inputPath))
                 {
                     Console.Error.WriteLine($"Swagger file {inputPath} does not exist");
-                    return 1;
+                    return 2;
                 }
 
                 using var baseline = new MemoryStream();
@@ -110,14 +110,13 @@ internal class Program
 
                 if (!StreamsEqual(baseline, generated))
                 {
-                    var updateHint = OperatingSystem.IsWindows() ? "Update it in PowerShell with:" : "Update it with:";
-                    Console.Error.WriteLine($"Swagger JSON/YAML does not match {inputPath}. {updateHint} {BuildToFileUpdateCommand(namedArgs)}");
-                    return 2;
+                    Console.Error.WriteLine($"Swagger JSON/YAML does not match {inputPath}. Update it with: {BuildToFileUpdateCommand(namedArgs)}");
+                    return 1;
                 }
 
                 Console.WriteLine($"Swagger JSON/YAML verified against {inputPath}");
                 return 0;
-            }));
+            }, errorExitCode: 2));
         });
 
         // > dotnet swagger list
@@ -202,7 +201,7 @@ internal class Program
             "swagger",
             "tofile",
             "--output",
-            FormatShellArgument(namedArgs["--input"]),
+            namedArgs["--input"],
         };
 
         string[] optionalValueFlags = ["--host", "--basepath", OpenApiVersionOption];
@@ -211,7 +210,7 @@ internal class Program
             if (namedArgs.TryGetValue(flag, out var value))
             {
                 commandParts.Add(flag);
-                commandParts.Add(FormatShellArgument(value));
+                commandParts.Add(value);
             }
         }
 
@@ -220,48 +219,23 @@ internal class Program
             commandParts.Add("--yaml");
         }
 
-        commandParts.Add(FormatShellArgument(namedArgs["startupassembly"]));
-        commandParts.Add(FormatShellArgument(namedArgs["swaggerdoc"]));
+        commandParts.Add(namedArgs["startupassembly"]);
+        commandParts.Add(namedArgs["swaggerdoc"]);
 
         return string.Join(" ", commandParts);
     }
 
-    internal static string FormatShellArgument(string value)
-        => FormatShellArgument(value, OperatingSystem.IsWindows());
-
-    internal static string FormatShellArgument(string value, bool isWindows)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return "''";
-        }
-
-        if (value.All(c => IsSafeUnquotedShellChar(c, isWindows)))
-        {
-            return value;
-        }
-
-        return isWindows
-            ? "'" + value.Replace("'", "''") + "'"
-            : "'" + value.Replace("'", "'\\''") + "'";
-    }
-
-    private static bool IsSafeUnquotedShellChar(char c, bool isWindows)
-        => char.IsAsciiLetterOrDigit(c)
-            || c is '.' or '_' or '-' or '/' or ':' or '='
-            || (isWindows && c == '\\');
-
     private static Task<int> RunSubProcess(string[] args, IDictionary<string, string> namedArgs)
     {
-        string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
+        var subProcessArguments = PrepareCommandLine(args, namedArgs);
 
-        using var child = Process.Start("dotnet", subProcessCommandLine);
+        using var child = Process.Start("dotnet", subProcessArguments);
 
         child.WaitForExit();
         return Task.FromResult(child.ExitCode);
     }
 
-    private static async Task<int> ExecuteWithErrorHandlingAsync(Func<Task<int>> action)
+    private static async Task<int> ExecuteWithErrorHandlingAsync(Func<Task<int>> action, int errorExitCode = 1)
     {
         try
         {
@@ -270,7 +244,7 @@ internal class Program
         catch (Exception ex)
         {
             Console.Error.WriteLine(ex);
-            return 1;
+            return errorExitCode;
         }
     }
 
@@ -337,7 +311,7 @@ internal class Program
         swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
     }
 
-    private static string PrepareCommandLine(string[] args, IDictionary<string, string> namedArgs)
+    private static IEnumerable<string> PrepareCommandLine(string[] args, IDictionary<string, string> namedArgs)
     {
         if (!File.Exists(namedArgs["startupassembly"]))
         {
@@ -348,28 +322,17 @@ internal class Program
         var runtimeConfig = namedArgs["startupassembly"].Replace(".dll", ".runtimeconfig.json");
         var commandName = args[0];
 
-        var subProcessArguments = new string[args.Length - 1];
-        if (subProcessArguments.Length > 0)
-        {
-            Array.Copy(args, 1, subProcessArguments, 0, subProcessArguments.Length);
-        }
-
-        var subProcessCommandLine = string.Format(
-            "exec --depsfile {0} --runtimeconfig {1} {2} _{3} {4}", // note the underscore prepended to the command name
-            EscapePath(depsFile),
-            EscapePath(runtimeConfig),
-            EscapePath(typeof(Program).Assembly.Location),
-            commandName,
-            string.Join(" ", subProcessArguments.Select(EscapePath))
-        );
-        return subProcessCommandLine;
-    }
-
-    private static string EscapePath(string path)
-    {
-        return path.Contains(' ')
-            ? "\"" + path + "\""
-            : path;
+        return
+        [
+            "exec",
+            "--depsfile",
+            depsFile,
+            "--runtimeconfig",
+            runtimeConfig,
+            typeof(Program).Assembly.Location,
+            $"_{commandName}", // note the underscore prepended to the command name
+            .. args.Skip(1),
+        ];
     }
 
     internal static IServiceProvider GetServiceProvider(Assembly startupAssembly, TimeSpan? waitTimeout = null)

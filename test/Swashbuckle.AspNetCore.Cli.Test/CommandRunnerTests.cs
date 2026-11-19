@@ -120,7 +120,7 @@ public static class CommandRunnerTests
         var exitCode = await subject.RunAsync(["verify", "app.dll"]);
 
         var usage = output.ToString();
-        Assert.Equal(1, exitCode);
+        Assert.Equal(2, exitCode);
         Assert.Contains("Usage: test verify --input <value> [options] [target]", usage, StringComparison.Ordinal);
         Assert.Contains("  --input:  input file path (required)", usage, StringComparison.Ordinal);
         Assert.Contains("  --yaml:  yaml output", usage, StringComparison.Ordinal);

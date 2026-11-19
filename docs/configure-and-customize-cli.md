@@ -87,8 +87,8 @@ dotnet tool install -g Swashbuckle.AspNetCore.Cli
 
     Exit codes:
     * `0`: the generated OpenAPI document matches `[input]`;
-    * `1`: invalid arguments, `[input]` does not exist, or document generation failed;
-    * `2`: the generated OpenAPI document differs from `[input]`.
+    * `1`: the generated OpenAPI document differs from `[input]`;
+    * `2`: invalid arguments, `[input]` does not exist, or document generation failed.
 
     For example, to verify that a committed `openapi.json` stays up to date in CI:
 

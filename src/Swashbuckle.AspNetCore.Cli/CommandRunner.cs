@@ -50,7 +50,7 @@ internal class CommandRunner(string commandName, string commandDescription, Text
         if (_subRunners.Count != 0 || !TryParseArgs(args, out IDictionary<string, string> namedArgs))
         {
             PrintUsage();
-            return 1;
+            return 2;
         }
 
         return await _runFunc(namedArgs);
