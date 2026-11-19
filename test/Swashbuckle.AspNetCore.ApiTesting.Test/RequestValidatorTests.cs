@@ -262,6 +262,72 @@ public class RequestValidatorTests
         Assert.Equal(expectedErrorMessage, exception?.Message);
     }
 
+    [Theory]
+    [InlineData("tr-TR", "integer", null, "42", null)]
+    [InlineData("tr-TR", "integer", "int32", "-42", null)]
+    [InlineData("tr-TR", "integer", "int32", "4.2", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("tr-TR", "integer", "int32", "4,2", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("tr-TR", "integer", "int32", "3000000000", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("en-US", "integer", "int32", "1,000", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("tr-TR", "integer", "int64", "3000000000", null)]
+    [InlineData("tr-TR", "integer", "int64", "-3000000000", null)]
+    [InlineData("tr-TR", "integer", "int64", "3.000.000.000", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("en-US", "integer", "int64", "foo", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("tr-TR", "number", "float", "1.5", null)]
+    [InlineData("tr-TR", "number", "float", "1,5", "Parameter 'param' is not of type 'number'")]
+    [InlineData("en-US", "number", "float", "1,000", "Parameter 'param' is not of type 'number'")]
+    [InlineData("en-US", "number", "float", "1e3", null)]
+    [InlineData("tr-TR", "string", "byte", "255", null)]
+    [InlineData("tr-TR", "string", "byte", "0", null)]
+    [InlineData("tr-TR", "string", "date", "2024-01-15", null)]
+    [InlineData("tr-TR", "string", "date", "01/15/2024", null)]
+    [InlineData("tr-TR", "string", "date-time", "2024-01-15T10:30:00Z", null)]
+    [InlineData("en-US", "string", "date-time", "2024-01-15T10:30:00+03:00", null)]
+    public void Validate_ParsesQueryParameterOfFormat_UsingInvariantCulture(string culture, string type, string? format, string value, string? expectedErrorMessage)
+    {
+        var schemaType = type switch
+        {
+            "integer" => JsonSchemaTypes.Integer,
+            "number" => JsonSchemaTypes.Number,
+            _ => JsonSchemaTypes.String,
+        };
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Get, new OpenApiOperation
+        {
+            Parameters =
+            [
+                new OpenApiParameter
+                {
+                    Name = "param",
+                    In = ParameterLocation.Query,
+                    Schema = new OpenApiSchema { Type = schemaType, Format = format }
+                }
+            ]
+        });
+        var request = new HttpRequestMessage
+        {
+            RequestUri = new Uri($"/api/products?param={value}", UriKind.Relative),
+            Method = HttpMethod.Get
+        };
+        var originalCulture = CultureInfo.CurrentCulture;
+        Exception? exception;
+
+        try
+        {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(culture);
+
+            exception = Record.Exception(() =>
+            {
+                Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Get);
+            });
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
+
+        Assert.Equal(expectedErrorMessage, exception?.Message);
+    }
+
     public static TheoryData<string, JsonSchemaType, JsonSchemaType?, string?> HeaderParameterTypeMismatchData => new()
     {
         { "foo", JsonSchemaTypes.Boolean, null, "Parameter 'test-header' is not of type 'boolean'" },
