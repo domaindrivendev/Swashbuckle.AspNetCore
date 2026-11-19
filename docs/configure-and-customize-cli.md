@@ -72,6 +72,33 @@ dotnet tool install -g Swashbuckle.AspNetCore.Cli
     swagger tofile --output openapi.yaml --openapiversion 3.1 --yaml [startupassembly] [swaggerdoc]
     ```
 
+3. Verify that an existing OpenAPI document matches the output from your application's startup assembly
+
+    ```terminal
+    swagger verify --input [input] [startupassembly] [swaggerdoc]
+    ```
+
+    Placeholders and their meaning:
+    * `[input]`: the relative path to the OpenAPI document to verify against;
+    * `[startupassembly]`: the relative path to your application's startup assembly;
+    * `[swaggerdoc]`: the name of the OpenAPI document you want to verify, as configured in your application.
+
+    The `verify` command also supports the same `--openapiversion`, `--yaml`, `--host`, and `--basepath` options as `tofile`.
+
+    Exit codes:
+    * `0`: the generated OpenAPI document matches `[input]`;
+    * `1`: the generated OpenAPI document differs from `[input]`;
+    * `2`: invalid arguments, `[input]` does not exist, or document generation failed.
+
+    For example, to verify that a committed `openapi.json` stays up to date in CI:
+
+    ```terminal
+    dotnet swagger verify --input openapi.json src/MyApp/bin/Release/net10.0/MyApp.dll v1
+    ```
+
+    > [!NOTE]
+    > Generate and update baseline files directly with `swagger tofile --output [path]` rather than shell redirection (such as PowerShell `>`), which can introduce a UTF-8/UTF-16 BOM or a trailing newline and cause false mismatches. OpenAPI documents are always generated using LF (`\n`) line endings, so if the baseline file is committed to Git, configure `.gitattributes` (for example `openapi.json text eol=lf`) so that `core.autocrlf` does not convert it to CRLF (`\r\n`) on checkout.
+
 ## Use the CLI Tool with a Custom Host Configuration
 
 By default, the tool will execute in the context of a "default" web host. However, in some cases you may want to

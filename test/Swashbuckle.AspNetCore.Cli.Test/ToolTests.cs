@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using Swashbuckle.AspNetCore.TestSupport.Utilities;
 using Xunit;
@@ -318,6 +319,268 @@ public static class ToolTests
         var paths = document.RootElement.GetProperty("paths");
         var productsPath = paths.GetProperty("/products");
         Assert.True(productsPath.TryGetProperty("post", out _));
+    }
+
+    [Fact]
+    public static async Task Can_Verify_Swagger_Json_v3()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+        var assemblyPath = Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll");
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        var expectedLastModified = File.GetLastWriteTimeUtc(outputPath);
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "verify",
+            "--input",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        Assert.Equal(expectedLastModified, File.GetLastWriteTimeUtc(outputPath));
+    }
+
+    [Fact]
+    public static async Task Can_Verify_Swagger_Yaml()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.yaml");
+        var assemblyPath = Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll");
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "tofile",
+            "--yaml",
+            "--output",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "verify",
+            "--yaml",
+            "--input",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+    }
+
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Input_File_Is_Different()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+
+        File.WriteAllText(outputPath, "different-content");
+
+        var result = await RunCliProcessAsync(
+            "verify",
+            "--yaml",
+            "--openapiversion",
+            "3.1",
+            "--input",
+            outputPath,
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1");
+
+        Assert.Equal(1, result.ExitCode);
+        Assert.Contains("does not match", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("dotnet swagger tofile --output", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("--openapiversion 3.1 --yaml", result.StandardError, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Input_File_Contains_Extra_Content()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+        var assemblyPath = Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll");
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        File.AppendAllText(outputPath, "extra-content");
+
+        var result = await RunCliProcessAsync(
+            "verify",
+            "--input",
+            outputPath,
+            assemblyPath,
+            "v1");
+
+        Assert.Equal(1, result.ExitCode);
+        Assert.Contains("does not match", result.StandardError, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Input_File_Has_Same_Length_But_Different_Content()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+        var assemblyPath = Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll");
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        var bytes = File.ReadAllBytes(outputPath);
+        var originalLength = bytes.Length;
+        var targetIndex = Array.IndexOf(bytes, (byte)'p');
+        Assert.True(targetIndex >= 0);
+        bytes[targetIndex] = (byte)'q';
+        File.WriteAllBytes(outputPath, bytes);
+
+        Assert.Equal(originalLength, new FileInfo(outputPath).Length);
+
+        var result = await RunCliProcessAsync(
+            "verify",
+            "--input",
+            outputPath,
+            assemblyPath,
+            "v1");
+
+        Assert.Equal(1, result.ExitCode);
+        Assert.Contains("does not match", result.StandardError, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Input_File_Does_Not_Exist()
+    {
+        var result = await RunCliProcessAsync(
+            "verify",
+            "--input",
+            "does_not_exist.json",
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1");
+
+        Assert.Equal(2, result.ExitCode);
+        Assert.Contains("does not exist", result.StandardError, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Input_Option_Is_Not_Set()
+    {
+        var result = await RunCliProcessAsync(
+            "verify",
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1");
+
+        Assert.Equal(2, result.ExitCode);
+        Assert.Contains("--input <value>", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("(required)", result.StandardOutput, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("--openapiversion", "3.1")]
+    [InlineData("--host", "api.example.com")]
+    [InlineData("--basepath", "/api")]
+    public static async Task Can_Verify_Swagger_With_Shared_Options(string optionName, string optionValue)
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+        var assemblyPath = Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll");
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "tofile",
+            optionName,
+            optionValue,
+            "--output",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "verify",
+            optionName,
+            optionValue,
+            "--input",
+            outputPath,
+            assemblyPath,
+            "v1"
+        ]));
+
+        var mismatchResult = await RunCliProcessAsync(
+            "verify",
+            "--input",
+            outputPath,
+            assemblyPath,
+            "v1");
+
+        Assert.Equal(1, mismatchResult.ExitCode);
+        Assert.Contains("does not match", mismatchResult.StandardError, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Can_Fail_Verification_When_Startup_Assembly_Does_Not_Exist()
+    {
+        var result = await RunCliProcessAsync(
+            "verify",
+            "--input",
+            "swagger.json",
+            "./does_not_exist.dll",
+            "v1");
+
+        Assert.Equal(2, result.ExitCode);
+        Assert.Contains("does_not_exist.dll", result.StandardError, StringComparison.Ordinal);
+    }
+
+    private static async Task<(int ExitCode, string StandardOutput, string StandardError)> RunCliProcessAsync(params string[] args)
+    {
+        using var process = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "dotnet",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            }
+        };
+
+        process.StartInfo.ArgumentList.Add("exec");
+        process.StartInfo.ArgumentList.Add(typeof(Program).Assembly.Location);
+        foreach (var arg in args)
+        {
+            process.StartInfo.ArgumentList.Add(arg);
+        }
+
+        Assert.True(process.Start());
+
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        var stdoutTask = process.StandardOutput.ReadToEndAsync(cts.Token);
+        var stderrTask = process.StandardError.ReadToEndAsync(cts.Token);
+
+        await process.WaitForExitAsync(cts.Token);
+
+        return (process.ExitCode, await stdoutTask, await stderrTask);
     }
 
     private static async Task<string> RunToStringCommandAsync(Func<string, string[]> setup, string subOutputPath = default)
