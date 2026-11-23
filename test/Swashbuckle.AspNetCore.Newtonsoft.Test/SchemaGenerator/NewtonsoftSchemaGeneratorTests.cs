@@ -179,7 +179,6 @@ public class NewtonsoftSchemaGeneratorTests
         { typeof(DateTime[]), JsonSchemaTypes.String, "date-time" },
         { typeof(DateTime?[]), JsonSchemaTypes.String | JsonSchemaType.Null, "date-time" },
         { typeof(IEnumerable<string>), JsonSchemaTypes.String, null },
-        { typeof(IAsyncEnumerable<string>), JsonSchemaTypes.String, null },
         { typeof(int[][]), JsonSchemaTypes.Array, null },
         { typeof(IList), null, null },
     };
@@ -201,29 +200,17 @@ public class NewtonsoftSchemaGeneratorTests
 #nullable restore
 
     [Fact]
-    public void GenerateSchema_GeneratesArraySchema_IfAsyncEnumerableOfComplexType()
+    public void GenerateSchema_KeepsObjectSchema_IfPropertyIsAsyncEnumerable()
     {
+        // MVC only buffers the response value itself, and Newtonsoft.Json writes the iterator's fields for a property
         var schemaRepository = new SchemaRepository();
 
-        var schema = Subject().GenerateSchema(typeof(IAsyncEnumerable<ComplexType>), schemaRepository);
+        var referenceSchema = Subject().GenerateSchema(typeof(TypeWithAsyncEnumerableProperty), schemaRepository);
 
-        Assert.Equal(JsonSchemaTypes.Array, schema.Type);
-        var itemsSchema = Assert.IsType<OpenApiSchemaReference>(schema.Items);
-        Assert.Equal("ComplexType", itemsSchema.Reference.Id);
-        Assert.Contains("ComplexType", schemaRepository.Schemas.Keys);
-    }
-
-    [Fact]
-    public void GenerateSchema_GeneratesArraySchema_IfTypeImplementsAsyncEnumerable()
-    {
-        var schemaRepository = new SchemaRepository();
-
-        var schema = Subject().GenerateSchema(typeof(AsyncEnumerableOfComplexType), schemaRepository);
-
-        Assert.Equal(JsonSchemaTypes.Array, schema.Type);
-        var itemsSchema = Assert.IsType<OpenApiSchemaReference>(schema.Items);
-        Assert.Equal("ComplexType", itemsSchema.Reference.Id);
-        Assert.DoesNotContain("AsyncEnumerableOfComplexType", schemaRepository.Schemas.Keys);
+        var schema = schemaRepository.Schemas[((OpenApiSchemaReference)referenceSchema).Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchemaReference>(schema.Properties["Results"]);
+        Assert.Equal("ComplexTypeIAsyncEnumerable", propertySchema.Reference.Id);
+        Assert.Equal(JsonSchemaTypes.Object, schemaRepository.Schemas["ComplexTypeIAsyncEnumerable"].Type);
     }
 
     [Theory]

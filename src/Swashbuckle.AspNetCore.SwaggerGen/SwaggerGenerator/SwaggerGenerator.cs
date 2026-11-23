@@ -525,7 +525,7 @@ public class SwaggerGenerator(
                         {
                             if (content is OpenApiMediaType mediaType)
                             {
-                                mediaType.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                                mediaType.Schema = GenerateResponseSchema(responseModel.Type, schemaRepository);
                             }
                         }
                     }
@@ -749,6 +749,19 @@ public class SwaggerGenerator(
                 message: $"Failed to generate schema for type - {type}. See inner exception",
                 innerException: ex);
         }
+    }
+
+    private IOpenApiSchema GenerateResponseSchema(Type type, SchemaRepository schemaRepository)
+    {
+        // MVC writes an IAsyncEnumerable<T> response value as a JSON array: System.Text.Json streams it,
+        // and the Newtonsoft.Json formatter buffers it into a list first. Only the response value itself
+        // is buffered, so an IAsyncEnumerable<T> property is left to the serializer's own contract.
+        if (type is not null && type.IsConstructedFrom(typeof(IAsyncEnumerable<>), out var asyncEnumerableType))
+        {
+            type = typeof(IEnumerable<>).MakeGenericType(asyncEnumerableType.GenericTypeArguments);
+        }
+
+        return GenerateSchema(type, schemaRepository);
     }
 
     private (IOpenApiRequestBody RequestBody, RequestBodyFilterContext FilterContext) GenerateRequestBodyAndFilterContext(
@@ -1062,7 +1075,7 @@ public class SwaggerGenerator(
 
                 if (seenModelTypesByContentType[contentType].Add(modelType ?? typeof(void)))
                 {
-                    schemas.Add(GenerateSchema(modelType, schemaRepository));
+                    schemas.Add(GenerateResponseSchema(modelType, schemaRepository));
                 }
             }
         }
