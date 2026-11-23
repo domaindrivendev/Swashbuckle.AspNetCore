@@ -111,6 +111,11 @@ public class FakeController
         throw new NotImplementedException();
     }
 
+    public IAsyncEnumerable<TestDto> ActionWithAsyncEnumerableReturnValue()
+    {
+        throw new NotImplementedException();
+    }
+
     [Produces("application/someMediaType")]
     public int ActionWithProducesAttribute()
     {

@@ -753,15 +753,22 @@ public class SwaggerGenerator(
 
     private IOpenApiSchema GenerateResponseSchema(Type type, SchemaRepository schemaRepository)
     {
-        // MVC writes an IAsyncEnumerable<T> response value as a JSON array: System.Text.Json streams it,
-        // and the Newtonsoft.Json formatter buffers it into a list first. Only the response value itself
-        // is buffered, so an IAsyncEnumerable<T> property is left to the serializer's own contract.
-        if (type is not null && type.IsConstructedFrom(typeof(IAsyncEnumerable<>), out var asyncEnumerableType))
+        // MVC can write a response value differently to a property of the same type, see SchemaGenerator.GenerateSchemaForResponse
+        if (_schemaGenerator is not SchemaGenerator schemaGenerator)
         {
-            type = typeof(IEnumerable<>).MakeGenericType(asyncEnumerableType.GenericTypeArguments);
+            return GenerateSchema(type, schemaRepository);
         }
 
-        return GenerateSchema(type, schemaRepository);
+        try
+        {
+            return schemaGenerator.GenerateSchemaForResponse(type, schemaRepository);
+        }
+        catch (Exception ex)
+        {
+            throw new SwaggerGeneratorException(
+                message: $"Failed to generate schema for type - {type}. See inner exception",
+                innerException: ex);
+        }
     }
 
     private (IOpenApiRequestBody RequestBody, RequestBodyFilterContext FilterContext) GenerateRequestBodyAndFilterContext(

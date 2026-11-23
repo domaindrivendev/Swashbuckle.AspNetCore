@@ -1412,6 +1412,77 @@ public class SwaggerGeneratorTests
     }
 
     [Fact]
+    public void GetSwagger_PassesResponseTypeToSchemaFilters_IfActionReturnsAsyncEnumerable()
+    {
+        var schemaFilter = new RecordingSchemaFilter();
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithAsyncEnumerableReturnValue),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                        }
+                    ])
+            ],
+            schemaFilters: [schemaFilter]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var schema = document.Paths["/resource"].Operations[HttpMethod.Get].Responses["200"].Content["application/json"].Schema;
+        Assert.Equal(JsonSchemaTypes.Array, schema.Type);
+        var itemsSchema = Assert.IsType<OpenApiSchemaReference>(schema.Items);
+        Assert.Equal("TestDto", itemsSchema.Reference.Id);
+        Assert.Equal(typeof(IAsyncEnumerable<TestDto>), schemaFilter.ContextTypes[schema]);
+    }
+
+    [Theory]
+    [InlineData(typeof(IAsyncEnumerable<TestDto>))]
+    [InlineData(typeof(IAsyncEnumerable<>))]
+    public void GetSwagger_UsesCustomTypeMapping_IfActionReturnsAsyncEnumerable(Type mappingType)
+    {
+        var schemaFilter = new RecordingSchemaFilter();
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithAsyncEnumerableReturnValue),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                        }
+                    ])
+            ],
+            schemaFilters: [schemaFilter],
+            customTypeMappings: new Dictionary<Type, Func<IOpenApiSchema>>
+            {
+                [mappingType] = () => new OpenApiSchema { Type = JsonSchemaTypes.String }
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var schema = document.Paths["/resource"].Operations[HttpMethod.Get].Responses["200"].Content["application/json"].Schema;
+        Assert.Equal(JsonSchemaTypes.String, schema.Type);
+        Assert.Equal(typeof(IAsyncEnumerable<TestDto>), schemaFilter.ContextTypes[schema]);
+        Assert.DoesNotContain("TestDto", document.Components.Schemas.Keys);
+    }
+
+    [Fact]
     public void GetSwagger_SetsResponseContentType_WhenActionHasFileResult()
     {
         var apiDescription = ApiDescriptionFactory.Create<FakeController>(
@@ -3129,12 +3200,19 @@ public class SwaggerGeneratorTests
         IEnumerable<ApiDescription> apiDescriptions,
         SwaggerGeneratorOptions options = null,
         IEnumerable<AuthenticationScheme> authenticationSchemes = null,
-        List<ISchemaFilter> schemaFilters = null)
+        List<ISchemaFilter> schemaFilters = null,
+        IDictionary<Type, Func<IOpenApiSchema>> customTypeMappings = null)
     {
+        var schemaGeneratorOptions = new SchemaGeneratorOptions
+        {
+            CustomTypeMappings = customTypeMappings ?? new Dictionary<Type, Func<IOpenApiSchema>>(),
+            SchemaFilters = schemaFilters ?? [],
+        };
+
         return new SwaggerGenerator(
             options ?? DefaultOptions,
             new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-            new SchemaGenerator(new SchemaGeneratorOptions { SchemaFilters = schemaFilters ?? [] }, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+            new SchemaGenerator(schemaGeneratorOptions, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
             new FakeAuthenticationSchemeProvider(authenticationSchemes ?? [])
         );
     }

@@ -24,6 +24,35 @@ public class NewtonsoftSwaggerGeneratorTests
         Assert.DoesNotContain(nameof(AsyncEnumerableOfComplexType), document.Components.Schemas.Keys);
     }
 
+    [Theory]
+    [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsAsyncEnumerable), typeof(IAsyncEnumerable<ComplexType>))]
+    [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsTypeImplementingAsyncEnumerable), typeof(AsyncEnumerableOfComplexType))]
+    public void GetSwagger_PassesResponseTypeToSchemaFilters_IfActionReturnsAsyncEnumerable(string actionName, Type responseType)
+    {
+        var schemaFilter = new RecordingSchemaFilter();
+
+        var document = Subject(actionName, c => c.SchemaFilters.Add(schemaFilter)).GetSwagger("v1");
+
+        var schema = document.Paths["/resource"].Operations[HttpMethod.Get].Responses["200"].Content["application/json"].Schema;
+        Assert.Equal(JsonSchemaTypes.Array, schema.Type);
+        Assert.Equal(responseType, schemaFilter.ContextTypes[schema]);
+    }
+
+    [Theory]
+    [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsAsyncEnumerable), typeof(IAsyncEnumerable<ComplexType>))]
+    [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsAsyncEnumerable), typeof(IAsyncEnumerable<>))]
+    [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsTypeImplementingAsyncEnumerable), typeof(AsyncEnumerableOfComplexType))]
+    public void GetSwagger_UsesCustomTypeMapping_IfActionReturnsAsyncEnumerable(string actionName, Type mappingType)
+    {
+        var document = Subject(
+            actionName,
+            c => c.CustomTypeMappings.Add(mappingType, () => new OpenApiSchema { Type = JsonSchemaTypes.String })).GetSwagger("v1");
+
+        var schema = document.Paths["/resource"].Operations[HttpMethod.Get].Responses["200"].Content["application/json"].Schema;
+        Assert.Equal(JsonSchemaTypes.String, schema.Type);
+        Assert.DoesNotContain("ComplexType", document.Components.Schemas.Keys);
+    }
+
     [Fact]
     public void GetSwagger_KeepsObjectSchema_IfResponsePropertyIsAsyncEnumerable()
     {
@@ -38,7 +67,7 @@ public class NewtonsoftSwaggerGeneratorTests
         Assert.Equal(JsonSchemaTypes.Object, document.Components.Schemas["ComplexTypeIAsyncEnumerable"].Type);
     }
 
-    private static SwaggerGenerator Subject(string actionName)
+    private static SwaggerGenerator Subject(string actionName, Action<SchemaGeneratorOptions> configureGenerator = null)
     {
         var apiDescription = ApiDescriptionFactory.Create<FakeControllerWithAsyncEnumerable>(
             _ => actionName,
@@ -62,9 +91,12 @@ public class NewtonsoftSwaggerGeneratorTests
             }
         };
 
+        var generatorOptions = new SchemaGeneratorOptions();
+        configureGenerator?.Invoke(generatorOptions);
+
         return new SwaggerGenerator(
             options,
             new FakeApiDescriptionGroupCollectionProvider([apiDescription]),
-            new SchemaGenerator(new SchemaGeneratorOptions(), new NewtonsoftDataContractResolver(new JsonSerializerSettings())));
+            new SchemaGenerator(generatorOptions, new NewtonsoftDataContractResolver(new JsonSerializerSettings())));
     }
 }
