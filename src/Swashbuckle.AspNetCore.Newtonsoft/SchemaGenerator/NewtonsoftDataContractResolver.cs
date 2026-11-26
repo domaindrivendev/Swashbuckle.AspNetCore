@@ -103,7 +103,9 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
 
             IEnumerable<string> keys = null;
 
-            if (keyType.IsEnum)
+            if (keyType.IsEnum &&
+                !_generatorOptions.Value.DisableObjectKeysForEnumDictionaries &&
+                !keyType.IsDefined(typeof(FlagsAttribute), inherit: false))
             {
                 // This is a special case where we know the possible key values
                 var enumValuesAsJson = keyType.GetEnumValues()
@@ -122,6 +124,7 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
                 keys: keys,
                 jsonConverter: JsonConverterFunc);
         }
+
 
         if (jsonContract is JsonObjectContract jsonObjectContract)
         {
