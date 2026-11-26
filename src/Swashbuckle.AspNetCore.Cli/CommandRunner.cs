@@ -17,14 +17,14 @@ internal class CommandRunner(string commandName, string commandDescription, Text
         _argumentDescriptors.Add(name, description);
     }
 
-    public void Option(string name, string description, bool isFlag = false)
+    public void Option(string name, string description, bool isFlag = false, bool isRequired = false)
     {
         if (!name.StartsWith("--"))
         {
             throw new ArgumentException("name of option must begin with --");
         }
 
-        _optionDescriptors.Add(name, new OptionDescriptor { Description = description, IsFlag = isFlag });
+        _optionDescriptors.Add(name, new OptionDescriptor { Description = description, IsFlag = isFlag, IsRequired = isRequired });
     }
 
     public void OnRun(Func<IDictionary<string, string>, Task<int>> runFunc)
@@ -50,7 +50,7 @@ internal class CommandRunner(string commandName, string commandDescription, Text
         if (_subRunners.Count != 0 || !TryParseArgs(args, out IDictionary<string, string> namedArgs))
         {
             PrintUsage();
-            return 1;
+            return 2;
         }
 
         return await _runFunc(namedArgs);
@@ -78,6 +78,14 @@ internal class CommandRunner(string commandName, string commandDescription, Text
             }
 
             namedArgs.Add(name, (!optionDescriptor.IsFlag ? argsQueue.Dequeue() : null));
+        }
+
+        foreach (var (name, optionDescriptor) in _optionDescriptors)
+        {
+            if (optionDescriptor.IsRequired && !namedArgs.ContainsKey(name))
+            {
+                return false;
+            }
         }
 
         // Process required args - ensure corresponding values are provided
@@ -115,9 +123,14 @@ internal class CommandRunner(string commandName, string commandDescription, Text
         else
         {
             // Usage for this command
-            var optionsPart = _optionDescriptors.Count != 0 ? "[options] " : "";
+            var requiredOptions = _optionDescriptors
+                .Where(entry => entry.Value.IsRequired)
+                .Select(entry => entry.Value.IsFlag ? entry.Key : $"{entry.Key} <value>");
+            var hasOptionalOptions = _optionDescriptors.Any(entry => !entry.Value.IsRequired);
+            var optionsParts = requiredOptions.Concat(hasOptionalOptions ? ["[options]"] : []);
             var argParts = _argumentDescriptors.Keys.Select(name => $"[{name}]");
-            _output.WriteLine($"Usage: {CommandName} {optionsPart}{string.Join(" ", argParts)}");
+            var signatureParts = optionsParts.Concat(argParts);
+            _output.WriteLine($"Usage: {CommandName} {string.Join(" ", signatureParts)}");
             _output.WriteLine();
 
             // Arguments
@@ -134,7 +147,8 @@ internal class CommandRunner(string commandName, string commandDescription, Text
                 _output.WriteLine("options:");
                 foreach (var entry in _optionDescriptors)
                 {
-                    _output.WriteLine($"  {entry.Key}:  {entry.Value.Description}");
+                    var requiredSuffix = entry.Value.IsRequired ? " (required)" : "";
+                    _output.WriteLine($"  {entry.Key}:  {entry.Value.Description}{requiredSuffix}");
                 }
                 _output.WriteLine();
             }
@@ -145,5 +159,6 @@ internal class CommandRunner(string commandName, string commandDescription, Text
     {
         public string Description;
         public bool IsFlag;
+        public bool IsRequired;
     }
 }
