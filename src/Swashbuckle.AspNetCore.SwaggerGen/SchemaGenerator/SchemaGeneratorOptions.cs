@@ -1,4 +1,6 @@
-﻿using Microsoft.OpenApi;
+﻿using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -55,14 +57,31 @@ public class SchemaGeneratorOptions
     {
         if (!modelType.IsConstructedGenericType)
         {
-            return modelType.Name.Replace("[]", "Array");
+            return GetSchemaIdName(modelType).Replace("[]", "Array");
         }
 
         var prefix = modelType.GetGenericArguments()
             .Select(DefaultSchemaIdSelector)
             .Aggregate((previous, current) => previous + current);
 
-        return prefix + modelType.Name.Split('`').First();
+        return prefix + GetSchemaIdName(modelType).Split('`').First();
+    }
+
+    private static string GetSchemaIdName(Type modelType)
+    {
+        // The names of compiler-generated types (such as anonymous types) contain characters
+        // that are not allowed in the keys of the schemas of an OpenAPI document, e.g. "<>f__AnonymousType0`1".
+        if (modelType.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false))
+        {
+            var match = Regex.Match(modelType.Name, @"AnonymousType\d+");
+
+            if (match.Success)
+            {
+                return match.Value + modelType.Name.Substring(match.Index + match.Length);
+            }
+        }
+
+        return modelType.Name;
     }
 
     private IEnumerable<Type> DefaultSubTypesSelector(Type baseType)
