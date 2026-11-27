@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using Microsoft.OpenApi;
 using Xunit;
 
@@ -208,6 +209,121 @@ public class RequestValidatorTests
         {
             Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Get);
         });
+
+        Assert.Equal(expectedErrorMessage, exception?.Message);
+    }
+
+    [Theory]
+    [InlineData("tr-TR", "1.5", null, null)]
+    [InlineData("tr-TR", "1.5", "double", null)]
+    [InlineData("tr-TR", "1,5", null, "Parameter 'param' is not of type 'number'")]
+    [InlineData("tr-TR", "1,5", "double", "Parameter 'param' is not of type 'number'")]
+    [InlineData("en-US", "1,000", null, "Parameter 'param' is not of type 'number'")]
+    [InlineData("en-US", "1,000", "double", "Parameter 'param' is not of type 'number'")]
+    [InlineData("en-US", "1e3", null, null)]
+    public void Validate_ParsesNumberQueryParameter_UsingInvariantCulture(string culture, string value, string? format, string? expectedErrorMessage)
+    {
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Get, new OpenApiOperation
+        {
+            Parameters =
+            [
+                new OpenApiParameter
+                {
+                    Name = "param",
+                    In = ParameterLocation.Query,
+                    Schema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Format = format }
+                }
+            ]
+        });
+        var request = new HttpRequestMessage
+        {
+            RequestUri = new Uri($"/api/products?param={value}", UriKind.Relative),
+            Method = HttpMethod.Get
+        };
+        var originalCulture = CultureInfo.CurrentCulture;
+        Exception? exception;
+
+        try
+        {
+            // Turkish uses ',' as the decimal separator and '.' as the group separator;
+            // group separators like "1,000" are not valid numbers on the wire in any culture
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(culture);
+
+            exception = Record.Exception(() =>
+            {
+                Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Get);
+            });
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
+
+        Assert.Equal(expectedErrorMessage, exception?.Message);
+    }
+
+    [Theory]
+    [InlineData("tr-TR", "integer", null, "42", null)]
+    [InlineData("tr-TR", "integer", "int32", "-42", null)]
+    [InlineData("tr-TR", "integer", "int32", "4.2", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("tr-TR", "integer", "int32", "4,2", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("tr-TR", "integer", "int32", "3000000000", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("en-US", "integer", "int32", "1,000", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("tr-TR", "integer", "int64", "3000000000", null)]
+    [InlineData("tr-TR", "integer", "int64", "-3000000000", null)]
+    [InlineData("tr-TR", "integer", "int64", "3.000.000.000", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("en-US", "integer", "int64", "foo", "Parameter 'param' is not of type 'integer'")]
+    [InlineData("tr-TR", "number", "float", "1.5", null)]
+    [InlineData("tr-TR", "number", "float", "1,5", "Parameter 'param' is not of type 'number'")]
+    [InlineData("en-US", "number", "float", "1,000", "Parameter 'param' is not of type 'number'")]
+    [InlineData("en-US", "number", "float", "1e3", null)]
+    [InlineData("tr-TR", "string", "byte", "255", null)]
+    [InlineData("tr-TR", "string", "byte", "0", null)]
+    [InlineData("tr-TR", "string", "date", "2024-01-15", null)]
+    [InlineData("tr-TR", "string", "date", "01/15/2024", null)]
+    [InlineData("tr-TR", "string", "date-time", "2024-01-15T10:30:00Z", null)]
+    [InlineData("en-US", "string", "date-time", "2024-01-15T10:30:00+03:00", null)]
+    public void Validate_ParsesQueryParameterOfFormat_UsingInvariantCulture(string culture, string type, string? format, string value, string? expectedErrorMessage)
+    {
+        var schemaType = type switch
+        {
+            "integer" => JsonSchemaTypes.Integer,
+            "number" => JsonSchemaTypes.Number,
+            _ => JsonSchemaTypes.String,
+        };
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Get, new OpenApiOperation
+        {
+            Parameters =
+            [
+                new OpenApiParameter
+                {
+                    Name = "param",
+                    In = ParameterLocation.Query,
+                    Schema = new OpenApiSchema { Type = schemaType, Format = format }
+                }
+            ]
+        });
+        var request = new HttpRequestMessage
+        {
+            RequestUri = new Uri($"/api/products?param={value}", UriKind.Relative),
+            Method = HttpMethod.Get
+        };
+        var originalCulture = CultureInfo.CurrentCulture;
+        Exception? exception;
+
+        try
+        {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(culture);
+
+            exception = Record.Exception(() =>
+            {
+                Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Get);
+            });
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
     }
