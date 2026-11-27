@@ -102,6 +102,107 @@ public class FakeController
     public void ActionWithRequiredMember(TypeWithRequiredProperty param)
     { }
 
+    public class TypeWithNestedRequiredProperty
+    {
+        [Required]
+        public string Prop { get; set; }
+
+        public string Free { get; set; }
+    }
+
+    public class TypeWithOptionalAndRequiredNestedTypes
+    {
+        public TypeWithNestedRequiredProperty Optional { get; set; }
+
+        [Required]
+        public TypeWithNestedRequiredProperty Mandatory { get; set; }
+
+        [FromQuery(Name = "renamed")]
+        public TypeWithNestedRequiredProperty OptionalRenamed { get; set; }
+
+        [Required]
+        public string Other { get; set; }
+    }
+
+    public void ActionWithNestedTypesFromQuery([FromQuery] TypeWithOptionalAndRequiredNestedTypes param)
+    { }
+
+    public void ActionWithNestedTypesFromForm([FromForm] TypeWithOptionalAndRequiredNestedTypes param)
+    { }
+
+#nullable enable
+    public class TypeWithNullableAnnotatedNestedTypes
+    {
+        public TypeWithNestedRequiredProperty NonNullable { get; set; } = null!;
+
+        public TypeWithNestedRequiredProperty? Nullable { get; set; }
+    }
+#nullable restore
+
+    public class TypeWithDottedBinderName
+    {
+        public TypeWithNestedRequiredProperty Optional { get; set; }
+
+        [Required]
+        [FromQuery(Name = "Optional.Free")]
+        public string Other { get; set; }
+    }
+
+    public void ActionWithNullableAnnotatedNestedTypesFromQuery([FromQuery] TypeWithNullableAnnotatedNestedTypes param)
+    { }
+
+    public void ActionWithDottedBinderNameFromQuery([FromQuery] TypeWithDottedBinderName param)
+    { }
+
+    public record RecordWithNestedTypes(
+        [Required] TypeWithNestedRequiredProperty Mandatory,
+        TypeWithNestedRequiredProperty Optional);
+
+    [ModelMetadataType(typeof(TypeWithNestedTypesMetadata))]
+    public class TypeWithNestedTypesInMetadataType
+    {
+        public TypeWithNestedRequiredProperty Mandatory { get; set; }
+
+        public TypeWithNestedRequiredProperty Optional { get; set; }
+    }
+
+    public class TypeWithNestedTypesMetadata
+    {
+        [Required]
+        public TypeWithNestedRequiredProperty Mandatory { get; set; }
+    }
+
+    public class TypeWithInheritedNestedTypes
+    {
+        public TypeWithNestedRequiredProperty Mandatory { get; set; }
+
+        public TypeWithNestedRequiredProperty Optional { get; set; }
+    }
+
+    [ModelMetadataType(typeof(TypeWithNestedTypesMetadata))]
+    public class DerivedTypeWithNestedTypesInMetadataType : TypeWithInheritedNestedTypes
+    { }
+
+    public record BaseRecordWithNestedTypes(
+        TypeWithNestedRequiredProperty Mandatory,
+        TypeWithNestedRequiredProperty Optional);
+
+    public record DerivedRecordWithNestedTypes(
+        [Required] TypeWithNestedRequiredProperty Mandatory,
+        TypeWithNestedRequiredProperty Optional) : BaseRecordWithNestedTypes(Mandatory, Optional);
+
+    public void ActionWithRecordNestedTypesFromQuery([FromQuery] RecordWithNestedTypes param)
+    { }
+
+    public void ActionWithMetadataTypeNestedTypesFromQuery([FromQuery] TypeWithNestedTypesInMetadataType param)
+    { }
+
+    public void ActionWithDerivedMetadataTypeNestedTypesFromQuery([FromQuery] DerivedTypeWithNestedTypesInMetadataType param)
+    { }
+
+    public void ActionWithDerivedRecordNestedTypesFromQuery([FromQuery] DerivedRecordWithNestedTypes param)
+    { }
+
     [Consumes("application/someMediaType")]
     public void ActionWithConsumesAttribute(string param)
     { }
