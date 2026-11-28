@@ -12,4 +12,7 @@ public class FakeControllerWithAsyncEnumerable
 
     public TypeWithAsyncEnumerableProperty ReturnsTypeWithAsyncEnumerableProperty()
         => throw new NotImplementedException();
+
+    public AsyncEnumerableOfSelf ReturnsAsyncEnumerableOfSelf(AsyncEnumerableOfSelf body)
+        => throw new NotImplementedException();
 }

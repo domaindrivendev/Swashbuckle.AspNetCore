@@ -753,8 +753,9 @@ public class SwaggerGenerator(
 
     private IOpenApiSchema GenerateResponseSchema(Type type, SchemaRepository schemaRepository)
     {
-        // MVC can write a response value differently to a property of the same type, see SchemaGenerator.GenerateSchemaForResponse
-        if (_schemaGenerator is not SchemaGenerator schemaGenerator)
+        // MVC can write a response value differently to a property of the same type, see SchemaGenerator.GenerateSchemaForResponse.
+        // Only the built-in type itself, as a derived generator can re-implement ISchemaGenerator.GenerateSchema.
+        if (_schemaGenerator is not SchemaGenerator schemaGenerator || schemaGenerator.GetType() != typeof(SchemaGenerator))
         {
             return GenerateSchema(type, schemaRepository);
         }

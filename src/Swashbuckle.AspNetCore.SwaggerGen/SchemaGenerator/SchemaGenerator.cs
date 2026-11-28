@@ -230,7 +230,10 @@ public class SchemaGenerator(
                 itemType: asyncEnumerableType.GenericTypeArguments[0],
                 jsonConverter: dataContract.JsonConverter);
 
-            var schema = GenerateConcreteSchema(arrayDataContract, schemaRepository);
+            // Kept inline, as the items can be the response type itself, whose component is its object schema
+            var schema = TryGetCustomTypeMapping(modelType, out var customSchemaFactory)
+                ? customSchemaFactory()
+                : CreateArraySchema(arrayDataContract, schemaRepository);
 
             ApplyFilters(schema, modelType, schemaRepository);
 

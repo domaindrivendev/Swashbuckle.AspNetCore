@@ -1516,6 +1516,42 @@ public class SwaggerGeneratorTests
         Assert.Same(generated.Schema, schema);
     }
 
+    [Theory]
+    [InlineData(nameof(FakeController.ActionWithReturnValue), typeof(int))]
+    [InlineData(nameof(FakeController.ActionWithAsyncEnumerableReturnValue), typeof(IAsyncEnumerable<TestDto>))]
+    public void GetSwagger_UsesReimplementedSchemaGenerator_ForResponseSchema(string actionName, Type responseType)
+    {
+        var schemaGenerator = new ReimplementingSchemaGenerator(
+            new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions()));
+
+        var subject = new SwaggerGenerator(
+            DefaultOptions,
+            new FakeApiDescriptionGroupCollectionProvider(
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    _ => actionName,
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                        }
+                    ])
+            ]),
+            schemaGenerator);
+
+        var document = subject.GetSwagger("v1");
+
+        var schema = document.Paths["/resource"].Operations[HttpMethod.Get].Responses["200"].Content["application/json"].Schema;
+        var generated = Assert.Single(schemaGenerator.GeneratedSchemas);
+        Assert.Equal(responseType, generated.Type);
+        Assert.Same(generated.Schema, schema);
+    }
+
     [Fact]
     public void GetSwagger_ThrowsSwaggerGeneratorException_IfResponseSchemaCannotBeGenerated()
     {

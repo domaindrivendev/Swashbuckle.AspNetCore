@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -25,8 +26,34 @@ public class NewtonsoftSwaggerGeneratorTests
     }
 
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void GetSwagger_GeneratesArrayResponseSchema_IfActionReturnsAsyncEnumerableOfItself(bool hasRequestBody)
+    {
+        // With a request body, the type's own schema is registered before the response schema is generated
+        ApiParameterDescription[] parameterDescriptions = hasRequestBody
+            ? [new ApiParameterDescription { Name = "body", Source = BindingSource.Body }]
+            : null;
+
+        var document = Subject(
+            nameof(FakeControllerWithAsyncEnumerable.ReturnsAsyncEnumerableOfSelf),
+            httpMethod: "POST",
+            parameterDescriptions: parameterDescriptions).GetSwagger("v1");
+
+        var schema = document.Paths["/resource"].Operations[HttpMethod.Post].Responses["200"].Content["application/json"].Schema;
+        Assert.Equal(JsonSchemaTypes.Array, schema.Type);
+        var itemsSchema = Assert.IsType<OpenApiSchemaReference>(schema.Items);
+        Assert.Equal(nameof(AsyncEnumerableOfSelf), itemsSchema.Reference.Id);
+
+        var itemSchema = document.Components.Schemas[nameof(AsyncEnumerableOfSelf)];
+        Assert.Equal(JsonSchemaTypes.Object, itemSchema.Type);
+        Assert.Equal("Id", Assert.Single(itemSchema.Properties).Key);
+    }
+
+    [Theory]
     [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsAsyncEnumerable), typeof(IAsyncEnumerable<ComplexType>))]
     [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsTypeImplementingAsyncEnumerable), typeof(AsyncEnumerableOfComplexType))]
+    [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsAsyncEnumerableOfSelf), typeof(AsyncEnumerableOfSelf))]
     public void GetSwagger_PassesResponseTypeToSchemaFilters_IfActionReturnsAsyncEnumerable(string actionName, Type responseType)
     {
         var schemaFilter = new RecordingSchemaFilter();
@@ -42,6 +69,7 @@ public class NewtonsoftSwaggerGeneratorTests
     [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsAsyncEnumerable), typeof(IAsyncEnumerable<ComplexType>))]
     [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsAsyncEnumerable), typeof(IAsyncEnumerable<>))]
     [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsTypeImplementingAsyncEnumerable), typeof(AsyncEnumerableOfComplexType))]
+    [InlineData(nameof(FakeControllerWithAsyncEnumerable.ReturnsAsyncEnumerableOfSelf), typeof(AsyncEnumerableOfSelf))]
     public void GetSwagger_UsesCustomTypeMapping_IfActionReturnsAsyncEnumerable(string actionName, Type mappingType)
     {
         var document = Subject(
@@ -67,13 +95,18 @@ public class NewtonsoftSwaggerGeneratorTests
         Assert.Equal(JsonSchemaTypes.Object, document.Components.Schemas["ComplexTypeIAsyncEnumerable"].Type);
     }
 
-    private static SwaggerGenerator Subject(string actionName, Action<SchemaGeneratorOptions> configureGenerator = null)
+    private static SwaggerGenerator Subject(
+        string actionName,
+        Action<SchemaGeneratorOptions> configureGenerator = null,
+        string httpMethod = "GET",
+        IEnumerable<ApiParameterDescription> parameterDescriptions = null)
     {
         var apiDescription = ApiDescriptionFactory.Create<FakeControllerWithAsyncEnumerable>(
             _ => actionName,
             groupName: "v1",
-            httpMethod: "GET",
+            httpMethod: httpMethod,
             relativePath: "resource",
+            parameterDescriptions: parameterDescriptions,
             supportedResponseTypes:
             [
                 new ApiResponseType
