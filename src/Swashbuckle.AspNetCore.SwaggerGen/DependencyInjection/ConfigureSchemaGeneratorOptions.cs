@@ -35,6 +35,7 @@ internal class ConfigureSchemaGeneratorOptions(
         target.UseAllOfToExtendReferenceSchemas = source.UseAllOfToExtendReferenceSchemas;
         target.SupportNonNullableReferenceTypes = source.SupportNonNullableReferenceTypes;
         target.NonNullableReferenceTypesAsRequired = source.NonNullableReferenceTypesAsRequired;
+        target.DisableObjectKeysForEnumDictionaries = source.DisableObjectKeysForEnumDictionaries;
         target.SchemaFilters = [.. source.SchemaFilters];
     }
 

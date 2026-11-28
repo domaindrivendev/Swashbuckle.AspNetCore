@@ -127,6 +127,7 @@ public class JsonSerializerSchemaGeneratorTests
         { typeof(IReadOnlyDictionary<string, bool>), JsonSchemaTypes.Boolean },
         { typeof(IDictionary), null },
         { typeof(ExpandoObject), null },
+        { typeof(IDictionary<FlagsEnum, int>), JsonSchemaTypes.Integer }
     };
 
     [Theory]
@@ -141,6 +142,7 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.True(schema.AdditionalPropertiesAllowed);
         Assert.NotNull(schema.AdditionalProperties);
         Assert.Equal(expectedAdditionalPropertiesType, schema.AdditionalProperties.Type);
+        Assert.Null(schema.Properties);
     }
 #nullable restore
 
@@ -2141,6 +2143,21 @@ public class JsonSerializerSchemaGeneratorTests
             .First();
         var schema = Subject().GenerateSchema(typeof(string), new SchemaRepository(), parameterInfo: parameterInfo, routeInfo: routeInfo);
         Assert.Equal(JsonSchemaTypes.Integer, schema.Type);
+    }
+
+    [Fact]
+    public void GenerateSchema_GeneratesMapDictionarySchema_IfEnumDictionaryKeysDisabled()
+    {
+        var subject = Subject(
+            configureGenerator: options => options.DisableObjectKeysForEnumDictionaries = true);
+
+        var schema = subject.GenerateSchema(typeof(IDictionary<IntEnum, int>), new SchemaRepository());
+
+        Assert.Equal(JsonSchemaTypes.Object, schema.Type);
+        Assert.True(schema.AdditionalPropertiesAllowed);
+        Assert.NotNull(schema.AdditionalProperties);
+        Assert.Equal(JsonSchemaTypes.Integer, schema.AdditionalProperties.Type);
+        Assert.Null(schema.Properties);
     }
 
     private static SchemaGenerator Subject(

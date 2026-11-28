@@ -1,1 +1,2 @@
-﻿
+﻿Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.DisableObjectKeysForEnumDictionaries.get -> bool
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.DisableObjectKeysForEnumDictionaries.set -> void

@@ -1094,6 +1094,33 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Null(arraySchema.Items.Enum);
     }
 
+    [Fact]
+    public void GenerateSchema_GeneratesMapDictionarySchema_IfEnumKeyHasFlagsAttribute()
+    {
+        var schema = Subject().GenerateSchema(typeof(IDictionary<FlagsEnum, int>), new SchemaRepository());
+
+        Assert.Equal(JsonSchemaTypes.Object, schema.Type);
+        Assert.True(schema.AdditionalPropertiesAllowed);
+        Assert.NotNull(schema.AdditionalProperties);
+        Assert.Equal(JsonSchemaTypes.Integer, schema.AdditionalProperties.Type);
+        Assert.Null(schema.Properties);
+    }
+
+    [Fact]
+    public void GenerateSchema_GeneratesMapDictionarySchema_IfEnumDictionaryKeysDisabled()
+    {
+        var subject = Subject(
+            configureGenerator: options => options.DisableObjectKeysForEnumDictionaries = true);
+
+        var schema = subject.GenerateSchema(typeof(IDictionary<IntEnum, int>), new SchemaRepository());
+
+        Assert.Equal(JsonSchemaTypes.Object, schema.Type);
+        Assert.True(schema.AdditionalPropertiesAllowed);
+        Assert.NotNull(schema.AdditionalProperties);
+        Assert.Equal(JsonSchemaTypes.Integer, schema.AdditionalProperties.Type);
+        Assert.Null(schema.Properties);
+    }
+
     private static SchemaGenerator Subject(
         Action<SchemaGeneratorOptions> configureGenerator = null,
         Action<JsonSerializerSettings> configureSerializer = null)

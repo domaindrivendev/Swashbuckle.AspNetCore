@@ -38,3 +38,11 @@ public enum IntEnumWithDuplicateValues : int
     PreferredName = 1,
     OldNameForBackwardsCompatibility = PreferredName,
 }
+
+[Flags]
+public enum FlagsEnum
+{
+    None = 0,
+    Read = 1,
+    Write = 2,
+}

@@ -51,6 +51,8 @@ public class SchemaGeneratorOptions
 
     public IList<ISchemaFilter> SchemaFilters { get; set; }
 
+    public bool DisableObjectKeysForEnumDictionaries { get; set; }
+
     private string DefaultSchemaIdSelector(Type modelType)
     {
         if (!modelType.IsConstructedGenericType)
