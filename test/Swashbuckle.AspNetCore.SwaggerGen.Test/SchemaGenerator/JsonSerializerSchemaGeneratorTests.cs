@@ -1004,6 +1004,8 @@ public class JsonSerializerSchemaGeneratorTests
         var secondReference = Assert.IsType<OpenApiSchemaReference>(second);
         Assert.Matches("^StringAnonymousType\\d+$", firstReference.Reference.Id);
         Assert.Matches("^Int32StringAnonymousType\\d+$", secondReference.Reference.Id);
+        var nested = subject.GenerateSchema(new { Items = new[] { new { Hello = "World" } } }.GetType(), schemaRepository);
+        Assert.IsType<OpenApiSchemaReference>(nested);
         Assert.All(schemaRepository.Schemas.Keys, id => Assert.Matches("^[a-zA-Z0-9.\\-_]+$", id));
     }
 

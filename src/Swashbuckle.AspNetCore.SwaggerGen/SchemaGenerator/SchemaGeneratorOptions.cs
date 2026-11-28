@@ -55,6 +55,12 @@ public class SchemaGeneratorOptions
 
     private string DefaultSchemaIdSelector(Type modelType)
     {
+        if (modelType.IsArray && modelType.GetArrayRank() == 1 && IsCompilerGenerated(modelType.GetElementType()))
+        {
+            // Build the ID from the element type, as its name contains characters that are not valid in a schema ID.
+            return DefaultSchemaIdSelector(modelType.GetElementType()) + "Array";
+        }
+
         if (!modelType.IsConstructedGenericType)
         {
             return GetSchemaIdName(modelType).Replace("[]", "Array");
@@ -67,11 +73,21 @@ public class SchemaGeneratorOptions
         return prefix + GetSchemaIdName(modelType).Split('`').First();
     }
 
+    private static bool IsCompilerGenerated(Type type)
+    {
+        while (type.IsArray && type.GetArrayRank() == 1)
+        {
+            type = type.GetElementType();
+        }
+
+        return type.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false);
+    }
+
     private static string GetSchemaIdName(Type modelType)
     {
         // The names of compiler-generated types (such as anonymous types) contain characters
         // that are not allowed in the keys of the schemas of an OpenAPI document, e.g. "<>f__AnonymousType0`1".
-        if (modelType.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false))
+        if (IsCompilerGenerated(modelType))
         {
             var match = Regex.Match(modelType.Name, @"AnonymousType\d+");
 
