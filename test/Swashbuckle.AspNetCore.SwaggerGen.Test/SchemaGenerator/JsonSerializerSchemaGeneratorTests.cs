@@ -992,6 +992,24 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_UsesValidSchemaIds_ForAnonymousTypes()
+    {
+        var subject = Subject();
+        var schemaRepository = new SchemaRepository();
+
+        var first = subject.GenerateSchema(new { Hello = "World" }.GetType(), schemaRepository);
+        var second = subject.GenerateSchema(new { Count = 1, Name = "x" }.GetType(), schemaRepository);
+
+        var firstReference = Assert.IsType<OpenApiSchemaReference>(first);
+        var secondReference = Assert.IsType<OpenApiSchemaReference>(second);
+        Assert.Matches("^StringAnonymousType\\d+$", firstReference.Reference.Id);
+        Assert.Matches("^Int32StringAnonymousType\\d+$", secondReference.Reference.Id);
+        var nested = subject.GenerateSchema(new { Items = new[] { new { Hello = "World" } } }.GetType(), schemaRepository);
+        Assert.IsType<OpenApiSchemaReference>(nested);
+        Assert.All(schemaRepository.Schemas.Keys, id => Assert.Matches("^[a-zA-Z0-9.\\-_]+$", id));
+    }
+
+    [Fact]
     public void GenerateSchema_SupportsOption_SchemaIdSelector()
     {
         var subject = Subject(
