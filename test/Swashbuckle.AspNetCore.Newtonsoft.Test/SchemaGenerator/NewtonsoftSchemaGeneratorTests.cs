@@ -1121,8 +1121,6 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Null(schema.Properties);
     }
 
-
-
     private static SchemaGenerator Subject(
         Action<SchemaGeneratorOptions> configureGenerator = null,
         Action<JsonSerializerSettings> configureSerializer = null)

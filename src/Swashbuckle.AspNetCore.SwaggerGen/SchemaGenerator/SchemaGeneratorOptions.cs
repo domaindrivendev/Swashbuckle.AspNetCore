@@ -53,7 +53,6 @@ public class SchemaGeneratorOptions
 
     public bool DisableObjectKeysForEnumDictionaries { get; set; }
 
-
     private string DefaultSchemaIdSelector(Type modelType)
     {
         if (!modelType.IsConstructedGenericType)

@@ -127,8 +127,7 @@ public class JsonSerializerSchemaGeneratorTests
         { typeof(IReadOnlyDictionary<string, bool>), JsonSchemaTypes.Boolean },
         { typeof(IDictionary), null },
         { typeof(ExpandoObject), null },
-        { typeof(IDictionary<FlagsEnum, int>), JsonSchemaTypes.Integer },
-
+        { typeof(IDictionary<FlagsEnum, int>), JsonSchemaTypes.Integer }
     };
 
     [Theory]

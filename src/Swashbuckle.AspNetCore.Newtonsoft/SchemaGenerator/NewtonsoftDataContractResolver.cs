@@ -125,7 +125,6 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
                 jsonConverter: JsonConverterFunc);
         }
 
-
         if (jsonContract is JsonObjectContract jsonObjectContract)
         {
             // This handles DateOnly and TimeOnly
