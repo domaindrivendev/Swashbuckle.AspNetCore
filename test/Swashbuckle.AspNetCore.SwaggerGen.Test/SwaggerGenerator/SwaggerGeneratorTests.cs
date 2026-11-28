@@ -1412,6 +1412,182 @@ public class SwaggerGeneratorTests
     }
 
     [Fact]
+    public void GetSwagger_PassesResponseTypeToSchemaFilters_IfActionReturnsAsyncEnumerable()
+    {
+        var schemaFilter = new RecordingSchemaFilter();
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithAsyncEnumerableReturnValue),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                        }
+                    ])
+            ],
+            schemaFilters: [schemaFilter]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var schema = document.Paths["/resource"].Operations[HttpMethod.Get].Responses["200"].Content["application/json"].Schema;
+        Assert.Equal(JsonSchemaTypes.Array, schema.Type);
+        var itemsSchema = Assert.IsType<OpenApiSchemaReference>(schema.Items);
+        Assert.Equal("TestDto", itemsSchema.Reference.Id);
+        Assert.Equal(typeof(IAsyncEnumerable<TestDto>), schemaFilter.ContextTypes[schema]);
+    }
+
+    [Theory]
+    [InlineData(typeof(IAsyncEnumerable<TestDto>))]
+    [InlineData(typeof(IAsyncEnumerable<>))]
+    public void GetSwagger_UsesCustomTypeMapping_IfActionReturnsAsyncEnumerable(Type mappingType)
+    {
+        var schemaFilter = new RecordingSchemaFilter();
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithAsyncEnumerableReturnValue),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                        }
+                    ])
+            ],
+            schemaFilters: [schemaFilter],
+            customTypeMappings: new Dictionary<Type, Func<IOpenApiSchema>>
+            {
+                [mappingType] = () => new OpenApiSchema { Type = JsonSchemaTypes.String }
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        var schema = document.Paths["/resource"].Operations[HttpMethod.Get].Responses["200"].Content["application/json"].Schema;
+        Assert.Equal(JsonSchemaTypes.String, schema.Type);
+        Assert.Equal(typeof(IAsyncEnumerable<TestDto>), schemaFilter.ContextTypes[schema]);
+        Assert.DoesNotContain("TestDto", document.Components.Schemas.Keys);
+    }
+
+    [Fact]
+    public void GetSwagger_PassesResponseTypeToCustomSchemaGenerator_IfActionReturnsAsyncEnumerable()
+    {
+        var schemaGenerator = new RecordingSchemaGenerator(
+            new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions())));
+
+        var subject = new SwaggerGenerator(
+            DefaultOptions,
+            new FakeApiDescriptionGroupCollectionProvider(
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithAsyncEnumerableReturnValue),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                        }
+                    ])
+            ]),
+            schemaGenerator);
+
+        var document = subject.GetSwagger("v1");
+
+        var schema = document.Paths["/resource"].Operations[HttpMethod.Get].Responses["200"].Content["application/json"].Schema;
+        var generated = Assert.Single(schemaGenerator.GeneratedSchemas);
+        Assert.Equal(typeof(IAsyncEnumerable<TestDto>), generated.Type);
+        Assert.Same(generated.Schema, schema);
+    }
+
+    [Theory]
+    [InlineData(nameof(FakeController.ActionWithReturnValue), typeof(int))]
+    [InlineData(nameof(FakeController.ActionWithAsyncEnumerableReturnValue), typeof(IAsyncEnumerable<TestDto>))]
+    public void GetSwagger_UsesReimplementedSchemaGenerator_ForResponseSchema(string actionName, Type responseType)
+    {
+        var schemaGenerator = new ReimplementingSchemaGenerator(
+            new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions()));
+
+        var subject = new SwaggerGenerator(
+            DefaultOptions,
+            new FakeApiDescriptionGroupCollectionProvider(
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    _ => actionName,
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                        }
+                    ])
+            ]),
+            schemaGenerator);
+
+        var document = subject.GetSwagger("v1");
+
+        var schema = document.Paths["/resource"].Operations[HttpMethod.Get].Responses["200"].Content["application/json"].Schema;
+        var generated = Assert.Single(schemaGenerator.GeneratedSchemas);
+        Assert.Equal(responseType, generated.Type);
+        Assert.Same(generated.Schema, schema);
+    }
+
+    [Fact]
+    public void GetSwagger_ThrowsSwaggerGeneratorException_IfResponseSchemaCannotBeGenerated()
+    {
+        var mappingException = new InvalidOperationException("Mapping failed");
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithAsyncEnumerableReturnValue),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                        }
+                    ])
+            ],
+            customTypeMappings: new Dictionary<Type, Func<IOpenApiSchema>>
+            {
+                [typeof(IAsyncEnumerable<TestDto>)] = () => throw mappingException
+            }
+        );
+
+        var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
+        var schemaException = Assert.IsType<SwaggerGeneratorException>(exception.InnerException);
+        Assert.Equal(
+            "Failed to generate schema for type - System.Collections.Generic.IAsyncEnumerable`1[Swashbuckle.AspNetCore.SwaggerGen.Test.TestDto]. See inner exception",
+            schemaException.Message);
+        Assert.Same(mappingException, schemaException.InnerException);
+    }
+
+    [Fact]
     public void GetSwagger_SetsResponseContentType_WhenActionHasFileResult()
     {
         var apiDescription = ApiDescriptionFactory.Create<FakeController>(
@@ -3202,12 +3378,19 @@ public class SwaggerGeneratorTests
         IEnumerable<ApiDescription> apiDescriptions,
         SwaggerGeneratorOptions options = null,
         IEnumerable<AuthenticationScheme> authenticationSchemes = null,
-        List<ISchemaFilter> schemaFilters = null)
+        List<ISchemaFilter> schemaFilters = null,
+        IDictionary<Type, Func<IOpenApiSchema>> customTypeMappings = null)
     {
+        var schemaGeneratorOptions = new SchemaGeneratorOptions
+        {
+            CustomTypeMappings = customTypeMappings ?? new Dictionary<Type, Func<IOpenApiSchema>>(),
+            SchemaFilters = schemaFilters ?? [],
+        };
+
         return new SwaggerGenerator(
             options ?? DefaultOptions,
             new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-            new SchemaGenerator(new SchemaGeneratorOptions { SchemaFilters = schemaFilters ?? [] }, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+            new SchemaGenerator(schemaGeneratorOptions, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
             new FakeAuthenticationSchemeProvider(authenticationSchemes ?? [])
         );
     }

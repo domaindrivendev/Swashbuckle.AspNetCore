@@ -200,6 +200,20 @@ public class NewtonsoftSchemaGeneratorTests
     }
 #nullable restore
 
+    [Fact]
+    public void GenerateSchema_KeepsObjectSchema_IfPropertyIsAsyncEnumerable()
+    {
+        // MVC only buffers the response value itself, and Newtonsoft.Json writes the iterator's fields for a property
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject().GenerateSchema(typeof(TypeWithAsyncEnumerableProperty), schemaRepository);
+
+        var schema = schemaRepository.Schemas[((OpenApiSchemaReference)referenceSchema).Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchemaReference>(schema.Properties["Results"]);
+        Assert.Equal("ComplexTypeIAsyncEnumerable", propertySchema.Reference.Id);
+        Assert.Equal(JsonSchemaTypes.Object, schemaRepository.Schemas["ComplexTypeIAsyncEnumerable"].Type);
+    }
+
     [Theory]
     [InlineData(typeof(ISet<string>))]
     [InlineData(typeof(IReadOnlySet<string>))]

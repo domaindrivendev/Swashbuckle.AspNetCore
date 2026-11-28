@@ -528,7 +528,7 @@ public class SwaggerGenerator(
                         {
                             if (content is OpenApiMediaType mediaType)
                             {
-                                mediaType.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                                mediaType.Schema = GenerateResponseSchema(responseModel.Type, schemaRepository);
                             }
                         }
                     }
@@ -745,6 +745,27 @@ public class SwaggerGenerator(
         try
         {
             return _schemaGenerator.GenerateSchema(type, schemaRepository, propertyInfo, parameterInfo, routeInfo);
+        }
+        catch (Exception ex)
+        {
+            throw new SwaggerGeneratorException(
+                message: $"Failed to generate schema for type - {type}. See inner exception",
+                innerException: ex);
+        }
+    }
+
+    private IOpenApiSchema GenerateResponseSchema(Type type, SchemaRepository schemaRepository)
+    {
+        // MVC can write a response value differently to a property of the same type, see SchemaGenerator.GenerateSchemaForResponse.
+        // Only the built-in type itself, as a derived generator can re-implement ISchemaGenerator.GenerateSchema.
+        if (_schemaGenerator is not SchemaGenerator schemaGenerator || schemaGenerator.GetType() != typeof(SchemaGenerator))
+        {
+            return GenerateSchema(type, schemaRepository);
+        }
+
+        try
+        {
+            return schemaGenerator.GenerateSchemaForResponse(type, schemaRepository);
         }
         catch (Exception ex)
         {
@@ -1065,7 +1086,7 @@ public class SwaggerGenerator(
 
                 if (seenModelTypesByContentType[contentType].Add(modelType ?? typeof(void)))
                 {
-                    schemas.Add(GenerateSchema(modelType, schemaRepository));
+                    schemas.Add(GenerateResponseSchema(modelType, schemaRepository));
                 }
             }
         }

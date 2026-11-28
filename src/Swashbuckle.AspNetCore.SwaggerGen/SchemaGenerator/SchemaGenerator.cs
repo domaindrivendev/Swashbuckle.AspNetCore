@@ -276,6 +276,33 @@ public class SchemaGenerator(
         return schema;
     }
 
+    internal IOpenApiSchema GenerateSchemaForResponse(Type modelType, SchemaRepository schemaRepository)
+    {
+        // MVC writes an IAsyncEnumerable<T> response value as a JSON array: System.Text.Json streams it,
+        // and the Newtonsoft.Json formatter buffers it into a list first. So if the serializer describes the
+        // type as an object, it's described as an array here instead, still as the same type for custom
+        // mappings and schema filters. Only the response value is buffered, so a property keeps its schema.
+        if (modelType.IsConstructedFrom(typeof(IAsyncEnumerable<>), out var asyncEnumerableType) &&
+            GetDataContractFor(modelType) is { DataType: DataType.Object } dataContract)
+        {
+            var arrayDataContract = DataContract.ForArray(
+                underlyingType: modelType,
+                itemType: asyncEnumerableType.GenericTypeArguments[0],
+                jsonConverter: dataContract.JsonConverter);
+
+            // Kept inline, as the items can be the response type itself, whose component is its object schema
+            var schema = TryGetCustomTypeMapping(modelType, out var customSchemaFactory)
+                ? customSchemaFactory()
+                : CreateArraySchema(arrayDataContract, schemaRepository);
+
+            ApplyFilters(schema, modelType, schemaRepository);
+
+            return schema;
+        }
+
+        return GenerateSchemaForType(modelType, schemaRepository);
+    }
+
     private DataContract GetDataContractFor(Type modelType)
     {
         return _serializerDataContractResolver.GetDataContractForType(modelType);
